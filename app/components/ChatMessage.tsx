@@ -85,8 +85,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
   return (
     <div className={`flex gap-4 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
       <div className={`group relative max-w-full rounded-3xl px-4 py-2.5 ${msg.role === 'user'
-          ? !isEditing ? 'text-white bg-sky-500' : ''
-          : 'text-slate-900 dark:text-slate-100 px-0'
+        ? !isEditing ? 'text-white bg-sky-500' : ''
+        : 'text-slate-900 dark:text-slate-100 px-0'
         }`}
       >
         <div className="whitespace-pre-wrap wrap-break-word leading-relaxed space-y-2 w-full max-w-full">
@@ -102,7 +102,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                     onSaveEdit();
                   }
                 }}
-                className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none rounded-xl focus:outline-none border border-slate-300 dark:border-slate-600 text-sm"
+                className="w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none rounded-xl text-sm"
                 rows={1}
               />
               <div className="flex justify-end gap-2 mt-1">
@@ -115,10 +115,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                 <button
                   onClick={onSaveEdit}
                   disabled={editValue.trim() === '' || editValue.trim() === msg.content as string}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-sky-500 enabled:hover:bg-sky-600 transition-colors ${editValue.trim() === '' || editValue.trim() === msg.content as string
-                    ? 'opacity-50 cursor-not-allowed'
-                    : ''
-                    }`}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-sky-500 enabled:hover:bg-sky-600 transition-colors"
                 >
                   Atualizar
                 </button>

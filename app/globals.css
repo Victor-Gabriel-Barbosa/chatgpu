@@ -41,3 +41,29 @@ body {
   scrollbar-color: var(--color-slate-600) transparent;
   scrollbar-width: inherit;
 }
+
+@layer base {
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-sky-500;
+  }
+
+  button, 
+  select,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  summary {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  input:disabled {
+    @apply cursor-not-allowed opacity-70;
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+}

@@ -12,7 +12,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { SUPPORTED_MODELS, DEFAULT_MODEL_ID } from "./constants/models";
 
 export default function ChatInterface() {
-  // Estados para o motor de inferência, mensagens, entrada do usuário, progresso e status
+  // Estados principais do chat, modelo, UI e controle de execução
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
@@ -23,9 +23,13 @@ export default function ChatInterface() {
   const [chats, setChats] = useState<ChatSession[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true); 
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [theme, setTheme] = useState('system');
+
+  // Referências para controle da textarea e scroll automático das mensagens
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Carrega as sessões de chat salvas do localStorage ao iniciar o componente
   useEffect(() => {
@@ -53,11 +57,21 @@ export default function ChatInterface() {
   // Aplica a classe de tema ao elemento raiz e salva a preferência no localStorage sempre que o tema mudar
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) root.classList.add('dark');
-    else  root.classList.remove('dark');
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const applyTheme = () => {
+      const isDark = theme === 'dark' || (theme === 'system' && media.matches);
+      root.classList.toggle('dark', isDark);
+    };
+
+    applyTheme();
+    localStorage.setItem("chatgpu-theme", theme);
+
+    media.addEventListener('change', applyTheme);
+    return () => media.removeEventListener('change', applyTheme);
   }, [theme]);
 
-  // Carrega o modelo selecionado do localStorage ao iniciar o componente e atualiza o estado do modelo selecionado
+  // Carrega o modelo selecionado do localStorage ao iniciar o componente
   useEffect(() => {
     const savedModel = localStorage.getItem("chatgpu-model");
     if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
@@ -109,7 +123,15 @@ export default function ChatInterface() {
     };
   }, [selectedModel]);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Scroll suave até o final das mensagens
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Rola automaticamente para o final quando as mensagens mudam ou o chat atual é trocado
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages.length, currentChatId]);
 
   // Ajusta a altura do textarea conforme o conteúdo
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -145,8 +167,8 @@ export default function ChatInterface() {
 
   // Renomeia uma sessão de chat específica
   const handleRenameChat = (chatId: string, newTitle: string) => {
-    setChats((prev) => 
-      prev.map((chat) => 
+    setChats((prev) =>
+      prev.map((chat) =>
         chat.id === chatId ? { ...chat, title: newTitle } : chat
       )
     );
@@ -327,7 +349,7 @@ export default function ChatInterface() {
 
       {/* Área Principal */}
       <main id="main-chat-area" className="flex-1 flex flex-col relative">
-        <div className="md:hidden flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-900 z-10 transition-colors duration-200">
+        <div className="md:hidden flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 z-10 transition-colors duration-200">
           <button onClick={() => setSidebarOpen(true)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors">
             <PanelLeft size={20} />
           </button>
@@ -350,11 +372,11 @@ export default function ChatInterface() {
           <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8">
             {messages.length === 0 && isReady ? (
               <div className="flex flex-col items-center justify-center gap-4 mt-20 text-2xl">
-                <Image 
-                  src="/icon0.svg" 
-                  alt="ChatGPU" 
-                  width={64} 
-                  height={64} 
+                <Image
+                  src="/icon0.svg"
+                  alt="ChatGPU"
+                  width={64}
+                  height={64}
                   className="mb-2"
                 />
                 <span className="font-bold bg-linear-to-r from-sky-500 to-indigo-500 bg-clip-text text-center text-transparent">
@@ -373,7 +395,8 @@ export default function ChatInterface() {
                     handleSubmitEdit={handleSubmitEdit}
                   />
                 ))}
-                <div className="h-36"></div>
+                {/* Elemento âncora para o scroll */}
+                <div ref={messagesEndRef} className="h-36" />
               </>
             )}
           </div>
@@ -406,7 +429,7 @@ export default function ChatInterface() {
                 id="model-select"
                 value={selectedModel}
                 onChange={(e) => handleModelChange(e.target.value)}
-                className="p-3 cursor-pointer bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
+                className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
                 title="Selecionar modelo"
               >
                 {SUPPORTED_MODELS.map((group) => (
@@ -433,9 +456,8 @@ export default function ChatInterface() {
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || !isReady}
-                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${
-                    (!input.trim() || !isReady) ? "cursor-not-allowed" : "bg-sky-500 hover:bg-sky-600 cursor-pointer"
-                  }`}
+                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${(input.trim() && isReady) ? "bg-sky-500 hover:bg-sky-600" : ''
+                    }`}
                   title="Enviar"
                 >
                   <SendHorizontal size={20} />

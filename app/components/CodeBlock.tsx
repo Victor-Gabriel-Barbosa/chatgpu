@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
+import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CodeBlockProps } from '../types/chat';
+import { getExtension } from '../constants/extensions'
 
 // Componente para exibir blocos de código com destaque de sintaxe, cópia para área de transferência e preview para HTML
 export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
@@ -21,6 +22,30 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
     });
   };
 
+  // Lida com o download do código
+  const handleDownload = () => {
+    // Pega a extensão do arquivo ou usa 'txt' como padrão
+    const ext = getExtension(validLanguage);
+    const filename = `snippet.${ext}`;
+
+    // Cria um Blob com o conteúdo do código
+    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    // Cria um elemento <a> temporário para forçar o download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+
+    // Adiciona ao DOM, clica e remove em seguida
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Limpa a URL criada para liberar memória
+    URL.revokeObjectURL(url);
+  };
+
   // Controla o overflow do body quando o preview está em fullscreen para evitar scroll indesejado
   useEffect(() => {
     if (isFullscreen) document.body.style.overflow = 'hidden';
@@ -36,27 +61,25 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
       <div className="bg-gray-200/50 dark:bg-gray-800/80 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-4">
           <span className="font-sans lowercase">{language || 'code'}</span>
-          
+
           {isHtml && (
             <div className="flex items-center gap-1 bg-gray-300/50 dark:bg-gray-900/50 p-0.5 rounded-lg">
               <button
                 onClick={() => setActiveTab('code')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
-                  activeTab === 'code' 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
-                    : 'hover:text-gray-900 dark:hover:text-white'
-                }`}
+                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${activeTab === 'code'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'hover:text-gray-900 dark:hover:text-white'
+                  }`}
               >
                 <Code2 size={14} />
                 <span>Código</span>
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
-                  activeTab === 'preview' 
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
-                    : 'hover:text-gray-900 dark:hover:text-white'
-                }`}
+                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${activeTab === 'preview'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'hover:text-gray-900 dark:hover:text-white'
+                  }`}
               >
                 <LayoutTemplate size={14} />
                 <span>Preview</span>
@@ -67,7 +90,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
 
         <div className="flex items-center gap-2">
           {isHtml && activeTab === 'preview' && (
-            <button 
+            <button
               onClick={() => setIsFullscreen(true)}
               className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               title="Maximizar preview"
@@ -75,16 +98,24 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
               <Maximize2 size={14} />
             </button>
           )}
-          <button 
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
+            title="Download"
+          >
+            <Download size={14} />
+          </button>
+
+          <button
             onClick={handleCopy}
             className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
             title="Copiar código"
           >
-            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? <Check className="text-sky-500" size={14} /> : <Copy size={14} />}
           </button>
         </div>
       </div>
-      
+
       {isHtml && activeTab === 'preview' ? (
         <div className="bg-white w-full">
           <iframe
@@ -126,7 +157,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
               <LayoutTemplate size={16} className="text-sky-500" />
               <span className="text-sm font-medium dark:text-white">Preview</span>
             </div>
-            <button 
+            <button
               onClick={() => setIsFullscreen(false)}
               className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900 transition-colors"
               title="Minimizar preview"
