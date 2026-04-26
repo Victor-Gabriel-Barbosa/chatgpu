@@ -1,36 +1,185 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💬 ChatGPU
 
-## Getting Started
+Um chat de IA rodando **100% no navegador**, utilizando **WebLLM (MLC)** para executar modelos localmente com aceleração por GPU (quando disponível).
 
-First, run the development server:
+> Sem backend. Sem API paga. Tudo direto no seu browser.
+
+---
+
+## 🚀 Demo
+
+> https://chatgpu-nu.vercel.app/
+
+---
+
+## ✨ Features
+
+* ⚡ Execução de LLMs diretamente no navegador (WebGPU)
+* 🧠 Suporte a múltiplos modelos (Qwen, Llama, Phi, Gemma...)
+* 💬 Interface de chat moderna (estilo ChatGPT)
+* 🧾 Histórico de conversas salvo no `localStorage`
+* 🧵 Streaming de respostas em tempo real
+* ⏹️ Interrupção de geração de resposta
+* 📝 Edição de mensagens e regeneração
+* 🎨 Tema claro/escuro
+* 📱 Layout responsivo
+
+---
+
+## 📷 Capturas de Tela
+
+> <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6655e5a7-61ae-4808-8142-5497e4e14fbb" />
+
+---
+
+## 🛠️ Tecnologias
+
+| Tecnologia           | Uso                         |
+| -------------------- | --------------------------- |
+| Next.js (App Router) | Frontend / estrutura do app |
+| React                | Interface e estados         |
+| TypeScript           | Tipagem                     |
+| Tailwind CSS         | Estilização                 |
+| WebLLM (MLC)         | Execução dos modelos LLM    |
+| Web Workers          | Processamento em background |
+
+---
+
+## 📦 Instalação
 
 ```bash
+# Clone o repositório
+git clone https://github.com/Victor-Gabriel-Barbosa/chatgpu.git
+
+# Entre na pasta
+cd chatgpu
+
+# Instale as dependências
+npm install
+
+# Rode o projeto
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra em:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ⚙️ Como funciona
 
-To learn more about Next.js, take a look at the following resources:
+O projeto utiliza o **@mlc-ai/web-llm**, que permite rodar modelos de linguagem diretamente no navegador usando:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* WebGPU
+* WebAssembly
+* Web Workers
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+O fluxo é basicamente:
 
-## Deploy on Vercel
+1. O modelo é carregado no browser
+2. As mensagens são enviadas para o worker
+3. O modelo gera a resposta em streaming
+4. A UI atualiza em tempo real
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧠 Modelos suportados
+
+Os modelos são definidos em:
+
+```
+/constants/models.ts
+```
+
+Exemplos:
+
+* Qwen2.5
+* Llama 3
+* Phi-3
+* Gemma
+
+> ⚠️ Modelos mais pesados exigem mais RAM/VRAM e podem não rodar em todos os dispositivos.
+
+---
+
+## 📁 Estrutura do projeto
+
+```
+app/
+ ├── components/
+ │   ├── ChatMessage.tsx
+ │   ├── Sidebar.tsx
+ │   ├── SettingsModal.tsx
+ │   └── CodeBlock.tsx
+ │
+ ├── page.tsx
+ │
+lib/
+ └── worker.ts
+
+constants/
+ └── models.ts
+```
+
+---
+
+## 💾 Persistência
+
+Os dados são armazenados no navegador:
+
+* `chatgpu-sessions` → histórico de chats
+* `chatgpu-model` → modelo selecionado
+* `chatgpu-theme` → tema
+
+---
+
+## ⚠️ Limitações
+
+* Depende de **WebGPU** (nem todos navegadores suportam)
+* Pode consumir bastante memória
+* Tempo de carregamento do modelo pode ser alto
+* Performance varia muito por hardware
+
+---
+
+## 🧪 Melhorias futuras
+
+* [ ] Exportar/importar conversas
+* [ ] Suporte a mais modelos
+* [ ] Melhor gerenciamento de memória
+* [ ] Deploy otimizado (lazy loading de modelos)
+* [ ] Suporte a plugins/tools
+
+---
+
+## 🤝 Contribuição
+
+Pull requests são bem-vindos.
+
+1. Fork o projeto
+2. Crie uma branch (`feature/minha-feature`)
+3. Commit suas mudanças
+4. Abra um PR
+
+---
+
+## 📄 Licença
+
+MIT
+
+---
+
+## 👨‍💻 Autor
+
+Feito por **Victor Gabriel Barbosa**
+
+* GitHub: https://github.com/Victor-Gabriel-Barbosa
+
+---
+
+## ⭐ Se curtir o projeto
+
+Deixa uma estrela no repositório — ajuda bastante 🚀
