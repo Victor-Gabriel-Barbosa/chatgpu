@@ -26,6 +26,9 @@ export default function ChatInterface() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [theme, setTheme] = useState('system');
 
+  // Index para a última mensagem do assistente
+  const lastAssistantIndex = messages.map(m => m.role).lastIndexOf("assistant");
+
   // Referências para controle da textarea e scroll automático das mensagens
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -392,6 +395,7 @@ export default function ChatInterface() {
                     copiedMessageIndex={copiedMessageIndex}
                     handleCopyMessage={handleCopyMessage}
                     handleSubmitEdit={handleSubmitEdit}
+                    isLastAssistant={index === lastAssistantIndex}
                   />
                 ))}
                 {/* Elemento âncora para o scroll */}

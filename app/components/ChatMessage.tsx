@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Check, Copy, Lightbulb, ChevronDown, Pencil } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { Message } from '../types/chat';
+import Image from "next/image";
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -14,6 +15,7 @@ interface ChatMessageProps {
   copiedMessageIndex: number | null;
   handleCopyMessage: (content: string, index: number) => void;
   handleSubmitEdit?: (newContent: string, index: number) => void;
+  isLastAssistant?: boolean;
 }
 
 const preprocessLaTeX = (content: string) => {
@@ -99,7 +101,7 @@ const messageComponents: Components = {
 };
 
 // Componente para exibir mensagens de chat, com suporte a edição, cópia e renderização de Markdown com LaTeX e tags <think>
-export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant }) => {
   const [showReasoning, setShowReasoning] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
@@ -133,9 +135,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
   };
 
   return (
-    <div className={`flex gap-4 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-      <div className={`group relative max-w-full rounded-3xl px-4 py-2.5 ${msg.role === 'user'
-        ? !isEditing ? 'text-white bg-sky-600' : ''
+    <div className={`flex gap-3 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+      {/* Ícone do Assistente */}
+      {msg.role !== 'user' && (
+        <div className="w-7 sm:w-8 shrink-0 flex justify-center items-baseline pt-2.5">
+          {isLastAssistant && (
+            <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
+          )}
+        </div>
+      )}
+
+      <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user'
+        ? !isEditing ? 'px-3 text-white bg-sky-600' : ''
         : 'text-slate-900 dark:text-slate-100 px-0'
         }`}
       >
