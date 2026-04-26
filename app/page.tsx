@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
-import type { ChatCompletionMessageParam } from "@mlc-ai/web-llm";
 import { SendHorizontal, Plus, Square, PanelLeft } from "lucide-react";
 import Image from "next/image";
-import { ChatSession } from "./types/chat";
+import { ChatSession, Message } from "./types/chat";
 import { ChatMessage } from "./components/ChatMessage";
 import { Sidebar } from './components/Sidebar';
 import { SettingsModal } from './components/SettingsModal';
@@ -15,7 +14,7 @@ export default function ChatInterface() {
   // Estados principais do chat, modelo, UI e controle de execução
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
-  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [progressText, setProgressText] = useState("Inicializando motor WebGPU...");
   const [isReady, setIsReady] = useState(false);
@@ -243,7 +242,7 @@ export default function ChatInterface() {
   };
 
   // Atualiza as mensagens de uma sessão de chat específica e ordena as sessões por data de atualização
-  const updateChatMessages = (chatId: string, newMessages: ChatCompletionMessageParam[]) => {
+  const updateChatMessages = (chatId: string, newMessages: Message[]) => {
     setChats((prev) =>
       prev.map((chat) => (chat.id === chatId ? { ...chat, messages: newMessages } : chat)).sort((a, b) => b.updatedAt - a.updatedAt)
     );
@@ -256,7 +255,7 @@ export default function ChatInterface() {
     const userMsg = input;
     setInput("");
 
-    const newMessages: ChatCompletionMessageParam[] = [...messages, { role: "user", content: userMsg }];
+    const newMessages: Message[] = [...messages, { role: "user", content: userMsg }];
     setMessages(newMessages);
     setIsGenerating(true);
 
@@ -456,7 +455,7 @@ export default function ChatInterface() {
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || !isReady}
-                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${(input.trim() && isReady) ? "bg-sky-500 hover:bg-sky-600" : ''
+                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${(input.trim() && isReady) ? "bg-sky-600 hover:bg-sky-700" : ''
                     }`}
                   title="Enviar"
                 >
