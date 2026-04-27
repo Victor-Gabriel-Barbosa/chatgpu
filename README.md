@@ -1,4 +1,4 @@
-# 💬 ChatGPU
+# 🤖 ChatGPU
 
 Um chat de IA rodando **100% no navegador**, utilizando **WebLLM (MLC)** para executar modelos localmente com aceleração por GPU (quando disponível).
 
