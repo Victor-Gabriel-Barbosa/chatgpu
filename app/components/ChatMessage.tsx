@@ -224,7 +224,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Copiar mensagem"
             >
-              {copiedMessageIndex === index ? <Check size={16} /> : <Copy size={16} />}
+              {copiedMessageIndex === index ? <Check className="text-sky-500" size={16} /> : <Copy size={16} />}
             </button>
 
             {msg.role === 'user' && handleSubmitEdit && (

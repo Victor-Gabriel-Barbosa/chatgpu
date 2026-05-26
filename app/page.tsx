@@ -9,6 +9,8 @@ import { ChatMessage } from "./components/ChatMessage";
 import { Sidebar } from './components/Sidebar';
 import { SettingsModal } from './components/SettingsModal';
 import { SUPPORTED_MODELS, DEFAULT_MODEL_ID } from "./constants/models";
+import { Toaster } from "@/components/ui/sonner"
+import { toast } from "sonner"
 
 export default function ChatInterface() {
   // Estados principais do chat, modelo, UI e controle de execução
@@ -16,7 +18,6 @@ export default function ChatInterface() {
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [progressText, setProgressText] = useState("Inicializando motor WebGPU...");
   const [isReady, setIsReady] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [chats, setChats] = useState<ChatSession[]>([]);
@@ -33,6 +34,9 @@ export default function ChatInterface() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Referência para o ID do toast de carregamento
+  const toastIdRef = useRef<string | number | null>(null);
+
   // Carrega as sessões de chat salvas do localStorage ao iniciar o componente
   useEffect(() => {
     const savedChats = localStorage.getItem("chatgpu-sessions");
@@ -43,6 +47,7 @@ export default function ChatInterface() {
         Promise.resolve().then(() => setChats(parsedChats));
       } catch (error) {
         console.error("Erro ao carregar sessões de chat salvas:", error);
+        toast.error("Erro ao carregar sessões de chat salvas");
       }
     }
   }, []);
@@ -94,6 +99,8 @@ export default function ChatInterface() {
     let worker: Worker;
 
     const initEngine = async () => {
+      toastIdRef.current = toast.loading("Inicializando motor WebGPU...");
+
       worker = new Worker(new URL("../lib/worker.ts", import.meta.url), {
         type: "module",
       });
@@ -103,7 +110,7 @@ export default function ChatInterface() {
 
       // Configura o callback de progresso para atualizar o texto de status
       newEngine.setInitProgressCallback((report: InitProgressReport) => {
-        setProgressText(report.text);
+        if (toastIdRef.current) toast.loading(report.text, { id: toastIdRef.current });
       });
 
       // Tenta carregar o modelo e atualiza o status de pronto ou erro
@@ -111,10 +118,16 @@ export default function ChatInterface() {
         await newEngine.reload(selectedModel);
         setEngine(newEngine);
         setIsReady(true);
-        setProgressText("Pronto!");
+        if (toastIdRef.current) {
+          toast.success("Modelo carregado e pronto para uso!", { id: toastIdRef.current });
+          toastIdRef.current = null;
+        }
       } catch (error) {
         console.error("Erro ao carregar o modelo:", error);
-        setProgressText("Erro ao carregar o WebGPU. Verifique suporte no navegador.");
+        if (toastIdRef.current) {
+          toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador", { id: toastIdRef.current });
+          toastIdRef.current = null;
+        } else toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador");
       }
     };
 
@@ -122,6 +135,7 @@ export default function ChatInterface() {
 
     return () => {
       if (worker) worker.terminate();
+      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
     };
   }, [selectedModel]);
 
@@ -149,15 +163,19 @@ export default function ChatInterface() {
   const handleModelChange = (model: string) => {
     setSelectedModel(model);
     setIsReady(false);
-    setProgressText("Inicializando novo modelo...");
     setEngine(null);
   };
 
   // Copia o conteúdo de uma mensagem para a área de transferência
   const handleCopyMessage = (content: string, index: number) => {
-    navigator.clipboard.writeText(content);
-    setCopiedMessageIndex(index);
-    setTimeout(() => setCopiedMessageIndex(null), 2000);
+    navigator.clipboard.writeText(content).then(() => {
+      setCopiedMessageIndex(index);
+      setTimeout(() => setCopiedMessageIndex(null), 2000);
+      toast.success("Copiado para a área de transferência");
+    }).catch((error) => {
+      console.error('Erro ao copiar mensagem:', error);
+      toast.error("Falha ao copiar a mensagem. Tente novamente");
+    })
   };
 
   // Inicia um novo chat limpando as mensagens
@@ -222,6 +240,7 @@ export default function ChatInterface() {
       });
     } catch (error) {
       console.error("Erro na inferência (edição):", error);
+      toast.error(`Erro na inferência (edição): ${error}`);
     } finally {
       setIsGenerating(false);
     }
@@ -318,6 +337,7 @@ export default function ChatInterface() {
       });
     } catch (error) {
       console.error("Erro na inferência:", error);
+      toast.error(`Erro na inferência: ${error}`);
     } finally {
       setIsGenerating(false);
     }
@@ -336,8 +356,8 @@ export default function ChatInterface() {
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       {/* Barra Lateral */}
       <Sidebar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+        isSidebarOpen={sidebarOpen}
+        setIsSidebarOpen={setSidebarOpen}
         chats={chats}
         currentChatId={currentChatId}
         setCurrentChatId={loadChat}
@@ -363,12 +383,6 @@ export default function ChatInterface() {
           </button>
         </div>
 
-        {!isReady && (
-          <div className="flex items-center justify-center w-full text-sky-600 dark:text-sky-200 p-2 text-center text-sm z-10">
-            {progressText}
-          </div>
-        )}
-
         {/* Mensagens */}
         <div className="flex-1 relative overflow-y-auto">
           <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8">
@@ -381,7 +395,7 @@ export default function ChatInterface() {
                   height={64}
                   className="mb-2"
                 />
-                <span className="font-bold bg-linear-to-r from-sky-500 to-indigo-500 bg-clip-text text-center text-transparent">
+                <span className="font-bold text-sky-500 text-center">
                   Como posso ajudar hoje?
                 </span>
               </div>
@@ -481,6 +495,13 @@ export default function ChatInterface() {
           onClose={() => setIsSettingsOpen(false)}
         />
       )}
+
+      <Toaster 
+        position="bottom-right" 
+        theme={theme === 'dark' || theme === 'light' || theme === 'system' ? theme  : 'system'} 
+        richColors 
+        closeButton
+      />
     </div>
   );
 }

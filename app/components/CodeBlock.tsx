@@ -5,6 +5,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CodeBlockProps } from '../types/chat';
 import { getExtension } from '../constants/extensions'
+import { toast } from "sonner"
+
 
 // Componente para exibir blocos de código com destaque de sintaxe, cópia para área de transferência e preview para HTML
 export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
@@ -17,8 +19,10 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      toast.success("Copiado para a área de transferência");
     }).catch(err => {
       console.error('Copy failed', err);
+      toast.error("Falha ao copiar o código. Tente novamente");
     });
   };
 
