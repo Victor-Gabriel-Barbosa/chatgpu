@@ -3,12 +3,24 @@ import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { ChatSession, Message } from "@/types/chat";
 import { toast } from "sonner";
 
+/**
+ * Propriedades para inicialização do hook useSession.
+ */
 interface UseSessionProps {
+  /** Instância do motor WebGPU responsável pela inferência. */
   engine: WebWorkerMLCEngine | null;
+  /** Indica se o motor de IA está carregado e pronto para uso. */
   isReady: boolean;
 }
 
-// Gerencia o estado e a lógica de uma sessão de chat
+/**
+ * Gerencia o estado e a lógica de uma sessão de chat.
+ *
+ * @param props Propriedades do hook.
+ * @param props.engine Instância do motor de IA.
+ * @param props.isReady Estado que indica se o motor está carregado.
+ * @returns Objeto contendo as mensagens, estado do chat e funções de manipulação.
+ */
 export function useSession({ engine, isReady }: UseSessionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -55,21 +67,32 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     else localStorage.removeItem("chatgpu-current-session");
   }, [currentChatId]);
 
-  // Cria uma nova sessão de chat, limpando as mensagens e resetando o estado atual
+  /**
+   * Cria uma nova sessão de chat, limpando as mensagens e resetando o estado atual.
+   */
   const handleNewChat = () => {
     if (isGenerating) return;
     setMessages([]);
     setCurrentChatId(null);
   };
 
-  // Renomeia uma sessão de chat específica, atualizando o título do chat correspondente
+  /**
+   * Renomeia uma sessão de chat específica, atualizando o título do chat correspondente.
+   *
+   * @param chatId Identificador do chat a ser renomeado.
+   * @param newTitle Novo título para o chat.
+   */
   const handleRenameChat = (chatId: string, newTitle: string) => {
     setChats((prev) =>
       prev.map((chat) => (chat.id === chatId ? { ...chat, title: newTitle } : chat))
     );
   };
 
-  // Carrega uma sessão de chat específica, definindo as mensagens e o chat atual com base no ID fornecido
+  /**
+   * Carrega uma sessão de chat específica, definindo as mensagens e o chat atual com base no ID fornecido.
+   *
+   * @param chatId Identificador do chat a ser carregado.
+   */
   const loadChat = (chatId: string) => {
     if (isGenerating) return;
     const chat = chats.find((c) => c.id === chatId);
@@ -79,14 +102,24 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
   };
 
-  // Exclui uma sessão de chat específica, removendo-a da lista de chats e, se for a sessão atual, criando uma nova sessão vazia
+  /**
+   * Exclui uma sessão de chat específica, removendo-a da lista de chats e, se for a sessão atual, criando uma nova sessão vazia.
+   *
+   * @param e Evento de clique do mouse.
+   * @param chatId Identificador do chat a ser excluído.
+   */
   const deleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
     setChats((prev) => prev.filter((c) => c.id !== chatId));
     if (currentChatId === chatId) handleNewChat();
   };
 
-  // Atualiza as mensagens de um chat específico, garantindo que a lista de chats seja reordenada com base na data de atualização
+  /**
+   * Atualiza as mensagens de um chat específico, garantindo que a lista de chats seja reordenada com base na data de atualização.
+   *
+   * @param chatId Identificador do chat a ser atualizado.
+   * @param newMessages Nova lista de mensagens do chat.
+   */
   const updateChatMessages = (chatId: string, newMessages: Message[]) => {
     setChats((prev) =>
       prev
@@ -95,7 +128,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     );
   };
 
-  // Exibe um toast de carregamento com progresso, atualizando o texto e a porcentagem conforme o progresso é reportado
+  /**
+   * Envia a entrada atual do usuário para o motor de IA e processa a resposta gerada de forma iterativa.
+   */
   const handleSend = async () => {
     if (!input.trim() || !engine || !isReady) return;
 
@@ -160,7 +195,12 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
   };
 
-  // Edita uma mensagem do usuário, descartando as respostas posteriores e gerando uma nova resposta da IA
+  /**
+   * Edita uma mensagem do usuário, descartando as respostas posteriores e gerando uma nova resposta da IA.
+   *
+   * @param newContent Novo conteúdo da mensagem editada.
+   * @param index Índice da mensagem a ser editada no histórico.
+   */
   const handleSubmitEdit = async (newContent: string, index: number) => {
     if (isGenerating || !engine || !isReady) return;
 
@@ -208,7 +248,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
   };
 
-  // Interrompe a geração da resposta da IA e salva o estado atual da conversa
+  /**
+   * Interrompe a geração da resposta da IA e salva o estado atual da conversa.
+   */
   const handleStop = () => {
     if (engine && isGenerating) {
       engine.interruptGenerate();

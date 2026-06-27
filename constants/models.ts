@@ -1,13 +1,26 @@
+/**
+ * Representa uma opção individual de modelo de IA.
+ */
 export interface ModelOption {
+  /** Identificador único do modelo. */
   id: string;
+  /** Nome de exibição do modelo. */
   name: string;
 }
 
+/**
+ * Representa um agrupamento categórico de modelos de IA.
+ */
 export interface ModelGroups {
+  /** Rótulo descritivo do grupo. */
   label: string;
+  /** Lista de opções de modelos pertencentes a este grupo. */
   options: ModelOption[];
 }
 
+/**
+ * Define a lista de todos os modelos suportados organizados por categorias.
+ */
 export const SUPPORTED_MODELS: ModelGroups[] = [
   {
     label: "Leves (1–3GB VRAM)",
@@ -47,4 +60,7 @@ export const SUPPORTED_MODELS: ModelGroups[] = [
   },
 ];
 
+/**
+ * Define o identificador do modelo padrão a ser utilizado.
+ */
 export const DEFAULT_MODEL_ID = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";

@@ -13,6 +13,11 @@ import { useTheme } from "@/hooks/useTheme";
 import { useEngine } from "@/hooks/useEngine";
 import { useSession } from "@/hooks/useSession";
 
+/**
+ * Renderiza a interface principal do aplicativo de chat, integrando a barra lateral, a área de exibição de mensagens e os controles de entrada e configuração do modelo.
+ *
+ * @returns Elemento React contendo a estrutura visual e lógica principal da aplicação.
+ */
 export default function ChatInterface() {
   // Estados do chat, modelo, UI e controle de execução
   const { theme, setTheme } = useTheme();

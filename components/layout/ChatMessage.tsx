@@ -9,15 +9,30 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
+/**
+ * Propriedades do componente ChatMessage.
+ */
 interface ChatMessageProps {
+  /** A mensagem a ser exibida. */
   msg: Message;
+  /** Índice da mensagem na lista de mensagens. */
   index: number;
+  /** Índice da mensagem que foi copiada recentemente, ou null se nenhuma foi copiada. */
   copiedMessageIndex: number | null;
+  /** Função para copiar o conteúdo da mensagem. */
   handleCopyMessage: (content: string, index: number) => void;
+  /** Função opcional para enviar o novo conteúdo de uma mensagem editada. */
   handleSubmitEdit?: (newContent: string, index: number) => void;
+  /** Indica se esta é a última mensagem gerada pelo assistente. */
   isLastAssistant?: boolean;
 }
 
+/**
+ * Preprocessa o conteúdo substituindo delimitadores LaTeX para o formato compatível com o renderizador.
+ *
+ * @param content Conteúdo original da mensagem.
+ * @returns Conteúdo formatado para renderização de fórmulas matemáticas.
+ */
 const preprocessLaTeX = (content: string) => {
   if (!content) return '';
   return content
@@ -27,7 +42,12 @@ const preprocessLaTeX = (content: string) => {
     .replaceAll(String.raw`\)`, '$');
 };
 
-// Função para separar o conteúdo <think> do restante da mensagem
+/**
+ * Separa o bloco de raciocínio (tag <think>) do conteúdo principal da mensagem.
+ *
+ * @param content Conteúdo completo da mensagem.
+ * @returns Objeto contendo o raciocínio extraído e o conteúdo principal restante.
+ */
 const parseMessageContent = (content: string) => {
   if (!content) return { think: null, mainContent: '' };
 
@@ -100,7 +120,18 @@ const messageComponents: Components = {
   p: ({ children }) => <p className="mb-2 last:mb-0 max-w-full">{children}</p>
 };
 
-// Componente para exibir mensagens de chat, com suporte a edição, cópia e renderização de Markdown com LaTeX e tags <think>
+/**
+ * Componente para exibir mensagens de chat, com suporte a edição, cópia e renderização de Markdown com LaTeX e tags <think>.
+ *
+ * @param props Propriedades do componente.
+ * @param props.msg Objeto representando os dados da mensagem.
+ * @param props.index Índice da mensagem atual na lista.
+ * @param props.copiedMessageIndex Índice da mensagem copiada, se houver.
+ * @param props.handleCopyMessage Função para lidar com a cópia da mensagem.
+ * @param props.handleSubmitEdit Função para submeter edições feitas pelo usuário.
+ * @param props.isLastAssistant Flag que identifica se é a última mensagem do assistente.
+ * @returns Elemento React contendo a mensagem renderizada.
+ */
 export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant }) => {
   const [showReasoning, setShowReasoning] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -155,7 +186,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       )}
 
       <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user'
-        ? !isEditing ? 'px-3 text-white bg-blue-600' : ''
+        ? isEditing ? '' : 'px-3 text-white bg-blue-600'
         : 'text-slate-900 dark:text-slate-100 px-0'
         }`}
       >

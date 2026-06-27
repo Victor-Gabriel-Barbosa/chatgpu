@@ -2,13 +2,27 @@ import React, { useState } from 'react';
 import { Settings, X, Cpu } from 'lucide-react';
 import { SUPPORTED_MODELS } from '@/constants/models';
 
+/**
+ * Propriedades para o componente SettingsModal.
+ */
 interface SettingsModalProps {
+  /** Identificador do modelo de IA atualmente selecionado. */
   selectedModel: string;
+  /** Função para atualizar o modelo de IA. */
   setSelectedModel: (model: string) => void;
+  /** Função acionada ao tentar fechar o modal. */
   onClose: () => void;
 }
 
-// Componente de modal para configurações, permitindo ao usuário selecionar o modelo de IA a ser utilizado
+/**
+ * Componente de modal para configurações, permitindo ao usuário selecionar o modelo de IA a ser utilizado.
+ *
+ * @param props Propriedades do componente.
+ * @param props.selectedModel Modelo atualmente selecionado.
+ * @param props.setSelectedModel Função para atualizar o modelo ativo.
+ * @param props.onClose Função para fechar o modal.
+ * @returns Elemento React contendo o modal de configurações.
+ */
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   selectedModel, setSelectedModel, onClose
 }) => {

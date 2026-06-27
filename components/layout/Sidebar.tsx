@@ -10,21 +10,51 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+/**
+ * Propriedades para o componente Sidebar.
+ */
 interface SidebarProps {
+  /** Indica se a barra lateral está expandida (aberta). */
   isSidebarOpen: boolean;
+  /** Função para atualizar o estado de expansão da barra lateral. */
   setIsSidebarOpen: (isOpen: boolean) => void;
+  /** Lista das conversas (chats) existentes. */
   chats: Chat[];
+  /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
   currentChatId: string | null;
+  /** Função para selecionar uma conversa a partir do seu ID. */
   setCurrentChatId: (id: string) => void;
+  /** Função para iniciar uma nova conversa. */
   createNewChat: () => void;
+  /** Função para excluir uma conversa selecionada. */
   deleteChat: (e: React.MouseEvent<HTMLButtonElement>, id: string) => void;
+  /** Função para alterar o título de uma conversa. */
   renameChat: (id: string, newTitle: string) => void;
+  /** Função para exibir o modal de configurações. */
   setSettingsOpen: (isOpen: boolean) => void;
+  /** Tema de interface ativo (claro, escuro ou do sistema). */
   theme?: Theme;
+  /** Função para atualizar o tema de interface. */
   setTheme?: (theme: Theme) => void;
 }
 
-// Componente de barra lateral para navegação entre chats, criação de novos chats e acesso às configurações
+/**
+ * Componente de barra lateral para navegação entre chats, criação de novos chats e acesso às configurações.
+ *
+ * @param props Propriedades do componente.
+ * @param props.isSidebarOpen Estado de abertura da barra lateral.
+ * @param props.setIsSidebarOpen Função para alternar a abertura.
+ * @param props.chats Lista de chats disponíveis.
+ * @param props.currentChatId ID do chat atualmente ativo.
+ * @param props.setCurrentChatId Função para alterar o chat ativo.
+ * @param props.createNewChat Função para criar um novo chat.
+ * @param props.deleteChat Função para excluir um chat.
+ * @param props.renameChat Função para renomear um chat.
+ * @param props.setSettingsOpen Função para abrir as configurações.
+ * @param props.theme Tema visual atualmente aplicado.
+ * @param props.setTheme Função para aplicar novo tema visual.
+ * @returns Elemento React contendo o layout da barra lateral de navegação.
+ */
 export const Sidebar: React.FC<SidebarProps> = ({
   isSidebarOpen, setIsSidebarOpen, chats, currentChatId, setCurrentChatId, createNewChat, deleteChat, renameChat, setSettingsOpen, theme = 'system', setTheme = () => { }
 }) => {

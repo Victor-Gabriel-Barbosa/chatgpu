@@ -6,12 +6,24 @@ import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getExtension } from '@/constants/extensions'
 import { toast } from "sonner"
 
+/**
+ * Propriedades para o componente CodeBlock.
+ */
 export interface CodeBlockProps {
+  /** Linguagem de programação do bloco de código. */
   language: string;
+  /** O código fonte a ser renderizado. */
   code: string;
 }
 
-// Componente para exibir blocos de código com destaque de sintaxe, cópia para área de transferência e preview para HTML
+/**
+ * Componente para exibir blocos de código com destaque de sintaxe, cópia para área de transferência e preview para HTML.
+ *
+ * @param props Propriedades do componente.
+ * @param props.language Linguagem do código para formatação.
+ * @param props.code Conteúdo do código.
+ * @returns Elemento React contendo o bloco de código formatado e suas ferramentas.
+ */
 export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');

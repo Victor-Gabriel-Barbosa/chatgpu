@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import type { Theme } from "@/types/theme";
 
-// Gerencia o estado e a lógica do tema, incluindo a aplicação da classe de tema e a persistência da preferência do usuário
+/**
+ * Gerencia o estado e a lógica do tema, incluindo a aplicação da classe de tema e a persistência da preferência do usuário.
+ *
+ * @returns Objeto contendo o tema atual e a função para atualizá-lo.
+ */
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>("system");
 

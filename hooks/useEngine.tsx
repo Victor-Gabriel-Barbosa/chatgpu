@@ -6,7 +6,11 @@ import { DEFAULT_MODEL_ID } from "@/constants/models";
 
 const LOADING_TOAST_ID = "carregamento-modelo";
 
-// Gerencia o estado e a lógica do motor de IA, incluindo a inicialização, seleção de modelo e feedback de carregamento
+/**
+ * Gerencia o estado e a lógica do motor de IA, incluindo a inicialização, seleção de modelo e feedback de carregamento.
+ *
+ * @returns Objeto contendo a instância do motor, estado de prontidão, ID do modelo selecionado e função para troca de modelo.
+ */
 export function useEngine() {
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
@@ -23,7 +27,12 @@ export function useEngine() {
     if (selectedModel) localStorage.setItem("chatgpu-model", selectedModel);
   }, [selectedModel]);
 
-  // Exibe um toast de carregamento com progresso, atualizando o texto e a porcentagem conforme o progresso é reportado
+  /**
+   * Exibe um toast de carregamento com progresso, atualizando o texto e a porcentagem conforme o progresso é reportado.
+   *
+   * @param percent Porcentagem de conclusão do carregamento.
+   * @param text Texto descritivo do estado atual do carregamento.
+   */
   const showLoadingToast = (percent: number, text: string) => {
     const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
 
@@ -96,7 +105,11 @@ export function useEngine() {
     };
   }, [selectedModel]);
 
-  // Troca o modelo atualmente ativo
+  /**
+   * Troca o modelo atualmente ativo.
+   *
+   * @param model Identificador do novo modelo a ser carregado.
+   */
   const handleModelChange = (model: string) => {
     setSelectedModel(model);
     setIsReady(false);
