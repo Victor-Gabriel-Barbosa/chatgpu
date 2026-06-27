@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Plus, EllipsisVertical, Settings, PanelLeftClose, PanelLeft, Pencil, Trash2, Sun, Moon, Monitor } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Chat } from '../types/chat';
+import { Chat } from '@/types/chat';
+import type { Theme } from "@/types/theme";
 import {
   Tooltip,
   TooltipContent,
@@ -19,13 +20,13 @@ interface SidebarProps {
   deleteChat: (e: React.MouseEvent<HTMLButtonElement>, id: string) => void;
   renameChat: (id: string, newTitle: string) => void;
   setSettingsOpen: (isOpen: boolean) => void;
-  theme?: string;
-  setTheme?: (theme: string) => void;
+  theme?: Theme;
+  setTheme?: (theme: Theme) => void;
 }
 
 // Componente de barra lateral para navegação entre chats, criação de novos chats e acesso às configurações
 export const Sidebar: React.FC<SidebarProps> = ({
-  isSidebarOpen: isSidebarOpen, setIsSidebarOpen: setIsSidebarOpen, chats, currentChatId, setCurrentChatId, createNewChat, deleteChat, renameChat, setSettingsOpen, theme = 'system', setTheme = () => { }
+  isSidebarOpen, setIsSidebarOpen, chats, currentChatId, setCurrentChatId, createNewChat, deleteChat, renameChat, setSettingsOpen, theme = 'system', setTheme = () => { }
 }) => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
@@ -76,8 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Overlay para mobile */}
       <div
-        className={`fixed inset-0 bg-black/20 dark:bg-black/60 z-30 md:hidden transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
+        className={`fixed inset-0 bg-black/20 dark:bg-black/60 z-30 md:hidden transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsSidebarOpen(false)}
       />
 
@@ -96,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="w-12 h-14 flex items-center justify-center shrink-0">
               <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
             </div>
-            <span className="font-semibold text-sky-500 whitespace-nowrap">
+            <span className="font-semibold text-blue-500 whitespace-nowrap">
               ChatGPU
             </span>
           </Link>
@@ -106,7 +106,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className={`group w-12 h-10 flex items-center justify-center shrink-0 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900 transition-all duration-300 absolute ${isSidebarOpen ? 'right-0' : 'left-0'}`}
-                title={isSidebarOpen ? "Minimizar" : "Expandir"}
               >
                 {isSidebarOpen ? <PanelLeftClose size={20} /> : (
                   <div className="relative w-6 h-6 flex items-center justify-center">
@@ -128,7 +127,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               onClick={createNewChat}
               className="group flex items-center h-10 w-full bg-transparent hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0 overflow-hidden"
-              title={isSidebarOpen ? undefined : "Novo Chat"}
             >
               <div className="w-12 h-10 flex items-center justify-center shrink-0">
                 <div className="w-6 h-6 bg-slate-900 text-white dark:bg-white dark:text-black rounded-full flex items-center justify-center transition-colors">
@@ -162,7 +160,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {chats.map(chat => (
               <Tooltip key={`${chat.id}-${isSidebarOpen}`}>
                 <TooltipTrigger asChild>
-                  <div
+                  <div 
                     key={chat.id}
                     role="button"
                     tabIndex={0}
@@ -171,20 +169,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       if ((e.key === 'Enter' || e.key === ' ') && editingChatId === null) {
                         e.preventDefault();
                         setCurrentChatId(chat.id);
-                        if (typeof window !== 'undefined' && window.innerWidth < 768) setIsSidebarOpen(false);
+                        if (globalThis.window !== undefined && window.innerWidth < 768) setIsSidebarOpen(false);
                       }
                     }}
                     onClick={() => {
                       if (editingChatId === null) {
                         setCurrentChatId(chat.id);
-                        if (typeof window !== 'undefined' && window.innerWidth < 768) setIsSidebarOpen(false);
+                        if (globalThis.window !== undefined && window.innerWidth < 768) setIsSidebarOpen(false);
                       }
                     }}
                     className={`group flex items-center h-10 cursor-pointer rounded-lg transition-all duration-300 shrink-0 ${currentChatId === chat.id
                       ? 'bg-slate-300/60 text-slate-900 dark:bg-slate-800/80 dark:text-white'
                       : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white'
                       }`}
-                    title={!isSidebarOpen ? chat.title : undefined}
                   >
                     <div className="w-12 h-10 -mx-0.5 flex items-center justify-center shrink-0">
                       <MessageSquare size={16} />
@@ -273,7 +270,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   onClick={() => setThemeMenuOpen(!themeMenuOpen)}
                   className="flex items-center h-10 w-full hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:hover:bg-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg transition-all duration-300 overflow-hidden"
-                  title={!isSidebarOpen ? "Tema" : undefined}
                 >
                   <div className="w-12 h-10 flex items-center justify-center shrink-0">
                     {theme === 'light' ? <Sun size={18} /> : theme === 'dark' ? <Moon size={18} /> : <Monitor size={18} />}
@@ -320,7 +316,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 onClick={() => setSettingsOpen(true)}
                 className="flex items-center h-10 w-full text-slate-600 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-900 dark:text-slate-400 rounded-lg transition-all duration-300 overflow-hidden"
-                title={!isSidebarOpen ? "Configurações" : undefined}
               >
                 <div className="w-12 h-10 flex items-center justify-center shrink-0">
                   <Settings size={18} />

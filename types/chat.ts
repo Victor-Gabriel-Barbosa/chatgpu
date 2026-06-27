@@ -11,11 +11,6 @@ export interface ChatSession {
   updatedAt: number;
 }
 
-export interface CodeBlockProps {
-  language: string;
-  code: string;
-}
-
 export interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;

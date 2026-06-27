@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Check, Copy, Lightbulb, ChevronDown, Pencil } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
-import { Message } from '../types/chat';
+import { Message } from '@/types/chat';
 import Image from "next/image";
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -21,10 +21,10 @@ interface ChatMessageProps {
 const preprocessLaTeX = (content: string) => {
   if (!content) return '';
   return content
-    .replace(/\\\[/g, '$$$$')
-    .replace(/\\\]/g, '$$$$')
-    .replace(/\\\(/g, '$')
-    .replace(/\\\)/g, '$');
+    .replaceAll(String.raw`\[`, '$$$$')
+    .replaceAll(String.raw`\]`, '$$$$')
+    .replaceAll(String.raw`\(`, '$')
+    .replaceAll(String.raw`\)`, '$');
 };
 
 // Função para separar o conteúdo <think> do restante da mensagem
@@ -32,7 +32,7 @@ const parseMessageContent = (content: string) => {
   if (!content) return { think: null, mainContent: '' };
 
   // Verifica tag completa <think>...</think>
-  const thinkMatch = content.match(/<think>([\s\S]*?)<\/think>/);
+  const thinkMatch = new RegExp(/<think>([\s\S]*?)<\/think>/).exec(content);
   if (thinkMatch) {
     return {
       think: thinkMatch[1].trim(),
@@ -41,7 +41,7 @@ const parseMessageContent = (content: string) => {
   }
 
   // Fallback para quando o modelo ainda está gerando a resposta (streaming)
-  const openThinkMatch = content.match(/<think>([\s\S]*)/);
+  const openThinkMatch = new RegExp(/<think>([\s\S]*)/).exec(content);
   if (openThinkMatch) {
     return {
       think: openThinkMatch[1].trim(),
@@ -63,13 +63,13 @@ const reasoningComponents: Components = {
         code={String(children).replace(/\n$/, '')}
       />
     ) : (
-      <code className="bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-100 px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word transition-colors" {...rest}>
+      <code className="bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-100 px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word transition-colors" {...rest}>
         {children}
       </code>
     );
   },
-  strong: ({ children }) => <strong className="font-semibold text-sky-950 dark:text-sky-100 transition-colors">{children}</strong>,
-  a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:text-sky-700 dark:text-sky-400 dark:hover:underline break-all transition-colors">{children}</a>,
+  strong: ({ children }) => <strong className="font-semibold text-blue-950 dark:text-blue-100 transition-colors">{children}</strong>,
+  a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:underline break-all transition-colors">{children}</a>,
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>
 };
 
@@ -96,7 +96,7 @@ const messageComponents: Components = {
   ol: ({ children }) => <ol className="list-decimal list-inside my-2 space-y-1 ml-2">{children}</ol>,
   strong: ({ children }) => <strong className="font-semibold text-slate-900 dark:text-white transition-colors">{children}</strong>,
   hr: () => <hr className="border-slate-300 dark:border-slate-700 my-4 transition-colors" />,
-  a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-sky-600 hover:underline dark:text-sky-400 break-all transition-colors">{children}</a>,
+  a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline dark:text-blue-400 break-all transition-colors">{children}</a>,
   p: ({ children }) => <p className="mb-2 last:mb-0 max-w-full">{children}</p>
 };
 
@@ -140,13 +140,22 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       {msg.role !== 'user' && (
         <div className="w-7 sm:w-8 shrink-0 flex justify-center items-baseline pt-2.5">
           {isLastAssistant && (
-            <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
+            <div className="flex gap-4 w-full justify-start">
+              <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
+              {!msg.content.trim() && (
+                <div className="flex items-center gap-1.5 px-2">
+                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
 
       <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user'
-        ? !isEditing ? 'px-3 text-white bg-sky-600' : ''
+        ? !isEditing ? 'px-3 text-white bg-blue-600' : ''
         : 'text-slate-900 dark:text-slate-100 px-0'
         }`}
       >
@@ -154,14 +163,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           <div className="mb-3 pb-3 border-b border-slate-300 dark:border-slate-700 transition-colors">
             <button
               onClick={() => setShowReasoning(!showReasoning)}
-              className="flex items-center gap-2 text-xs font-medium text-sky-600 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 transition-colors"
+              className="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
               <Lightbulb size={14} />
               Mostrar raciocínio
               <ChevronDown size={14} className={`transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </button>
             {showReasoning && (
-              <div className="mt-2 p-3 bg-sky-50 border border-sky-200 text-sky-900 dark:bg-sky-950/30 dark:border-sky-900/50 rounded-lg text-xs dark:text-sky-100/90 leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
+              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 text-blue-900 dark:bg-blue-950/30 dark:border-blue-900/50 rounded-lg text-xs dark:text-blue-100/90 leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -199,8 +208,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                 </button>
                 <button
                   onClick={onSaveEdit}
-                  disabled={editValue.trim() === '' || editValue.trim() === msg.content as string}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-sky-500 enabled:hover:bg-sky-600 transition-colors"
+                  disabled={editValue.trim() === '' || editValue.trim() === msg.content}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-blue-500 enabled:hover:bg-blue-600 transition-colors"
                 >
                   Atualizar
                 </button>
@@ -224,7 +233,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Copiar mensagem"
             >
-              {copiedMessageIndex === index ? <Check className="text-sky-500" size={16} /> : <Copy size={16} />}
+              {copiedMessageIndex === index ? <Check className="text-blue-500" size={16} /> : <Copy size={16} />}
             </button>
 
             {msg.role === 'user' && handleSubmitEdit && (

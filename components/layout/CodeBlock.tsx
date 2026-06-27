@@ -3,10 +3,13 @@ import { createPortal } from 'react-dom';
 import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { CodeBlockProps } from '../types/chat';
-import { getExtension } from '../constants/extensions'
+import { getExtension } from '@/constants/extensions'
 import { toast } from "sonner"
 
+export interface CodeBlockProps {
+  language: string;
+  code: string;
+}
 
 // Componente para exibir blocos de código com destaque de sintaxe, cópia para área de transferência e preview para HTML
 export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
@@ -44,7 +47,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
     // Adiciona ao DOM, clica e remove em seguida
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
 
     // Limpa a URL criada para liberar memória
     URL.revokeObjectURL(url);
@@ -115,7 +118,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
             className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
             title="Copiar código"
           >
-            {copied ? <Check className="text-sky-500" size={14} /> : <Copy size={14} />}
+            {copied ? <Check className="text-blue-500" size={14} /> : <Copy size={14} />}
           </button>
         </div>
       </div>
@@ -158,7 +161,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
         <div className="absolute inset-0 z-9999 bg-white dark:bg-slate-900 flex flex-col animate-in fade-in duration-200">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-950">
             <div className="flex items-center gap-2">
-              <LayoutTemplate size={16} className="text-sky-500" />
+              <LayoutTemplate size={16} className="text-blue-500" />
               <span className="text-sm font-medium dark:text-white">Preview</span>
             </div>
             <button

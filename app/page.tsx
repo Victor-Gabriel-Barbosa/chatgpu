@@ -1,359 +1,84 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
+import { useState, useRef, useEffect } from "react";
 import { SendHorizontal, Plus, Square, PanelLeft } from "lucide-react";
 import Image from "next/image";
-import { ChatSession, Message } from "./types/chat";
-import { ChatMessage } from "./components/ChatMessage";
-import { Sidebar } from './components/Sidebar';
-import { SettingsModal } from './components/SettingsModal';
-import { SUPPORTED_MODELS, DEFAULT_MODEL_ID } from "./constants/models";
-import { Toaster } from "@/components/ui/sonner"
-import { toast } from "sonner"
+import { ChatMessage } from "@/components/layout/ChatMessage";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { SettingsModal } from "@/components/layout/SettingsModal";
+import { SUPPORTED_MODELS } from "@/constants/models";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { useTheme } from "@/hooks/useTheme";
+import { useEngine } from "@/hooks/useEngine";
+import { useSession } from "@/hooks/useSession";
 
 export default function ChatInterface() {
-  // Estados principais do chat, modelo, UI e controle de execução
-  const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
-  const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [isReady, setIsReady] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [chats, setChats] = useState<ChatSession[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-  const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
+  // Estados do chat, modelo, UI e controle de execução
+  const { theme, setTheme } = useTheme();
+  const { engine, isReady, selectedModel, handleModelChange } = useEngine();
+  const {
+    messages,
+    input,
+    setInput,
+    isGenerating,
+    chats,
+    currentChatId,
+    handleNewChat,
+    handleRenameChat,
+    loadChat,
+    deleteChat,
+    handleSend,
+    handleSubmitEdit,
+    handleStop,
+  } = useSession({ engine, isReady });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [theme, setTheme] = useState('system');
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
 
-  // Index para a última mensagem do assistente
-  const lastAssistantIndex = messages.map(m => m.role).lastIndexOf("assistant");
-
-  // Referências para controle da textarea e scroll automático das mensagens
+  // Refs para textarea e para o final da lista de mensagens
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Referência para o ID do toast de carregamento
-  const toastIdRef = useRef<string | number | null>(null);
+  // Encontrar o índice da última mensagem do assistente para controle de UI
+  const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
 
-  // Carrega as sessões de chat salvas do localStorage ao iniciar o componente
-  useEffect(() => {
-    const savedChats = localStorage.getItem("chatgpu-sessions");
-
-    if (savedChats) {
-      try {
-        const parsedChats = JSON.parse(savedChats);
-        Promise.resolve().then(() => setChats(parsedChats));
-      } catch (error) {
-        console.error("Erro ao carregar sessões de chat salvas:", error);
-        toast.error("Erro ao carregar sessões de chat salvas");
-      }
-    }
-  }, []);
-
-  // Carrega o tema salvo do localStorage e aplica a classe de tema ao elemento raiz
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("chatgpu-theme") as "light" | "dark" | "system" | null;
-    if (savedTheme) {
-      Promise.resolve().then(() => setTheme(savedTheme));
-      document.documentElement.classList.toggle("dark", savedTheme === "dark");
-    }
-  }, []);
-
-  // Aplica a classe de tema ao elemento raiz e salva a preferência no localStorage sempre que o tema mudar
-  useEffect(() => {
-    const root = document.documentElement;
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const applyTheme = () => {
-      const isDark = theme === 'dark' || (theme === 'system' && media.matches);
-      root.classList.toggle('dark', isDark);
-    };
-
-    applyTheme();
-    localStorage.setItem("chatgpu-theme", theme);
-
-    media.addEventListener('change', applyTheme);
-    return () => media.removeEventListener('change', applyTheme);
-  }, [theme]);
-
-  // Carrega o modelo selecionado do localStorage ao iniciar o componente
-  useEffect(() => {
-    const savedModel = localStorage.getItem("chatgpu-model");
-    if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
-  }, []);
-
-  // Salva o modelo selecionado no localStorage sempre que ele mudar
-  useEffect(() => {
-    if (selectedModel) localStorage.setItem("chatgpu-model", selectedModel);
-  }, [selectedModel]);
-
-  // Salva as sessões de chat no localStorage sempre que elas mudarem
-  useEffect(() => {
-    localStorage.setItem("chatgpu-sessions", JSON.stringify(chats));
-  }, [chats]);
-
-  // Inicializa o motor de inferência usando um Web Worker e carrega o modelo selecionado
-  useEffect(() => {
-    let worker: Worker;
-
-    const initEngine = async () => {
-      toastIdRef.current = toast.loading("Inicializando motor WebGPU...");
-
-      worker = new Worker(new URL("../lib/worker.ts", import.meta.url), {
-        type: "module",
-      });
-
-      // Cria uma nova instância do motor usando o Web Worker
-      const newEngine = new WebWorkerMLCEngine(worker);
-
-      // Configura o callback de progresso para atualizar o texto de status
-      newEngine.setInitProgressCallback((report: InitProgressReport) => {
-        if (toastIdRef.current) toast.loading(report.text, { id: toastIdRef.current });
-      });
-
-      // Tenta carregar o modelo e atualiza o status de pronto ou erro
-      try {
-        await newEngine.reload(selectedModel);
-        setEngine(newEngine);
-        setIsReady(true);
-        if (toastIdRef.current) {
-          toast.success("Modelo carregado e pronto para uso!", { id: toastIdRef.current });
-          toastIdRef.current = null;
-        }
-      } catch (error) {
-        console.error("Erro ao carregar o modelo:", error);
-        if (toastIdRef.current) {
-          toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador", { id: toastIdRef.current });
-          toastIdRef.current = null;
-        } else toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador");
-      }
-    };
-
-    initEngine();
-
-    return () => {
-      if (worker) worker.terminate();
-      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
-    };
-  }, [selectedModel]);
-
-  // Scroll suave até o final das mensagens
+  // Faz scroll para a última mensagem
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Rola automaticamente para o final quando as mensagens mudam ou o chat atual é trocado
+  // Faz scroll para o final sempre que as mensagens ou o chat atual mudarem
   useEffect(() => {
     scrollToBottom();
   }, [messages.length, currentChatId]);
 
-  // Ajusta a altura do textarea conforme o conteúdo
+  // Ajusta a altura do textarea conforme o conteúdo muda
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
 
-  // Lida com a mudança de modelo, reinicializando o motor e atualizando o status
-  const handleModelChange = (model: string) => {
-    setSelectedModel(model);
-    setIsReady(false);
-    setEngine(null);
-  };
-
   // Copia o conteúdo de uma mensagem para a área de transferência
   const handleCopyMessage = (content: string, index: number) => {
-    navigator.clipboard.writeText(content).then(() => {
-      setCopiedMessageIndex(index);
-      setTimeout(() => setCopiedMessageIndex(null), 2000);
-      toast.success("Copiado para a área de transferência");
-    }).catch((error) => {
-      console.error('Erro ao copiar mensagem:', error);
-      toast.error("Falha ao copiar a mensagem. Tente novamente");
-    })
-  };
-
-  // Inicia um novo chat limpando as mensagens
-  const handleNewChat = () => {
-    if (isGenerating) return;
-    setMessages([]);
-    setCurrentChatId(null);
-  };
-
-  // Renomeia uma sessão de chat específica
-  const handleRenameChat = (chatId: string, newTitle: string) => {
-    setChats((prev) =>
-      prev.map((chat) =>
-        chat.id === chatId ? { ...chat, title: newTitle } : chat
-      )
-    );
-  };
-
-  // Lida com a edição de uma mensagem do usuário, atualizando o histórico e gerando uma nova resposta do modelo
-  const handleSubmitEdit = async (newContent: string, index: number) => {
-    if (isGenerating || !engine || !isReady) return;
-
-    // Corta o histórico até a mensagem editada (excluindo as mensagens da IA que vieram depois)
-    const updatedMessages = messages.slice(0, index);
-
-    // Adiciona a mensagem editada com o novo conteúdo
-    updatedMessages.push({ role: "user", content: newContent });
-
-    setMessages(updatedMessages);
-    setIsGenerating(true);
-
-    if (currentChatId) updateChatMessages(currentChatId, updatedMessages);
-
-    // Prepara para gerar a nova resposta
-    const chatHistory = [...updatedMessages];
-    setMessages(prev => [...prev, { role: "assistant", content: "" }]);
-
-    try {
-      const completion = await engine.chat.completions.create({
-        stream: true,
-        messages: chatHistory,
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        setCopiedMessageIndex(index);
+        setTimeout(() => setCopiedMessageIndex(null), 2000);
+        toast.success("Copiado para a área de transferência");
+      })
+      .catch((error) => {
+        console.error("Erro ao copiar mensagem:", error);
+        toast.error("Falha ao copiar a mensagem. Tente novamente");
       });
-
-      let resp = "";
-
-      for await (const chunk of completion) {
-        const delta = chunk.choices[0]?.delta?.content;
-        if (delta) {
-          resp += delta;
-          setMessages(prev => {
-            const newMsgList = [...prev];
-            const lastIndex = newMsgList.length - 1;
-            newMsgList[lastIndex] = { ...newMsgList[lastIndex], content: resp };
-            return newMsgList;
-          });
-        }
-      }
-
-      setMessages(currentMessages => {
-        updateChatMessages(currentChatId as string, currentMessages);
-        return currentMessages;
-      });
-    } catch (error) {
-      console.error("Erro na inferência (edição):", error);
-      toast.error(`Erro na inferência (edição): ${error}`);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // Carrega uma sessão de chat existente selecionada
-  const loadChat = (chatId: string) => {
-    if (isGenerating) return;
-    const chat = chats.find((c) => c.id === chatId);
-    if (chat) {
-      setMessages(chat.messages);
-      setCurrentChatId(chatId);
-    }
-  };
-
-  // Exclui uma sessão de chat e limpa a área de mensagens se o chat atual for excluído
-  const deleteChat = (e: React.MouseEvent, chatId: string) => {
-    e.stopPropagation();
-    setChats((prev) => prev.filter((c) => c.id !== chatId));
-    if (currentChatId === chatId) handleNewChat();
-  };
-
-  // Atualiza as mensagens de uma sessão de chat específica e ordena as sessões por data de atualização
-  const updateChatMessages = (chatId: string, newMessages: Message[]) => {
-    setChats((prev) =>
-      prev.map((chat) => (chat.id === chatId ? { ...chat, messages: newMessages } : chat)).sort((a, b) => b.updatedAt - a.updatedAt)
-    );
-  };
-
-  // Lida com o envio de mensagens
-  const handleSend = async () => {
-    if (!input.trim() || !engine || !isReady) return;
-
-    const userMsg = input;
-    setInput("");
-
-    const newMessages: Message[] = [...messages, { role: "user", content: userMsg }];
-    setMessages(newMessages);
-    setIsGenerating(true);
-
-    let activeChatId = currentChatId;
-
-    // Se não há chat ativo, cria um novo
-    if (!activeChatId) {
-      activeChatId = Date.now().toString();
-      setCurrentChatId(activeChatId);
-
-      const newTitle = userMsg.slice(0, 30) + (userMsg.length > 30 ? "..." : "");
-      const newChat: ChatSession = {
-        id: activeChatId,
-        title: newTitle,
-        messages: newMessages,
-        updatedAt: Date.now()
-      };
-
-      setChats(prev => [newChat, ...prev]);
-    } else updateChatMessages(activeChatId, newMessages);
-
-    // Prepara o histórico de mensagens para enviar ao modelo
-    const chatHistory = [...newMessages];
-
-    // Adiciona uma mensagem de assistente vazia para começar a resposta
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
-    // Solicita uma resposta do modelo com streaming
-    try {
-      const completion = await engine.chat.completions.create({
-        stream: true,
-        messages: chatHistory,
-      });
-
-      let resp = "";
-
-      // Itera sobre os chunks de resposta à medida que chegam
-      for await (const chunk of completion) {
-        const delta = chunk.choices[0]?.delta?.content;
-        if (delta) {
-          resp += delta;
-
-          // Atualiza a última mensagem do assistente com o conteúdo recebido até agora
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            const lastIndex = newMessages.length - 1;
-            newMessages[lastIndex] = { ...newMessages[lastIndex], content: resp };
-            return newMessages;
-          });
-        }
-      }
-
-      // Após a conclusão, garante que a mensagem final esteja atualizada e salva o histórico
-      setMessages(currentMessages => {
-        updateChatMessages(activeChatId as string, currentMessages);
-        return currentMessages;
-      });
-    } catch (error) {
-      console.error("Erro na inferência:", error);
-      toast.error(`Erro na inferência: ${error}`);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  // Interrompe a geração atual do modelo
-  const handleStop = () => {
-    if (engine && isGenerating) {
-      engine.interruptGenerate();
-
-      if (currentChatId) updateChatMessages(currentChatId, messages);
-    }
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="flex h-dvh bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       {/* Barra Lateral */}
       <Sidebar
         isSidebarOpen={sidebarOpen}
@@ -372,13 +97,19 @@ export default function ChatInterface() {
       {/* Área Principal */}
       <main id="main-chat-area" className="flex-1 flex flex-col relative">
         <div className="md:hidden flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 z-10 transition-colors duration-200">
-          <button onClick={() => setSidebarOpen(true)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
+          >
             <PanelLeft size={20} />
           </button>
-          <span className="font-medium truncate max-w-50 text-slate-800 dark:text-slate-200">{
-            chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"
-          }</span>
-          <button onClick={handleNewChat} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors">
+          <span className="font-medium truncate max-w-50 text-slate-800 dark:text-slate-200">
+            {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
+          </span>
+          <button
+            onClick={handleNewChat}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
+          >
             <Plus size={20} />
           </button>
         </div>
@@ -388,16 +119,8 @@ export default function ChatInterface() {
           <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8">
             {messages.length === 0 && isReady ? (
               <div className="flex flex-col items-center justify-center gap-4 mt-20 text-2xl">
-                <Image
-                  src="/icon0.svg"
-                  alt="ChatGPU"
-                  width={64}
-                  height={64}
-                  className="mb-2"
-                />
-                <span className="font-bold text-sky-500 text-center">
-                  Como posso ajudar hoje?
-                </span>
+                <Image src="/icon0.svg" alt="ChatGPU" width={64} height={64} className="mb-2" />
+                <span className="font-bold text-blue-500 text-center">Como posso ajudar hoje?</span>
               </div>
             ) : (
               <>
@@ -450,7 +173,7 @@ export default function ChatInterface() {
                 title="Selecionar modelo"
               >
                 {SUPPORTED_MODELS.map((group) => (
-                  <optgroup key={group.label} label={group.label}>
+                  <optgroup key={group.label} label={group.label} className="bg-slate-100 dark:bg-slate-800">
                     {group.options.map((model) => (
                       <option key={model.id} value={model.id}>
                         {model.name}
@@ -460,11 +183,10 @@ export default function ChatInterface() {
                 ))}
               </select>
 
-              {/* Botões condicionais Enviar/Parar */}
               {isGenerating ? (
                 <button
                   onClick={handleStop}
-                  className="p-3 m-1 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-colors shadow-sm"
+                  className="p-3 m-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm"
                   title="Parar geração"
                 >
                   <Square fill="currentColor" size={20} />
@@ -473,7 +195,7 @@ export default function ChatInterface() {
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || !isReady}
-                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${(input.trim() && isReady) ? "bg-sky-600 hover:bg-sky-700" : ''
+                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${input.trim() && isReady ? "bg-blue-600 hover:bg-blue-700" : ""
                     }`}
                   title="Enviar"
                 >
@@ -488,6 +210,7 @@ export default function ChatInterface() {
         </div>
       </main>
 
+      { /* Modal de Configurações */}
       {isSettingsOpen && (
         <SettingsModal
           selectedModel={selectedModel}
@@ -496,10 +219,11 @@ export default function ChatInterface() {
         />
       )}
 
-      <Toaster 
-        position="bottom-right" 
-        theme={theme === 'dark' || theme === 'light' || theme === 'system' ? theme  : 'system'} 
-        richColors 
+      { /* Toaster para notificações */}
+      <Toaster
+        position="bottom-left"
+        theme={theme === "dark" || theme === "light" || theme === "system" ? theme : "system"}
+        richColors
         closeButton
       />
     </div>

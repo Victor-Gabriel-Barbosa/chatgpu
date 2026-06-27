@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, X, Cpu } from 'lucide-react';
-import { SUPPORTED_MODELS } from '../constants/models';
+import { SUPPORTED_MODELS } from '@/constants/models';
 
 interface SettingsModalProps {
   selectedModel: string;
@@ -57,7 +57,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl px-3 py-2 transition-colors appearance-none"
             >
               {SUPPORTED_MODELS.map((group) => (
-                <optgroup key={group.label} label={group.label}>
+                <optgroup key={group.label} label={group.label} className="bg-slate-100 dark:bg-slate-800">
                   {group.options.map((model) => (
                     <option key={model.id} value={model.id}>
                       {model.name}
@@ -67,8 +67,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               ))}
             </select>
 
-            <div className="mt-3 p-3 bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/50 rounded-lg">
-              <p className="text-xs text-sky-800 dark:text-sky-200/80 flex gap-2 items-start">
+            <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg">
+              <p className="text-xs text-blue-800 dark:text-blue-200/80 flex gap-2 items-start">
                 <Cpu size={14} className="shrink-0 mt-0.5" />
                 <span>
                   <strong>Modelos WebGPU</strong> rodam no seu navegador usando o hardware do seu dispositivo. A primeira execução fará o download de múltiplos MB/GB de dados para o cache.
