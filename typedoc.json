@@ -1,0 +1,12 @@
+{
+  "entryPoints": [
+    "components",
+    "hooks",
+    "lib",
+    "types",
+    "constants"
+  ],
+  "entryPointStrategy": "expand",
+  "tsconfig": "tsconfig.json",
+  "out": "docs"
+}

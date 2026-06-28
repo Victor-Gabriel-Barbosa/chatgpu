@@ -12,7 +12,7 @@ import 'katex/dist/katex.min.css';
 /**
  * Propriedades do componente ChatMessage.
  */
-interface ChatMessageProps {
+export interface ChatMessageProps {
   /** A mensagem a ser exibida. */
   msg: Message;
   /** Índice da mensagem na lista de mensagens. */

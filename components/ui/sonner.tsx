@@ -4,6 +4,13 @@ import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
+/**
+ * Componente responsável por exibir notificações visuais (toasts) na tela.
+ * Configura e personaliza o provider da biblioteca Sonner com ícones próprios e integração de tema.
+ *
+ * @param props Propriedades repassadas ao componente base Sonner.
+ * @returns Elemento React contendo o provedor de notificações.
+ */
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 

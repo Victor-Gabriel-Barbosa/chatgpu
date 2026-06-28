@@ -6,7 +6,7 @@ import { toast } from "sonner";
 /**
  * Propriedades para inicialização do hook useSession.
  */
-interface UseSessionProps {
+export interface UseSessionProps {
   /** Instância do motor WebGPU responsável pela inferência. */
   engine: WebWorkerMLCEngine | null;
   /** Indica se o motor de IA está carregado e pronto para uso. */

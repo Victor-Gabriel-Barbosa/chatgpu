@@ -13,7 +13,7 @@ import {
 /**
  * Propriedades para o componente Sidebar.
  */
-interface SidebarProps {
+export interface SidebarProps {
   /** Indica se a barra lateral está expandida (aberta). */
   isSidebarOpen: boolean;
   /** Função para atualizar o estado de expansão da barra lateral. */

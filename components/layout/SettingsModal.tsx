@@ -5,7 +5,7 @@ import { SUPPORTED_MODELS } from '@/constants/models';
 /**
  * Propriedades para o componente SettingsModal.
  */
-interface SettingsModalProps {
+export interface SettingsModalProps {
   /** Identificador do modelo de IA atualmente selecionado. */
   selectedModel: string;
   /** Função para atualizar o modelo de IA. */
