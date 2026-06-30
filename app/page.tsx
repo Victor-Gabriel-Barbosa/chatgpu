@@ -13,11 +13,6 @@ import { useTheme } from "@/hooks/useTheme";
 import { useEngine } from "@/hooks/useEngine";
 import { useSession } from "@/hooks/useSession";
 
-/**
- * Renderiza a interface principal do aplicativo de chat, integrando a barra lateral, a área de exibição de mensagens e os controles de entrada e configuração do modelo.
- *
- * @returns Elemento React contendo a estrutura visual e lógica principal da aplicação.
- */
 export default function ChatInterface() {
   // Estados do chat, modelo, UI e controle de execução
   const { theme, setTheme } = useTheme();
@@ -83,7 +78,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex h-dvh bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="flex h-dvh text-slate-900 dark:text-slate-100 bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]">
       {/* Barra Lateral */}
       <Sidebar
         isSidebarOpen={sidebarOpen}
@@ -122,33 +117,36 @@ export default function ChatInterface() {
         {/* Mensagens */}
         <div className="flex-1 relative overflow-y-auto">
           <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8">
-            {messages.length === 0 && isReady ? (
-              <div className="flex flex-col items-center justify-center gap-4 mt-20 text-2xl">
-                <Image src="/icon0.svg" alt="ChatGPU" width={64} height={64} className="mb-2" />
-                <span className="font-bold text-blue-500 text-center">Como posso ajudar hoje?</span>
-              </div>
-            ) : (
-              <>
-                {messages.map((msg, index) => (
-                  <ChatMessage
-                    key={index}
-                    msg={msg}
-                    index={index}
-                    copiedMessageIndex={copiedMessageIndex}
-                    handleCopyMessage={handleCopyMessage}
-                    handleSubmitEdit={handleSubmitEdit}
-                    isLastAssistant={index === lastAssistantIndex}
-                  />
-                ))}
-                {/* Elemento âncora para o scroll */}
-                <div ref={messagesEndRef} className="h-36" />
-              </>
-            )}
+            {messages.map((msg, index) => (
+              <ChatMessage
+                key={index}
+                msg={msg}
+                index={index}
+                copiedMessageIndex={copiedMessageIndex}
+                handleCopyMessage={handleCopyMessage}
+                handleSubmitEdit={handleSubmitEdit}
+                isLastAssistant={index === lastAssistantIndex}
+              />
+            ))}
+            {/* Elemento âncora para o scroll */}
+            <div ref={messagesEndRef} className="h-36" />
           </div>
         </div>
 
         {/* Entrada de Texto */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-b from-transparent via-slate-100 dark:via-slate-900 to-slate-100 dark:to-slate-900">
+        <div
+          className={`absolute left-0 right-0 p-4 transition-all duration-500 ease-in-out z-10 ${messages.length === 0
+            ? "bottom-3/5 translate-y-1/2"
+            : "bottom-0 translate-y-0"
+            }`}
+        >
+          {messages.length === 0 && isReady && (
+            <div className="flex flex-col items-center justify-center gap-4 mb-8 text-2xl">
+              <Image src="/icon0.svg" alt="ChatGPU" width={64} height={64} className="mb-2" />
+              <span className="font-bold text-blue-500 text-center">Como posso ajudar hoje?</span>
+            </div>
+          )}
+
           <div className="max-w-180 mx-auto bg-slate-100 dark:bg-slate-800 rounded-3xl shadow-md">
             <div className="flex items-center">
               <textarea
@@ -165,7 +163,7 @@ export default function ChatInterface() {
                 }}
                 placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
                 disabled={!isReady || isGenerating}
-                className="flex-1 px-4 pt-4 pb-2 outline-none resize-none max-h-35 overflow-y-auto"
+                className="flex-1 px-4 pt-4 pb-2 outline-none resize-none max-h-35 overflow-y-auto placeholder-slate-500 disabled:placeholder-slate-500"
                 rows={1}
               />
             </div>
@@ -174,7 +172,7 @@ export default function ChatInterface() {
                 id="model-select"
                 value={selectedModel}
                 onChange={(e) => handleModelChange(e.target.value)}
-                className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
+                className="max-w-20 sm:max-w-40 truncate p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
                 title="Selecionar modelo"
               >
                 {SUPPORTED_MODELS.map((group) => (

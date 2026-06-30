@@ -40,17 +40,17 @@ export function useEngine() {
       () => (
         <div className="w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-lg">
           <div className="flex items-center gap-2 mb-2">
-            <Loader2 size={16} className="animate-spin text-sky-500 shrink-0" />
+            <Loader2 size={16} className="animate-spin text-blue-500 shrink-0" />
             <span className="text-sm font-medium text-slate-800 dark:text-slate-100 flex-1 truncate">
               Carregando modelo
             </span>
-            <span className="text-xs font-semibold text-sky-500 shrink-0">
+            <span className="text-xs font-semibold text-blue-500 shrink-0">
               {clampedPercent}%
             </span>
           </div>
           <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-sky-500 rounded-full transition-all duration-300 ease-out"
+              className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${clampedPercent}%` }}
             />
           </div>
