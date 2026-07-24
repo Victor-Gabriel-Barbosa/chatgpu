@@ -73,7 +73,7 @@ const parseMessageContent = (content: string) => {
 };
 
 const reasoningComponents: Components = {
-  pre: ({ children }) => <div className="w-full overflow-x-auto">{children}</div>,
+  pre: ({ children }) => <div className="w-full max-w-full min-w-0 overflow-x-auto">{children}</div>,
   code(props) {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
@@ -94,7 +94,7 @@ const reasoningComponents: Components = {
 };
 
 const messageComponents: Components = {
-  pre: ({ children }) => <div className="w-full overflow-x-auto">{children}</div>,
+  pre: ({ children }) => <div className="w-full max-w-full min-w-0 overflow-x-auto">{children}</div>,
   code(props) {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
@@ -166,7 +166,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
   };
 
   return (
-    <div className={`flex gap-3 w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex gap-3 w-full max-w-full min-w-0 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
       {/* Ícone do Assistente */}
       {msg.role !== 'user' && (
         <div className="w-7 sm:w-8 shrink-0 flex justify-center items-baseline pt-2.5">

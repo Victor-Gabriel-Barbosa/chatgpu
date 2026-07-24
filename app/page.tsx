@@ -78,7 +78,12 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex h-dvh text-slate-900 dark:text-slate-100 bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]">
+    <div
+      className={`flex h-dvh text-slate-900 dark:text-slate-100 ${messages.length === 0
+        ? "bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]"
+        : "bg-slate-100 dark:bg-slate-950"
+        }`}
+    >
       {/* Barra Lateral */}
       <Sidebar
         isSidebarOpen={sidebarOpen}
@@ -95,7 +100,7 @@ export default function ChatInterface() {
       />
 
       {/* Área Principal */}
-      <main id="main-chat-area" className="flex-1 flex flex-col relative">
+      <main id="main-chat-area" className="flex-1 flex flex-col relative min-w-0">
         <div className="md:hidden flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 z-10 transition-colors duration-200">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -129,15 +134,15 @@ export default function ChatInterface() {
               />
             ))}
             {/* Elemento âncora para o scroll */}
-            <div ref={messagesEndRef} className="h-36" />
+            <div ref={messagesEndRef} />
           </div>
         </div>
 
         {/* Entrada de Texto */}
         <div
           className={`absolute left-0 right-0 p-4 transition-all duration-500 ease-in-out z-10 ${messages.length === 0
-            ? "bottom-3/5 translate-y-1/2"
-            : "bottom-0 translate-y-0"
+            ? "bottom-1/2 translate-y-1/2"
+            : "bottom-0 translate-y-0 bg-linear-to-b from-transparent to-slate-100 dark:to-slate-950 to-20%"
             }`}
         >
           {messages.length === 0 && isReady && (

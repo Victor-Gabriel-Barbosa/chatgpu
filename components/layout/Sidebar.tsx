@@ -179,7 +179,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 custom-scrollbar -mx-2">
           <div className="overflow-hidden transition-all duration-300 shrink-0 flex items-end h-6 opacity-100 mb-1">
             <p className="px-3 text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
-              {isSidebarOpen && "Conversas" }
+              {isSidebarOpen && "Conversas"}
             </p>
           </div>
 
@@ -190,7 +190,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {chats.map(chat => (
               <Tooltip key={`${chat.id}-${isSidebarOpen}`}>
                 <TooltipTrigger asChild>
-                  <div 
+                  <div
                     key={chat.id}
                     role="button"
                     tabIndex={0}
@@ -282,7 +282,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                   </div>
                 </TooltipTrigger>
-                {(!isSidebarOpen || chat.title.length > 19) && (
+                {(!isSidebarOpen || chat.title.length > 20) && (
                   <TooltipContent side={"right"}>
                     <p>{chat.title}</p>
                   </TooltipContent>

@@ -77,7 +77,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
 
   return (
     <div className="my-4 bg-gray-50 dark:bg-[#1E1E1E] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm w-full">
-      <div className="bg-gray-200/50 dark:bg-gray-800/80 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
+      <div className="bg-gray-200/50 dark:bg-gray-800/80 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center border-b border-gray-200 dark:border-gray-800 min-w-0 overflow-auto">
         <div className="flex items-center gap-4">
           <span className="font-sans lowercase">{language || 'code'}</span>
 
@@ -91,7 +91,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
                   }`}
               >
                 <Code2 size={14} />
-                <span>Código</span>
+                <span className="max-sm:hidden">Código</span>
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
@@ -101,7 +101,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
                   }`}
               >
                 <LayoutTemplate size={14} />
-                <span>Preview</span>
+                <span className="max-sm:hidden">Preview</span>
               </button>
             </div>
           )}
