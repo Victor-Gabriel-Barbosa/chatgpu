@@ -36,8 +36,7 @@ export default function ChatInterface() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
 
-  // Refs para textarea e para o final da lista de mensagens
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // Ref para o final da lista de mensagens
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Encontrar o índice da última mensagem do assistente para controle de UI
@@ -52,15 +51,6 @@ export default function ChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages.length, currentChatId]);
-
-  // Ajusta a altura do textarea conforme o conteúdo muda
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  };
 
   // Copia o conteúdo de uma mensagem para a área de transferência
   const handleCopyMessage = (content: string, index: number) => {
@@ -155,20 +145,18 @@ export default function ChatInterface() {
           <div className="max-w-180 mx-auto bg-slate-100 dark:bg-slate-800 rounded-3xl shadow-md">
             <div className="flex items-center">
               <textarea
-                ref={textareaRef}
                 id="chat-input"
                 value={input}
-                onChange={handleChange}
+                onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSend();
-                    if (textareaRef.current && input.trim()) textareaRef.current.style.height = "auto";
                   }
                 }}
                 placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
                 disabled={!isReady || isGenerating}
-                className="flex-1 px-4 pt-4 pb-2 outline-none resize-none max-h-35 overflow-y-auto placeholder-slate-500 disabled:placeholder-slate-500"
+                className="field-sizing-content leading-6 flex-1 px-4 pt-4 mt-2 me-2 pb-2 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
                 rows={1}
               />
             </div>
