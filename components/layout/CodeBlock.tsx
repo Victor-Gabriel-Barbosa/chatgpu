@@ -84,6 +84,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           {isHtml && (
             <div className="flex items-center gap-1 bg-gray-300/50 dark:bg-gray-900/50 p-0.5 rounded-lg">
               <button
+                type="button"
                 onClick={() => setActiveTab('code')}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${activeTab === 'code'
                   ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
@@ -94,6 +95,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
                 <span className="max-sm:hidden">Código</span>
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab('preview')}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${activeTab === 'preview'
                   ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
@@ -110,6 +112,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
         <div className="flex items-center gap-2">
           {isHtml && activeTab === 'preview' && (
             <button
+              type="button"
               onClick={() => setIsFullscreen(true)}
               className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               title="Maximizar preview"
@@ -118,6 +121,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
             </button>
           )}
           <button
+            type="button"
             onClick={handleDownload}
             className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
             title="Download"
@@ -126,6 +130,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           </button>
 
           <button
+            type="button"
             onClick={handleCopy}
             className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
             title="Copiar código"
@@ -177,6 +182,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
               <span className="text-sm font-medium dark:text-white">Preview</span>
             </div>
             <button
+              type="button"
               onClick={() => setIsFullscreen(false)}
               className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900 transition-colors"
               title="Minimizar preview"

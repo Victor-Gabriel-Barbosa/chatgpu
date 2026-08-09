@@ -193,6 +193,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         {displayReasoning && msg.role !== 'user' && (
           <div className="mb-3 pb-3 border-b border-slate-300 dark:border-slate-700 transition-colors">
             <button
+              type="button"
               onClick={() => setShowReasoning(!showReasoning)}
               className="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
@@ -232,12 +233,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               />
               <div className="flex justify-end gap-2 mt-1">
                 <button
+                  type="button"
                   onClick={onCancelEdit}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
+                  type="button"
                   onClick={onSaveEdit}
                   disabled={editValue.trim() === '' || editValue.trim() === msg.content}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-blue-500 enabled:hover:bg-blue-600 transition-colors"
@@ -260,6 +263,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         {!isEditing && (
           <div className="absolute flex items-center gap-1 opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 left-0 -bottom-8 transition-all">
             <button
+              type="button"
               onClick={() => handleCopyMessage(msg.content, index)}
               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Copiar mensagem"

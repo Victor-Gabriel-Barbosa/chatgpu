@@ -49,6 +49,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <button
+          type="button"
           onClick={onClose}
           className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
         >
@@ -94,6 +95,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         <div className="mt-8 flex justify-end">
           <button
+            type="button"
             onClick={handleSave}
             className="px-4 py-2 text-white dark:text-black bg-slate-900 dark:bg-slate-200 hover:bg-slate-800 dark:hover:bg-slate-200 rounded-md transition-colors"
           >

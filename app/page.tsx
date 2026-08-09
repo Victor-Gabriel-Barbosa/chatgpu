@@ -93,6 +93,7 @@ export default function ChatInterface() {
       <main id="main-chat-area" className="flex-1 flex flex-col relative min-w-0">
         <div className="md:hidden flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 z-10 transition-colors duration-200">
           <button
+            type="button"
             onClick={() => setSidebarOpen(true)}
             className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
           >
@@ -102,6 +103,7 @@ export default function ChatInterface() {
             {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
           </span>
           <button
+            type="button"
             onClick={handleNewChat}
             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
           >
@@ -181,6 +183,7 @@ export default function ChatInterface() {
 
               {isGenerating ? (
                 <button
+                  type="button"
                   onClick={handleStop}
                   className="p-3 m-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm"
                   title="Parar geração"
@@ -189,6 +192,7 @@ export default function ChatInterface() {
                 </button>
               ) : (
                 <button
+                  type="button"
                   onClick={handleSend}
                   disabled={!input.trim() || !isReady}
                   className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${input.trim() && isReady ? "bg-blue-600 hover:bg-blue-700" : ""

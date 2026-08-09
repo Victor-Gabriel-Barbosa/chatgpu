@@ -134,6 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Tooltip key={`toggle-${isSidebarOpen}`}>
             <TooltipTrigger asChild>
               <button
+                type="button"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className={`group w-12 h-10 flex items-center justify-center shrink-0 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900 transition-all duration-300 absolute ${isSidebarOpen ? 'right-0' : 'left-0'}`}
               >
@@ -155,6 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Tooltip key={`newchat-${isSidebarOpen}`}>
           <TooltipTrigger asChild>
             <button
+              type="button"
               onClick={createNewChat}
               className="group flex items-center h-10 w-full bg-transparent hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0 overflow-hidden"
             >
@@ -241,6 +243,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       data-menu-trigger
                     >
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           setOpenMenuId(openMenuId === chat.id ? null : chat.id);
@@ -255,6 +258,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       {openMenuId === chat.id && isSidebarOpen && (
                         <div className="absolute right-0 top-full mr-2 bg-white dark:bg-slate-900 rounded-lg shadow-md dark:shadow-lg z-50 min-w-32 transition-colors">
                           <button
+                            type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               setEditingChatId(chat.id);
@@ -267,6 +271,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             Renomear
                           </button>
                           <button
+                            type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               deleteChat(e, chat.id);
@@ -298,6 +303,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Tooltip key={`theme-${isSidebarOpen}`}>
               <TooltipTrigger asChild>
                 <button
+                  type="button"
                   onClick={() => setThemeMenuOpen(!themeMenuOpen)}
                   className="flex items-center h-10 w-full hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:hover:bg-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg transition-all duration-300 overflow-hidden"
                 >
@@ -320,18 +326,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {themeMenuOpen && (
               <div className={`absolute bottom-full mb-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg z-50 p-1 flex flex-col gap-0.5 transition-colors ${isSidebarOpen ? 'left-0 w-full' : 'left-full ml-2 w-36'}`}>
                 <button
+                  type="button"
                   onClick={() => { setTheme('light'); setThemeMenuOpen(false); }}
                   className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${theme === 'light' ? 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
                 >
                   <Sun size={14} /> Claro
                 </button>
                 <button
+                  type="button"
                   onClick={() => { setTheme('dark'); setThemeMenuOpen(false); }}
                   className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${theme === 'dark' ? 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
                 >
                   <Moon size={14} /> Escuro
                 </button>
                 <button
+                  type="button"
                   onClick={() => { setTheme('system'); setThemeMenuOpen(false); }}
                   className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${theme === 'system' ? 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-white' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'}`}
                 >
@@ -344,6 +353,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Tooltip key={`config-${isSidebarOpen}`}>
             <TooltipTrigger asChild>
               <button
+                type="button"
                 onClick={() => setSettingsOpen(true)}
                 className="flex items-center h-10 w-full text-slate-600 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-900 dark:text-slate-400 rounded-lg transition-all duration-300 overflow-hidden"
               >
