@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Check, Copy, Lightbulb, ChevronDown, Pencil } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { Message } from '@/types/chat';
@@ -136,21 +136,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
   const [showReasoning, setShowReasoning] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { think: parsedThink, mainContent } = parseMessageContent(msg.content);
   const displayReasoning = parsedThink || msg.reasoning;
-
-  // Ajusta a altura do textarea automaticamente ao entrar no modo de edição ou ao alterar o valor editável
-  useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      const el = textareaRef.current;
-      el.style.height = 'auto';
-      el.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
-      el.style.overflow = 'hidden';
-      el.focus();
-    }
-  }, [isEditing, editValue]);
 
   // Lida com o salvamento da edição
   const onSaveEdit = () => {
@@ -219,7 +207,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           {isEditing ? (
             <div className="flex flex-col gap-2 w-full min-w-62.5 sm:min-w-100">
               <textarea
-                ref={textareaRef}
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={(e) => {
@@ -228,7 +215,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                     onSaveEdit();
                   }
                 }}
-                className="w-full bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none rounded-xl text-sm"
+                className="field-sizing-content leading-6 w-full bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none overflow-y-auto max-h-35 rounded-xl text-sm"
                 rows={1}
               />
               <div className="flex justify-end gap-2 mt-1">
@@ -273,6 +260,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
 
             {msg.role === 'user' && handleSubmitEdit && (
               <button
+                type="button"
                 onClick={() => setIsEditing(true)}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 title="Editar mensagem"
