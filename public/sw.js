@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chatgpu-cache-v2';
+const CACHE_NAME = 'chatgpu-cache-v3';
 
 const ASSETS_TO_CACHE = [
   '/',
@@ -29,20 +29,14 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET' || event.request.url.startsWith('chrome-extension')) {
-    return;
-  }
+  if (event.request.method !== 'GET' || event.request.url.startsWith('chrome-extension')) return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+      if (cachedResponse) return cachedResponse;
 
       return fetch(event.request).then((networkResponse) => {
-        if (networkResponse?.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
-        }
+        if (networkResponse?.status !== 200 || networkResponse.type !== 'basic') return networkResponse;
 
         const responseToCache = networkResponse.clone();
 

@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { Settings, X, Cpu } from 'lucide-react';
 import { SUPPORTED_MODELS } from '@/constants/models';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel
+} from "@/components/ui/select"
 
 /**
  * Propriedades para o componente SettingsModal.
@@ -29,8 +38,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [selectMode, setSelectMode] = useState<string>(selectedModel);
 
   // Lida com a mudança de seleção do modelo
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectMode(e.target.value);
+  const handleSelectChange = (value: string) => {
+    setSelectMode(value);
   };
 
   // Lida com o salvamento das configurações, atualizando o modelo selecionado e fechando o modal
@@ -65,22 +74,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <label htmlFor="motor-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors">
               Motor / Modelo
             </label>
-            <select
-              id="motor-select"
-              value={selectMode}
-              onChange={handleSelectChange}
-              className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl px-3 py-2 transition-colors appearance-none"
-            >
-              {SUPPORTED_MODELS.map((group) => (
-                <optgroup key={group.label} label={group.label} className="bg-slate-100 dark:bg-slate-800">
-                  {group.options.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.name}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
+
+            <Select value={selectedModel} onValueChange={handleSelectChange}>
+              <SelectTrigger
+                id="model-select"
+                title="Selecionar modelo"
+                className="w-full truncate p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm border-none"
+              >
+                <SelectValue placeholder="Selecionar modelo" />
+              </SelectTrigger>
+              <SelectContent position="popper" className="bg-slate-100 dark:text-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                {SUPPORTED_MODELS.map((group) => (
+                  <SelectGroup key={group.label}>
+                    <SelectLabel>{group.label}</SelectLabel>
+                    {group.options.map((model) => (
+                      <SelectItem key={model.id} value={model.id} className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg">
+                        {model.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ))}
+              </SelectContent>
+            </Select>
 
             <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg">
               <p className="text-xs text-blue-800 dark:text-blue-200/80 flex gap-2 items-start">

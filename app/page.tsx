@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
-import { SendHorizontal, Plus, Square, PanelLeft, Paperclip, X } from "lucide-react";
+import { SendHorizontal, Plus, Square, PanelLeftOpen, PanelLeftClose, Paperclip, X } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/layout/ChatMessage";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -12,6 +12,15 @@ import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
 import { useEngine } from "@/hooks/useEngine";
 import { useSession } from "@/hooks/useSession";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel
+} from "@/components/ui/select"
 
 export default function ChatInterface() {
   // Estados do chat, modelo, UI e controle de execução
@@ -107,13 +116,13 @@ export default function ChatInterface() {
 
       {/* Área Principal */}
       <main id="main-chat-area" className="flex-1 flex flex-col relative min-w-0">
-        <div className="md:hidden flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 z-10 transition-colors duration-200">
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 transition-colors duration-200">
           <button
             type="button"
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
           >
-            <PanelLeft size={20} />
+            {sidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
           </button>
           <span className="font-medium truncate max-w-50 text-slate-800 dark:text-slate-200">
             {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
@@ -212,10 +221,10 @@ export default function ChatInterface() {
                     disabled={!isReady}
                     aria-label={"Anexar arquivo"}
                     title="Anexar arquivo"
-                    className={`group flex items-center h-10 w-full bg-transparent hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors shrink-0 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-40 disabled:pointer-events-none 
+                    className={`group flex items-center w-full bg-transparent hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors shrink-0 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-40 disabled:pointer-events-none 
                       }`}
                   >
-                    <div className="w-12 h-10 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 flex items-center justify-center shrink-0">
                       <div className="w-6 h-6 bg-slate-900 text-white dark:bg-white dark:text-black rounded-full flex items-center justify-center transition-colors">
                         <Plus size={16} strokeWidth={2.5} />
                       </div>
@@ -232,23 +241,28 @@ export default function ChatInterface() {
                   />
                 </div>
 
-                <select
-                  id="model-select"
-                  value={selectedModel}
-                  onChange={(e) => handleModelChange(e.target.value)}
-                  className="max-w-20 sm:max-w-40 truncate p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
-                  title="Selecionar modelo"
-                >
-                  {SUPPORTED_MODELS.map((group) => (
-                    <optgroup key={group.label} label={group.label} className="bg-slate-100 dark:bg-slate-800">
-                      {group.options.map((model) => (
-                        <option key={model.id} value={model.id}>
-                          {model.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
+                <Select value={selectedModel} onValueChange={handleModelChange}>
+                  <SelectTrigger
+                    id="model-select"
+                    title="Selecionar modelo"
+                    className="max-w-20 sm:max-w-40 truncate p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm border-none"
+                    disabled={isGenerating}
+                  >
+                    <SelectValue placeholder="Selecionar modelo" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-100 dark:text-white dark:bg-slate-800">
+                    {SUPPORTED_MODELS.map((group) => (
+                      <SelectGroup key={group.label}>
+                        <SelectLabel>{group.label}</SelectLabel>
+                        {group.options.map((model) => (
+                          <SelectItem key={model.id} value={model.id} className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg cursor-pointer">
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {isGenerating ? (
@@ -268,7 +282,7 @@ export default function ChatInterface() {
                     setAttachedFiles([]);
                   }}
                   disabled={!input.trim() || !isReady}
-                  className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${input.trim() && isReady ? "bg-blue-600 hover:bg-blue-700" : ""
+                  className={`p-2 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${input.trim() && isReady ? "bg-blue-600 hover:bg-blue-700" : ""
                     }`}
                   title="Enviar"
                 >

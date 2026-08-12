@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.82",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@tauri-apps/cli": "^2.11.4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

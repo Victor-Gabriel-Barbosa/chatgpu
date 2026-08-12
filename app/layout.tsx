@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-slate-100 dark:bg-slate-950`}
     >
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegister />
