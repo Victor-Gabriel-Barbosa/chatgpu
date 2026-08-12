@@ -22,6 +22,11 @@ import {
   SelectValue,
   SelectLabel
 } from "@/components/ui/select"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export default function ChatInterface() {
   // Estados do chat, modelo, UI e controle de execução
@@ -150,6 +155,7 @@ export default function ChatInterface() {
                 handleCopyMessage={handleCopyMessage}
                 handleSubmitEdit={handleSubmitEdit}
                 isLastAssistant={index === lastAssistantIndex}
+                isGenerating={isGenerating}
               />
             ))}
             {/* Elemento âncora para o scroll */}
@@ -209,7 +215,7 @@ export default function ChatInterface() {
                 }}
                 placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
                 disabled={!isReady || isGenerating}
-                className="field-sizing-content leading-6 flex-1 px-4 pt-4 me-2 pb-2 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
+                className="flex-1 px-4 pt-4 me-2 pb-2 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
                 rows={1}
               />
             </div>
@@ -234,6 +240,7 @@ export default function ChatInterface() {
                   </button>
 
                   <input
+                    id="file-input"
                     ref={fileInputRef}
                     type="file"
                     accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1"
@@ -266,15 +273,21 @@ export default function ChatInterface() {
                   </SelectContent>
                 </Select>
 
-                <button
-                  type="button"
-                  onClick={() => setIsModelManagerOpen(true)}
-                  title="Gerenciar modelos baixados"
-                  aria-label="Gerenciar modelos baixados"
-                  className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-                >
-                  <HardDrive size={18} />
-                </button>
+                <Tooltip key="model-manager-tooltip">
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => setIsModelManagerOpen(true)}
+                      aria-label="Gerenciar modelos baixados"
+                      className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors"
+                    >
+                      <HardDrive size={18} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side={"right"}>
+                    <p>Gerenciar modelos baixados</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
 
               {isGenerating ? (
@@ -293,9 +306,8 @@ export default function ChatInterface() {
                     handleSend(attachedFiles);
                     setAttachedFiles([]);
                   }}
-                  disabled={!input.trim() || !isReady}
-                  className={`p-2 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${input.trim() && isReady ? "bg-blue-600 hover:bg-blue-700" : ""
-                    }`}
+                  disabled={!isReady || (attachedFiles.length === 0 && !input.trim())}
+                  className="p-2 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm bg-blue-600 hover:bg-blue-700"
                   title="Enviar"
                 >
                   <SendHorizontal size={20} />

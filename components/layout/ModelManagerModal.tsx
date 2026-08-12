@@ -66,8 +66,8 @@ export function ModelManagerModal({
         {/* Cabeçalho */}
         <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2">
-            <HardDrive size={18} className="text-blue-500" />
-            <h2 className="font-semibold text-slate-800 dark:text-slate-100">
+            <HardDrive size={18} />
+            <h2 className="font-semibold text-slate-900 dark:text-white">
               Modelos baixados
             </h2>
           </div>
@@ -78,18 +78,18 @@ export function ModelManagerModal({
               disabled={isChecking}
               aria-label="Verificar novamente"
               title="Verificar novamente"
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-40 transition-colors"
+              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 transition-colors"
             >
-              <RefreshCw size={16} className={isChecking ? "animate-spin" : ""} />
+              <RefreshCw size={18} className={isChecking ? "animate-spin" : ""} />
             </button>
             <button
               type="button"
               onClick={onClose}
               aria-label="Fechar"
               title="Fechar"
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
         </div>

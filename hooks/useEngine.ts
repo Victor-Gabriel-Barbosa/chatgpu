@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { DEFAULT_MODEL_ID } from "@/constants/models";
 
@@ -57,34 +56,14 @@ export function useEngine() {
    * @param text Texto descritivo do estado atual do carregamento.
    */
   const showLoadingToast = (percent: number, text: string) => {
-    const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
+  const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
 
-    toast.custom(
-      () => (
-        <div className="w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <Loader2 size={16} className="animate-spin text-blue-500 shrink-0" />
-            <span className="text-sm font-medium text-slate-800 dark:text-slate-100 flex-1 truncate">
-              Carregando modelo
-            </span>
-            <span className="text-xs font-semibold text-blue-500 shrink-0">
-              {clampedPercent}%
-            </span>
-          </div>
-          <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${clampedPercent}%` }}
-            />
-          </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 truncate">
-            {text}
-          </p>
-        </div>
-      ),
-      { id: LOADING_TOAST_ID, duration: Infinity }
-    );
-  };
+  toast.loading(`Carregando modelo (${clampedPercent}%)`, {
+    id: LOADING_TOAST_ID,
+    description: text,
+    duration: Infinity,
+  });
+};
 
   // Inicializa (ou reaproveita) o motor WebGPU singleton e carrega o modelo selecionado
   useEffect(() => {

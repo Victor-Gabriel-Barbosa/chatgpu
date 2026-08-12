@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             tabIndex={isSidebarOpen ? 0 : -1}
             className={`flex items-center overflow-hidden transition-all duration-300 absolute left-0 ${isSidebarOpen ? 'w-50 opacity-100' : 'w-0 opacity-0'}`}
           >
-            <div className="w-12 h-14 flex items-center justify-center shrink-0">
+            <div className={`w-12 h-14 flex items-center justify-center shrink-0 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
               <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
             </div>
             <span className="font-semibold text-blue-500 whitespace-nowrap">
@@ -227,6 +227,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       }`}>
                       {editingChatId === chat.id ? (
                         <input
+                          id={`chat-title-input-${chat.id}`}
                           ref={inputRef}
                           type="text"
                           value={editingName}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Copy, Lightbulb, ChevronDown, ChevronUp, Pencil, Paperclip } from 'lucide-react';
+import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { Message } from '@/types/chat';
 import Image from "next/image";
@@ -25,6 +25,8 @@ export interface ChatMessageProps {
   handleSubmitEdit?: (newContent: string, index: number) => void;
   /** Indica se esta é a última mensagem gerada pelo assistente. */
   isLastAssistant?: boolean;
+  /** Indica se a mensagem está sendo gerada. */
+  isGenerating?: boolean;
 }
 
 /**
@@ -150,7 +152,7 @@ const messageComponents: Components = {
  * @param props.isLastAssistant Flag que identifica se é a última mensagem do assistente.
  * @returns Elemento React contendo a mensagem renderizada.
  */
-export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant, isGenerating }) => {
   const [showReasoning, setShowReasoning] = useState(false);
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
@@ -184,7 +186,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         <div className="w-7 sm:w-8 shrink-0 flex justify-center items-baseline pt-2.5">
           {isLastAssistant && (
             <div className="flex gap-4 w-full justify-start">
-              <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
+              <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} className={`${isGenerating ? "animate-[spin_2s_linear_infinite]" : ""}`} />
               {!msg.content.trim() && (
                 <div className="flex items-center gap-1.5 px-2">
                   <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
@@ -203,7 +205,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         }`}
       >
         {displayReasoning && msg.role !== 'user' && (
-          <div className="mb-3 pb-3 border-b border-slate-300 dark:border-slate-700 transition-colors">
+          <div className="mb-3 pb-3">
             <button
               type="button"
               onClick={() => setShowReasoning(!showReasoning)}
@@ -282,7 +284,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                 <div key={idx} className="flex flex-col gap-2 w-full">
                   <button
                     type="button"
-                    className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg border hover:bg-blue-600 shadow-sm ${msg.role === 'user'
+                    className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg border hover:bg-blue-500 shadow-sm ${msg.role === 'user'
                       ? 'bg-blue-500/20 border-blue-400/30 text-white'
                       : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200'
                       }`}
@@ -292,7 +294,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                       <Paperclip size={14} className="shrink-0" />
                       <span className="font-medium truncate">{file.name}</span>
                     </div>
-                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Renderiza o conteúdo do arquivo se estiver expandido */}
