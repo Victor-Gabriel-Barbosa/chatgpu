@@ -1,6 +1,8 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "ChatGPU",
+  "short_name": "ChatGPU",
+  "description": "ChatGPT rodando inteiramente no seu navegador usando WebGPU e MLC",
+  "start_url": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
