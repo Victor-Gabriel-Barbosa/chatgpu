@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
+import { Check, Copy, Lightbulb, ChevronDown, ChevronUp, Pencil, Paperclip } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { Message } from '@/types/chat';
 import Image from "next/image";
@@ -51,13 +51,18 @@ const preprocessLaTeX = (content: string) => {
 const parseMessageContent = (content: string) => {
   if (!content) return { think: null, mainContent: '', files: [] };
 
-  const files: string[] = [];
+  const files: { name: string, content: string }[] = [];
   let processedContent = content;
 
   // Regex para capturar e extrair arquivos no formato <file name="arquivo.ext">...</file>
-  const fileRegex = /<file name="([^"]+)">[\s\S]*?<\/file>/g;
+  const fileRegex = /<file name="([^"]+)">([\s\S]*?)<\/file>/g;
   let match;
-  while ((match = fileRegex.exec(processedContent)) !== null) files.push(match[1]);
+  while ((match = fileRegex.exec(processedContent)) !== null) {
+    files.push({
+      name: match[1],
+      content: match[2].trim()
+    });
+  }
 
   // Remove o texto bruto dos arquivos para que não polua o chat
   processedContent = processedContent.replace(/<file name="[^"]+">[\s\S]*?<\/file>/g, '').trim();
@@ -147,11 +152,17 @@ const messageComponents: Components = {
  */
 export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant }) => {
   const [showReasoning, setShowReasoning] = useState(false);
+  const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
 
   const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
   const displayReasoning = parsedThink || msg.reasoning;
+
+  // Lida com a expansão e colapso do conteúdo dos arquivos
+  const toggleFile = (idx: number) => {
+    setExpandedFiles(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
 
   // Lida com o salvamento da edição
   const onSaveEdit = () => {
@@ -263,18 +274,39 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         {files.length > 0 && !isEditing && (
           <div className={`mt-3 pt-3 flex flex-wrap gap-2 border-t ${msg.role === 'user' ? 'border-blue-400/30' : 'border-slate-300 dark:border-slate-700'
             }`}>
-            {files.map((fileName, idx) => (
-              <div
-                key={idx}
-                className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border shadow-sm ${msg.role === 'user'
-                    ? 'bg-blue-500/20 border-blue-400/30 text-white'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200'
-                  }`}
-              >
-                <Paperclip size={14} className="shrink-0" />
-                <span className="max-w-40 truncate">{fileName}</span>
-              </div>
-            ))}
+            {files.map((file, idx) => {
+              const isExpanded = expandedFiles[idx];
+              const fileExtension = file.name.split('.').pop() || 'text';
+
+              return (
+                <div key={idx} className="flex flex-col gap-2 w-full">
+                  <button
+                    type="button"
+                    className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg border hover:bg-blue-600 shadow-sm ${msg.role === 'user'
+                      ? 'bg-blue-500/20 border-blue-400/30 text-white'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200'
+                      }`}
+                    onClick={() => toggleFile(idx)}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Paperclip size={14} className="shrink-0" />
+                      <span className="font-medium truncate">{file.name}</span>
+                    </div>
+                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </button>
+
+                  {/* Renderiza o conteúdo do arquivo se estiver expandido */}
+                  {isExpanded && (
+                    <div className="w-full animate-in fade-in slide-in-from-top-1 duration-200">
+                      <CodeBlock
+                        language={fileExtension}
+                        code={file.content}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 
