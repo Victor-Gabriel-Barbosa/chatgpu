@@ -151,7 +151,31 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Atualiza as mensagens de um chat específico, garantindo que a lista de chats seja reordenada com base na data de atualização.
+   * Exporta uma sessão de chat específica como um arquivo JSON.
+   *
+   * @param chatId Identificador do chat a ser exportado.
+   */
+  const exportChat = (chatId: string) => {
+    const chat = chats.find((c) => c.id === chatId);
+    if (!chat) {
+      toast.error("Chat não encontrado para exportação");
+      return;
+    }
+
+    const chatData = JSON.stringify(chat, null, 2);
+    const blob = new Blob([chatData], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${chat.title || "chat"}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Atualiza as mensagens de um chat específico reordenando com base na data de atualização.
    *
    * @param chatId Identificador do chat a ser atualizado.
    * @param newMessages Nova lista de mensagens do chat.
@@ -273,6 +297,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     handleRenameChat,
     loadChat,
     deleteChat,
+    exportChat,
     handleSend,
     handleSubmitEdit,
     handleStop,

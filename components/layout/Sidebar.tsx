@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Plus, EllipsisVertical, Settings, PanelLeftClose, PanelLeftOpen, Pencil, Trash2, Sun, Moon, Monitor, Quote } from 'lucide-react';
+import { MessageSquare, Plus, EllipsisVertical, Settings, PanelLeftClose, PanelLeftOpen, Pencil, Trash2, Sun, Moon, Monitor, Quote, Upload } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Chat } from '@/types/chat';
@@ -28,6 +28,8 @@ export interface SidebarProps {
   createNewChat: () => void;
   /** Função para excluir uma conversa selecionada. */
   deleteChat: (e: React.MouseEvent<HTMLButtonElement>, id: string) => void;
+  /** Função para exportar uma conversa selecionada. */
+  exportChat: (id: string) => void;
   /** Função para alterar o título de uma conversa. */
   renameChat: (id: string, newTitle: string) => void;
   /** Função para exibir o modal de configurações. */
@@ -49,6 +51,7 @@ export interface SidebarProps {
  * @param props.setCurrentChatId Função para alterar o chat ativo.
  * @param props.createNewChat Função para criar um novo chat.
  * @param props.deleteChat Função para excluir um chat.
+ * @param props.exportChat Função para exportar um chat.
  * @param props.renameChat Função para renomear um chat.
  * @param props.setSettingsOpen Função para abrir as configurações.
  * @param props.theme Tema visual atualmente aplicado.
@@ -56,7 +59,7 @@ export interface SidebarProps {
  * @returns Elemento React contendo o layout da barra lateral de navegação.
  */
 export const Sidebar: React.FC<SidebarProps> = ({
-  isSidebarOpen, setIsSidebarOpen, chats, currentChatId, setCurrentChatId, createNewChat, deleteChat, renameChat, setSettingsOpen, theme = 'system', setTheme = () => { }
+  isSidebarOpen, setIsSidebarOpen, chats, currentChatId, setCurrentChatId, createNewChat, deleteChat, exportChat, renameChat, setSettingsOpen, theme = 'system', setTheme = () => { }
 }) => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
@@ -261,11 +264,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
+                              exportChat(chat.id);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 rounded-t-lg transition-colors"
+                          >
+                            <Upload size={14} />
+                            Exportar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setEditingChatId(chat.id);
                               setEditingName(chat.title);
                               setOpenMenuId(null);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 rounded-t-lg transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
                           >
                             <Pencil size={14} />
                             Renomear
@@ -281,7 +295,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           >
                             <Trash2 size={14} />
                             Excluir
-                          </button>
+                          </button>                          
                         </div>
                       )}
                     </div>

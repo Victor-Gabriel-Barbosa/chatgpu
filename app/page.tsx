@@ -28,6 +28,7 @@ export default function ChatInterface() {
     handleRenameChat,
     loadChat,
     deleteChat,
+    exportChat,
     handleSend,
     handleSubmitEdit,
     handleStop,
@@ -97,6 +98,7 @@ export default function ChatInterface() {
         setCurrentChatId={loadChat}
         createNewChat={handleNewChat}
         deleteChat={deleteChat}
+        exportChat={exportChat}
         renameChat={handleRenameChat}
         setSettingsOpen={setIsSettingsOpen}
         theme={theme}
