@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { SendHorizontal, Plus, Square, PanelLeft } from "lucide-react";
+import { useState, useRef, useEffect, type ChangeEvent } from "react";
+import { SendHorizontal, Plus, Square, PanelLeft, Paperclip, X } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/layout/ChatMessage";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -35,11 +35,13 @@ export default function ChatInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
-  // Ref para o final da lista de mensagens
+  // Ref para o final da lista de mensagens e para o input de arquivos
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Encontrar o índice da última mensagem do assistente para controle de UI
+  // Índice da última mensagem do assistente para controle de UI
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
 
   // Faz scroll para a última mensagem
@@ -65,6 +67,18 @@ export default function ChatInterface() {
         console.error("Erro ao copiar mensagem:", error);
         toast.error("Falha ao copiar a mensagem. Tente novamente");
       });
+  };
+
+  // Adiciona os arquivos escolhidos (input genérico ou de imagem) à lista de anexos
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files ?? []);
+    if (selected.length > 0) setAttachedFiles((prev) => [...prev, ...selected]);
+    e.target.value = "";
+  };
+
+  // Remove um anexo da lista pelo índice
+  const removeAttachedFile = (index: number) => {
+    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -126,7 +140,7 @@ export default function ChatInterface() {
               />
             ))}
             {/* Elemento âncora para o scroll */}
-            <div ref={messagesEndRef} />
+            <div className="h-40" ref={messagesEndRef} />
           </div>
         </div>
 
@@ -138,13 +152,36 @@ export default function ChatInterface() {
             }`}
         >
           {messages.length === 0 && isReady && (
-            <div className="flex flex-col items-center justify-center gap-4 mb-8 text-2xl">
-              <Image src="/icon0.svg" alt="ChatGPU" width={64} height={64} className="mb-2" />
+            <div className="max-md:hidden flex flex-col items-center justify-center gap-4 mb-8 text-2xl">
+              <Image src="/icon0.svg" alt="ChatGPU" width={54} height={54} className="mb-2" />
               <span className="font-bold text-blue-500 text-center">Como posso ajudar hoje?</span>
             </div>
           )}
 
-          <div className="max-w-180 mx-auto bg-slate-100 dark:bg-slate-800 rounded-3xl shadow-md">
+          <div className="max-w-180 mx-auto bg-slate-100 dark:bg-slate-800 rounded-2xl shadow-md">
+            {/* Chips dos arquivos anexados */}
+            {attachedFiles.length > 0 && (
+              <div className="flex flex-wrap gap-2 px-4 pt-3">
+                {attachedFiles.map((file, i) => (
+                  <div
+                    key={`${file.name}-${i}`}
+                    className="flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs pl-2.5 pr-1.5 py-1 rounded-full border border-slate-200 dark:border-slate-600 shadow-sm"
+                  >
+                    <Paperclip size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />
+                    <span className="max-w-32 truncate">{file.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeAttachedFile(i)}
+                      aria-label={`Remover ${file.name}`}
+                      className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-full p-0.5 transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="flex items-center">
               <textarea
                 id="chat-input"
@@ -153,33 +190,64 @@ export default function ChatInterface() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    handleSend();
+                    handleSend(attachedFiles);
+                    setAttachedFiles([]);
                   }
                 }}
                 placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
                 disabled={!isReady || isGenerating}
-                className="field-sizing-content leading-6 flex-1 px-4 pt-4 mt-2 me-2 pb-2 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
+                className="field-sizing-content leading-6 flex-1 px-4 pt-4 me-2 pb-2 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
                 rows={1}
               />
             </div>
             <div className="flex items-center justify-between px-2">
-              <select
-                id="model-select"
-                value={selectedModel}
-                onChange={(e) => handleModelChange(e.target.value)}
-                className="max-w-20 sm:max-w-40 truncate p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
-                title="Selecionar modelo"
-              >
-                {SUPPORTED_MODELS.map((group) => (
-                  <optgroup key={group.label} label={group.label} className="bg-slate-100 dark:bg-slate-800">
-                    {group.options.map((model) => (
-                      <option key={model.id} value={model.id}>
-                        {model.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+              <div className="flex items-center gap-2">
+                {/* Botão de anexo de arquivos */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={!isReady}
+                    aria-label={"Anexar arquivo"}
+                    title="Anexar arquivo"
+                    className={`group flex items-center h-10 w-full bg-transparent hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors shrink-0 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-40 disabled:pointer-events-none 
+                      }`}
+                  >
+                    <div className="w-12 h-10 flex items-center justify-center shrink-0">
+                      <div className="w-6 h-6 bg-slate-900 text-white dark:bg-white dark:text-black rounded-full flex items-center justify-center transition-colors">
+                        <Plus size={16} strokeWidth={2.5} />
+                      </div>
+                    </div>
+                  </button>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </div>
+
+                <select
+                  id="model-select"
+                  value={selectedModel}
+                  onChange={(e) => handleModelChange(e.target.value)}
+                  className="max-w-20 sm:max-w-40 truncate p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm"
+                  title="Selecionar modelo"
+                >
+                  {SUPPORTED_MODELS.map((group) => (
+                    <optgroup key={group.label} label={group.label} className="bg-slate-100 dark:bg-slate-800">
+                      {group.options.map((model) => (
+                        <option key={model.id} value={model.id}>
+                          {model.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
 
               {isGenerating ? (
                 <button
@@ -193,7 +261,10 @@ export default function ChatInterface() {
               ) : (
                 <button
                   type="button"
-                  onClick={handleSend}
+                  onClick={() => {
+                    handleSend(attachedFiles);
+                    setAttachedFiles([]);
+                  }}
                   disabled={!input.trim() || !isReady}
                   className={`p-3 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm ${input.trim() && isReady ? "bg-blue-600 hover:bg-blue-700" : ""
                     }`}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { ChatSession, Message } from "@/types/chat";
 import { toast } from "sonner";
+import { fileToPlainText } from "@/lib/fileToText";
 
 /**
  * Propriedades para inicialização do hook useSession.
@@ -11,6 +12,41 @@ export interface UseSessionProps {
   engine: WebWorkerMLCEngine | null;
   /** Indica se o motor de IA está carregado e pronto para uso. */
   isReady: boolean;
+}
+
+/**
+ * Processa a resposta do assistente de forma iterativa, atualizando o estado das mensagens em tempo real.
+ * @param engine Instância do motor de inferência.
+ * @param chatHistory Histórico de mensagens do chat.
+ * @param chatId Identificador da sessão de chat atual.
+ * @param setMessages Função para atualizar o estado das mensagens.
+ * @param updateChatMessages Função para atualizar as mensagens de uma sessão específica.
+ * @returns Promise que resolve quando a resposta do assistente é completamente processada.
+ */
+async function streamAssistantReply(
+  engine: WebWorkerMLCEngine,
+  chatHistory: Message[],
+  chatId: string,
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+  updateChatMessages: (id: string, msgs: Message[]) => void,
+) {
+  setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+  const completion = await engine.chat.completions.create({ stream: true, messages: chatHistory });
+  let resp = "";
+  for await (const chunk of completion) {
+    const delta = chunk.choices[0]?.delta?.content;
+    if (!delta) continue;
+    resp += delta;
+    setMessages((prev) => {
+      const next = [...prev];
+      next[next.length - 1] = { ...next[next.length - 1], content: resp };
+      return next;
+    });
+  }
+  setMessages((current) => {
+    updateChatMessages(chatId, current);
+    return current;
+  });
 }
 
 /**
@@ -36,10 +72,10 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     if (savedChats) {
       try {
         const parsedChats: ChatSession[] = JSON.parse(savedChats);
-        
+
         Promise.resolve().then(() => {
           setChats(parsedChats);
-          
+
           // Se houver um ID de chat salvo, sincroniza restaurando as mensagens e o ID atual
           if (savedCurrentChatId) {
             const activeChat = parsedChats.find((c) => c.id === savedCurrentChatId);
@@ -131,10 +167,26 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   /**
    * Envia a entrada atual do usuário para o motor de IA e processa a resposta gerada de forma iterativa.
    */
-  const handleSend = async () => {
-    if (!input.trim() || !engine || !isReady) return;
+  const handleSend = async (files: File[] = []) => {
+    if (engine == null || (!input.trim() && files.length === 0)) return;
 
-    const userMsg = input;
+    let prompt = input;
+
+    if (files.length > 0) {
+      prompt += "\n\n";
+
+      for (const file of files) {
+        try {
+          const textContent = await fileToPlainText(file);
+          prompt += `<file name="${file.name}">\n${textContent}\n</file>\n`;
+        } catch (error) {
+          console.error(`Erro ao ler o arquivo ${file.name}`, error);
+          toast.error(`Erro ao ler o arquivo ${file.name}`);
+        }
+      }
+    }
+
+    const userMsg = prompt;
     setInput("");
 
     const newMessages: Message[] = [...messages, { role: "user", content: userMsg }];
@@ -160,33 +212,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
 
     const chatHistory = [...newMessages];
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const completion = await engine.chat.completions.create({
-        stream: true,
-        messages: chatHistory,
-      });
-
-      let resp = "";
-
-      for await (const chunk of completion) {
-        const delta = chunk.choices[0]?.delta?.content;
-        if (delta) {
-          resp += delta;
-          setMessages((prev) => {
-            const newMsgList = [...prev];
-            const lastIndex = newMsgList.length - 1;
-            newMsgList[lastIndex] = { ...newMsgList[lastIndex], content: resp };
-            return newMsgList;
-          });
-        }
-      }
-
-      setMessages((currentMessages) => {
-        updateChatMessages(activeChatId, currentMessages);
-        return currentMessages;
-      });
+      await streamAssistantReply(engine, chatHistory, activeChatId, setMessages, updateChatMessages);
     } catch (error) {
       console.error("Erro na inferência:", error);
       toast.error(`Erro na inferência: ${error}`);
@@ -213,33 +241,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     if (currentChatId) updateChatMessages(currentChatId, updatedMessages);
 
     const chatHistory = [...updatedMessages];
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const completion = await engine.chat.completions.create({
-        stream: true,
-        messages: chatHistory,
-      });
-
-      let resp = "";
-
-      for await (const chunk of completion) {
-        const delta = chunk.choices[0]?.delta?.content;
-        if (delta) {
-          resp += delta;
-          setMessages((prev) => {
-            const newMsgList = [...prev];
-            const lastIndex = newMsgList.length - 1;
-            newMsgList[lastIndex] = { ...newMsgList[lastIndex], content: resp };
-            return newMsgList;
-          });
-        }
-      }
-
-      setMessages((currentMessages) => {
-        updateChatMessages(currentChatId as string, currentMessages);
-        return currentMessages;
-      });
+      await streamAssistantReply(engine, chatHistory, currentChatId!, setMessages, updateChatMessages);
     } catch (error) {
       console.error("Erro na inferência (edição):", error);
       toast.error(`Erro na inferência (edição): ${error}`);

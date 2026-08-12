@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Copy, Lightbulb, ChevronDown, Pencil } from 'lucide-react';
+import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { Message } from '@/types/chat';
 import Image from "next/image";
@@ -43,33 +43,46 @@ const preprocessLaTeX = (content: string) => {
 };
 
 /**
- * Separa o bloco de raciocínio (tag <think>) do conteúdo principal da mensagem.
+ * Separa o bloco de raciocínio e os arquivos do conteúdo principal da mensagem.
  *
  * @param content Conteúdo completo da mensagem.
- * @returns Objeto contendo o raciocínio extraído e o conteúdo principal restante.
+ * @returns Um objeto contendo o raciocínio, o conteúdo principal e a lista de arquivos.
  */
 const parseMessageContent = (content: string) => {
-  if (!content) return { think: null, mainContent: '' };
+  if (!content) return { think: null, mainContent: '', files: [] };
+
+  const files: string[] = [];
+  let processedContent = content;
+
+  // Regex para capturar e extrair arquivos no formato <file name="arquivo.ext">...</file>
+  const fileRegex = /<file name="([^"]+)">[\s\S]*?<\/file>/g;
+  let match;
+  while ((match = fileRegex.exec(processedContent)) !== null) files.push(match[1]);
+
+  // Remove o texto bruto dos arquivos para que não polua o chat
+  processedContent = processedContent.replace(/<file name="[^"]+">[\s\S]*?<\/file>/g, '').trim();
 
   // Verifica tag completa <think>...</think>
-  const thinkMatch = new RegExp(/<think>([\s\S]*?)<\/think>/).exec(content);
+  const thinkMatch = new RegExp(/<think>([\s\S]*?)<\/think>/).exec(processedContent);
   if (thinkMatch) {
     return {
       think: thinkMatch[1].trim(),
-      mainContent: content.replace(/<think>[\s\S]*?<\/think>/, '').trim()
+      mainContent: processedContent.replace(/<think>[\s\S]*?<\/think>/, '').trim(),
+      files
     };
   }
 
   // Fallback para quando o modelo ainda está gerando a resposta (streaming)
-  const openThinkMatch = new RegExp(/<think>([\s\S]*)/).exec(content);
+  const openThinkMatch = new RegExp(/<think>([\s\S]*)/).exec(processedContent);
   if (openThinkMatch) {
     return {
       think: openThinkMatch[1].trim(),
-      mainContent: content.replace(/<think>[\s\S]*/, '').trim()
+      mainContent: processedContent.replace(/<think>[\s\S]*/, '').trim(),
+      files
     };
   }
 
-  return { think: null, mainContent: content };
+  return { think: null, mainContent: processedContent, files };
 };
 
 const reasoningComponents: Components = {
@@ -137,7 +150,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
 
-  const { think: parsedThink, mainContent } = parseMessageContent(msg.content);
+  const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
   const displayReasoning = parsedThink || msg.reasoning;
 
   // Lida com o salvamento da edição
@@ -203,7 +216,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           </div>
         )}
 
-        <div className="whitespace-pre-wrap wrap-break-word leading-relaxed space-y-2 w-full max-w-full">
+        <div className="wrap-break-word leading-relaxed space-y-2 w-full max-w-full">
           {isEditing ? (
             <div className="flex flex-col gap-2 w-full min-w-62.5 sm:min-w-100">
               <textarea
@@ -215,7 +228,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                     onSaveEdit();
                   }
                 }}
-                className="field-sizing-content leading-6 w-full bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none overflow-y-auto max-h-35 rounded-xl text-sm"
+                className="field-sizing-content leading-6 w-full bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none overflow-y-auto max-h-55 rounded-xl text-sm"
                 rows={1}
               />
               <div className="flex justify-end gap-2 mt-1">
@@ -246,6 +259,24 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
             </ReactMarkdown>
           )}
         </div>
+
+        {files.length > 0 && !isEditing && (
+          <div className={`mt-3 pt-3 flex flex-wrap gap-2 border-t ${msg.role === 'user' ? 'border-blue-400/30' : 'border-slate-300 dark:border-slate-700'
+            }`}>
+            {files.map((fileName, idx) => (
+              <div
+                key={idx}
+                className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border shadow-sm ${msg.role === 'user'
+                    ? 'bg-blue-500/20 border-blue-400/30 text-white'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200'
+                  }`}
+              >
+                <Paperclip size={14} className="shrink-0" />
+                <span className="max-w-40 truncate">{fileName}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {!isEditing && (
           <div className="absolute flex items-center gap-1 opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 left-0 -bottom-8 transition-all">

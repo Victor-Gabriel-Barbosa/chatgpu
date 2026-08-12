@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Plus, EllipsisVertical, Settings, PanelLeftClose, PanelLeft, Pencil, Trash2, Sun, Moon, Monitor } from 'lucide-react';
+import { MessageSquare, Plus, EllipsisVertical, Settings, PanelLeftClose, PanelLeftOpen, Pencil, Trash2, Sun, Moon, Monitor, Quote } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Chat } from '@/types/chat';
@@ -141,7 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {isSidebarOpen ? <PanelLeftClose size={20} /> : (
                   <div className="relative w-6 h-6 flex items-center justify-center">
                     <Image className="absolute transition-opacity duration-200 opacity-100 group-hover:opacity-0" src="/icon0.svg" alt="ChatGPU" width={24} height={24} />
-                    <PanelLeft className="absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100" size={20} />
+                    <PanelLeftOpen className="absolute transition-opacity duration-200 opacity-0 group-hover:opacity-100" size={20} />
                   </div>
                 )}
               </button>
@@ -179,9 +179,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Lista de Conversas */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-1 custom-scrollbar -mx-2">
-          <div className="overflow-hidden transition-all duration-300 shrink-0 flex items-end h-6 opacity-100 mb-1">
+          <div className={`overflow-hidden transition-all duration-300 shrink-0 flex items-end h-6 opacity-100 mb-1 ${!isSidebarOpen && 'w-15 justify-center'}`}>
             <p className="px-3 text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">
-              {isSidebarOpen && "Conversas"}
+              {isSidebarOpen ? "Conversas" : <Quote size={16} />}
             </p>
           </div>
 
