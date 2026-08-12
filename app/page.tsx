@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
-import { SendHorizontal, Plus, Square, PanelLeftOpen, PanelLeftClose, Paperclip, X } from "lucide-react";
+import { SendHorizontal, Plus, Square, PanelLeftOpen, PanelLeftClose, Paperclip, X, HardDrive } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/layout/ChatMessage";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsModal } from "@/components/layout/SettingsModal";
+import { ModelManagerModal } from "@/components/layout/ModelManagerModal";
 import { SUPPORTED_MODELS } from "@/constants/models";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -44,6 +45,7 @@ export default function ChatInterface() {
   } = useSession({ engine, isReady });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isModelManagerOpen, setIsModelManagerOpen] = useState(false);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
@@ -263,6 +265,16 @@ export default function ChatInterface() {
                     ))}
                   </SelectContent>
                 </Select>
+
+                <button
+                  type="button"
+                  onClick={() => setIsModelManagerOpen(true)}
+                  title="Gerenciar modelos baixados"
+                  aria-label="Gerenciar modelos baixados"
+                  className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                >
+                  <HardDrive size={18} />
+                </button>
               </div>
 
               {isGenerating ? (
@@ -303,6 +315,16 @@ export default function ChatInterface() {
           selectedModel={selectedModel}
           setSelectedModel={handleModelChange}
           onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
+
+      { /* Modal de Gerenciamento de Modelos Baixados */}
+      {isModelManagerOpen && (
+        <ModelManagerModal
+          selectedModel={selectedModel}
+          isGenerating={isGenerating}
+          onSelectModel={handleModelChange}
+          onClose={() => setIsModelManagerOpen(false)}
         />
       )}
 
