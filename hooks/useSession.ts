@@ -3,6 +3,7 @@ import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { ChatSession, Message } from "@/types/chat";
 import { toast } from "sonner";
 import { fileToPlainText } from "@/lib/fileToText";
+import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
 
 /**
  * Propriedades para inicialização do hook useSession.
@@ -67,51 +68,69 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const [chats, setChats] = useState<ChatSession[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
 
-  // Carrega as sessões de chat salvas e o chat atual do localStorage ao montar o componente
+  // Carrega as sessões de chat salvas e o chat atual do IndexedDB (via Dexie) ao montar o componente
   useEffect(() => {
-    const savedChats = localStorage.getItem("chatgpu-sessions");
-    const savedCurrentChatId = localStorage.getItem("chatgpu-current-session");
+    let isMounted = true;
 
-    if (savedChats) {
+    const loadSession = async () => {
       try {
-        const parsedChats: ChatSession[] = JSON.parse(savedChats);
+        const savedChats = await db.chats
+          .orderBy("updatedAt")
+          .reverse()
+          .toArray();
+        const savedCurrentChatSetting = await db.settings.get(
+          CURRENT_CHAT_SETTING_KEY,
+        );
 
-        Promise.resolve().then(() => {
-          setChats(parsedChats);
+        if (!isMounted) return;
 
-          // Se houver um ID de chat salvo, sincroniza restaurando as mensagens e o ID atual
-          if (savedCurrentChatId) {
-            const activeChat = parsedChats.find(
-              (c) => c.id === savedCurrentChatId,
-            );
-            if (activeChat) {
-              setCurrentChatId(savedCurrentChatId);
-              setMessages(activeChat.messages);
-            }
+        setChats(savedChats);
+
+        // Se houver um ID de chat salvo, sincroniza restaurando as mensagens e o ID atual
+        const savedCurrentChatId = savedCurrentChatSetting?.value ?? null;
+        if (savedCurrentChatId) {
+          const activeChat = savedChats.find(
+            (c: ChatSession) => c.id === savedCurrentChatId,
+          );
+          if (activeChat) {
+            setCurrentChatId(savedCurrentChatId);
+            setMessages(activeChat.messages);
           }
-        });
-      } catch (error) {
+        }
+      } catch (error: unknown) {
         console.error("Erro ao carregar sessões de chat salvas:", error);
         toast.error("Erro ao carregar sessões de chat salvas");
       }
-    }
+    };
+
+    loadSession();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // Salva as sessões de chat no localStorage sempre que elas mudarem
+  // Salva o ID do chat atual no IndexedDB sempre que ele mudar
   useEffect(() => {
-    localStorage.setItem("chatgpu-sessions", JSON.stringify(chats));
-  }, [chats]);
+    const persistCurrentChatId = async () => {
+      try {
+        if (currentChatId) {
+          await db.settings.put({
+            key: CURRENT_CHAT_SETTING_KEY,
+            value: currentChatId,
+          });
+        } else {
+          await db.settings.delete(CURRENT_CHAT_SETTING_KEY);
+        }
+      } catch (error) {
+        console.error("Erro ao salvar sessão atual:", error);
+      }
+    };
 
-  // Salva o ID do chat atual no localStorage sempre que ele mudar
-  useEffect(() => {
-    if (currentChatId)
-      localStorage.setItem("chatgpu-current-session", currentChatId);
-    else localStorage.removeItem("chatgpu-current-session");
+    persistCurrentChatId();
   }, [currentChatId]);
 
-  /**
-   * Cria uma nova sessão de chat, limpando as mensagens e resetando o estado atual.
-   */
+  // Cria uma nova sessão de chat, limpando as mensagens e resetando o estado atual.
   const handleNewChat = () => {
     if (isGenerating) return;
     setMessages([]);
@@ -130,6 +149,11 @@ export function useSession({ engine, isReady }: UseSessionProps) {
         chat.id === chatId ? { ...chat, title: newTitle } : chat,
       ),
     );
+
+    db.chats.update(chatId, { title: newTitle }).catch((error: unknown) => {
+      console.error("Erro ao renomear chat:", error);
+      toast.error("Erro ao renomear chat");
+    });
   };
 
   /**
@@ -156,6 +180,11 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     e.stopPropagation();
     setChats((prev) => prev.filter((c) => c.id !== chatId));
     if (currentChatId === chatId) handleNewChat();
+
+    db.chats.delete(chatId).catch((error) => {
+      console.error("Erro ao excluir chat:", error);
+      toast.error("Erro ao excluir chat");
+    });
   };
 
   /**
@@ -165,7 +194,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    */
   const exportChat = async (chatId: string) => {
     const chat = chats.find((c) => c.id === chatId);
-
     if (!chat) {
       toast.error("Chat não encontrado para exportação");
       return;
@@ -173,7 +201,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     const chatData = JSON.stringify(chat, null, 2);
     const fileName = `${chat.title || "chat"}.json`;
-
     try {
       if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
         const { save } = await import("@tauri-apps/plugin-dialog");
@@ -223,19 +250,24 @@ export function useSession({ engine, isReady }: UseSessionProps) {
         )
         .sort((a, b) => b.updatedAt - a.updatedAt),
     );
+
+    db.chats.update(chatId, { messages: newMessages }).catch((error: unknown) => {
+      console.error("Erro ao salvar mensagens do chat:", error);
+      toast.error("Erro ao salvar mensagens do chat");
+    });
   };
 
   /**
    * Envia a entrada atual do usuário para o motor de IA e processa a resposta gerada de forma iterativa.
+   * 
+   * @param files Lista de arquivos anexados que serão incluídos na entrada do usuário.
    */
   const handleSend = async (files: File[] = []) => {
     if (engine == null || (!input.trim() && files.length === 0)) return;
-
+    
     let prompt = input;
-
     if (files.length > 0) {
       prompt += "\n\n";
-
       for (const file of files) {
         try {
           const textContent = await fileToPlainText(file);
@@ -258,14 +290,12 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     setIsGenerating(true);
 
     let activeChatId = currentChatId;
-
     if (activeChatId) updateChatMessages(activeChatId, newMessages);
     else {
       activeChatId = Date.now().toString();
       setCurrentChatId(activeChatId);
 
-      const newTitle =
-        userMsg.slice(0, 30) + (userMsg.length > 30 ? "..." : "");
+      const newTitle = userMsg.slice(0, 30) + (userMsg.length > 30 ? "..." : "");
       const newChat: ChatSession = {
         id: activeChatId,
         title: newTitle,
@@ -274,6 +304,11 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       };
 
       setChats((prev) => [newChat, ...prev]);
+
+      db.chats.add(newChat).catch((error) => {
+        console.error("Erro ao criar chat:", error);
+        toast.error("Erro ao criar chat");
+      });
     }
 
     const chatHistory = [...newMessages];
@@ -329,9 +364,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
   };
 
-  /**
-   * Interrompe a geração da resposta da IA e salva o estado atual da conversa.
-   */
+  // Interrompe a geração da resposta da IA e salva o estado atual da conversa.
   const handleStop = () => {
     if (engine && isGenerating) {
       engine.interruptGenerate();

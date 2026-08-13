@@ -16,6 +16,7 @@
     "@tauri-apps/plugin-fs": "^2.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dexie": "^4.4.4",
     "lucide-react": "^1.16.0",
     "mammoth": "^1.12.1",
     "next": "^16.2.6",
