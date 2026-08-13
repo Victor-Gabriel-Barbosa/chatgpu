@@ -4,10 +4,14 @@ import { toast } from "sonner";
 import { defaultModelId } from "@/constants/models.json";
 
 const LOADING_TOAST_ID = "carregamento-modelo";
+const STORAGE_KEY = "chatgpu-model";
 
 // Singleton do motor WebGPU (worker + engine) para reaproveitamento entre trocas de modelo e remontagens do componente
 let engineSingleton: WebWorkerMLCEngine | null = null;
 let workerSingleton: Worker | null = null;
+
+// Fila de promessas para serializar chamadas a reload() e evitar concorrência entre múltiplas trocas de modelo
+let reloadChain: Promise<void> = Promise.resolve();
 
 /**
  * Retorna a instância singleton do motor WebGPU, criando se ainda não existir.
@@ -25,28 +29,36 @@ function getEngineSingleton(): WebWorkerMLCEngine {
 }
 
 /**
+ * Lê o modelo salvo no localStorage, se houver, ou o modelo padrão. Usado
+ * como inicializador preguiçoso do estado para evitar uma segunda renderização
+ * (e um segundo carregamento) logo após montar o componente.
+ *
+ * @returns ID do modelo a ser usado inicialmente.
+ */
+function getInitialModel(): string {
+  if (typeof window === "undefined") return defaultModelId;
+  return localStorage.getItem(STORAGE_KEY) || defaultModelId;
+}
+
+/**
  * Gerencia o estado e a lógica do motor de IA, incluindo a inicialização, seleção de modelo e feedback de carregamento.
  *
  * O motor (worker + engine) é um singleton reaproveitado entre trocas de modelo
  * e remontagens do componente; apenas reload() é chamado ao trocar de modelo.
+ * As chamadas a reload() são serializadas numa fila para garantir que nunca
+ * haja duas em andamento ao mesmo tempo.
  *
  * @returns Objeto contendo a instância do motor, estado de prontidão, ID do modelo selecionado e função para troca de modelo.
  */
 export function useEngine() {
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
-  const [selectedModel, setSelectedModel] = useState(defaultModelId);
+  const [selectedModel, setSelectedModel] = useState<string>(getInitialModel);
   const [isReady, setIsReady] = useState(false);
   const loadIdRef = useRef(0);
 
-  // Carrega o modelo selecionado do localStorage ao montar o componente
-  useEffect(() => {
-    const savedModel = localStorage.getItem("chatgpu-model");
-    if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
-  }, []);
-
   // Salva o modelo selecionado no localStorage sempre que ele mudar
   useEffect(() => {
-    if (selectedModel) localStorage.setItem("chatgpu-model", selectedModel);
+    if (selectedModel) localStorage.setItem(STORAGE_KEY, selectedModel);
   }, [selectedModel]);
 
   /**
@@ -56,14 +68,14 @@ export function useEngine() {
    * @param text Texto descritivo do estado atual do carregamento.
    */
   const showLoadingToast = (percent: number, text: string) => {
-  const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
+    const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
 
-  toast.loading(`Carregando modelo (${clampedPercent}%)`, {
-    id: LOADING_TOAST_ID,
-    description: text,
-    duration: Infinity,
-  });
-};
+    toast.loading(`Carregando modelo (${clampedPercent}%)`, {
+      id: LOADING_TOAST_ID,
+      description: text,
+      duration: Infinity,
+    });
+  };
 
   // Inicializa (ou reaproveita) o motor WebGPU singleton e carrega o modelo selecionado
   useEffect(() => {
@@ -81,8 +93,15 @@ export function useEngine() {
         showLoadingToast((report.progress ?? 0) * 100, report.text);
       });
 
+      // Serializa a chamada a reload() para evitar concorrência
+      const runReload: Promise<void> = reloadChain.catch(() => {}).then(() => {
+        if (currentLoadId !== loadIdRef.current) return;
+        return sharedEngine.reload(selectedModel);
+      });
+      reloadChain = runReload;
+
       try {
-        await sharedEngine.reload(selectedModel);
+        await runReload;
         if (currentLoadId !== loadIdRef.current) return;
 
         setEngine(sharedEngine);
@@ -102,7 +121,7 @@ export function useEngine() {
     };
 
     initEngine();
-    
+
     return () => {
       toast.dismiss(LOADING_TOAST_ID);
     };
