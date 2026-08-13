@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
-import { DEFAULT_MODEL_ID } from "@/constants/models";
+import { defaultModelId } from "@/constants/models.json";
 
 const LOADING_TOAST_ID = "carregamento-modelo";
 
@@ -34,7 +34,7 @@ function getEngineSingleton(): WebWorkerMLCEngine {
  */
 export function useEngine() {
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
-  const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
+  const [selectedModel, setSelectedModel] = useState(defaultModelId);
   const [isReady, setIsReady] = useState(false);
   const loadIdRef = useRef(0);
 

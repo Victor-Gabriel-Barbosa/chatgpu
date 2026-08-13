@@ -1,0 +1,15 @@
+{
+  "id": "1786580833085",
+  "title": "ola",
+  "messages": [
+    {
+      "role": "user",
+      "content": "ola"
+    },
+    {
+      "role": "assistant",
+      "content": "Olá! Como posso ajudar você hoje?"
+    }
+  ],
+  "updatedAt": 1786580833085
+}

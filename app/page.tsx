@@ -7,7 +7,7 @@ import { ChatMessage } from "@/components/layout/ChatMessage";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsModal } from "@/components/layout/SettingsModal";
 import { ModelManagerModal } from "@/components/layout/ModelManagerModal";
-import { SUPPORTED_MODELS } from "@/constants/models";
+import { models as Models } from "@/constants/models.json";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
@@ -145,7 +145,7 @@ export default function ChatInterface() {
 
         {/* Mensagens */}
         <div className="flex-1 relative overflow-y-auto">
-          <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8">
+          <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-8">
             {messages.map((msg, index) => (
               <ChatMessage
                 key={index}
@@ -171,7 +171,7 @@ export default function ChatInterface() {
             }`}
         >
           {messages.length === 0 && isReady && (
-            <div className="max-md:hidden flex flex-col items-center justify-center gap-4 mb-8 text-2xl">
+            <div className="max-md:hidden flex flex-row items-center justify-center gap-4 mb-8 text-2xl">
               <Image src="/icon0.svg" alt="ChatGPU" width={54} height={54} className="mb-2" />
               <span className="font-bold text-blue-500 text-center">Como posso ajudar hoje?</span>
             </div>
@@ -215,7 +215,7 @@ export default function ChatInterface() {
                 }}
                 placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
                 disabled={!isReady || isGenerating}
-                className="flex-1 px-4 pt-4 me-2 pb-2 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
+                className="flex-1 px-2 pt-4 mx-2 pb-2 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
                 rows={1}
               />
             </div>
@@ -260,7 +260,7 @@ export default function ChatInterface() {
                     <SelectValue placeholder="Selecionar modelo" />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-100 dark:text-white dark:bg-slate-800">
-                    {SUPPORTED_MODELS.map((group) => (
+                    {Models.map((group) => (
                       <SelectGroup key={group.label}>
                         <SelectLabel>{group.label}</SelectLabel>
                         {group.options.map((model) => (
@@ -316,7 +316,7 @@ export default function ChatInterface() {
             </div>
           </div>
           <div className="text-center text-xs text-slate-500 mt-2">
-            A IA pode cometer erros. Processamento 100% local via WebGPU
+            O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
           </div>
         </div>
       </main>
@@ -342,10 +342,11 @@ export default function ChatInterface() {
 
       { /* Toaster para notificações */}
       <Toaster
-        position="bottom-left"
+        position="bottom-right"
         theme={theme === "dark" || theme === "light" || theme === "system" ? theme : "system"}
         richColors
         closeButton
+        offset={{ bottom: 5}}
       />
     </div>
   );

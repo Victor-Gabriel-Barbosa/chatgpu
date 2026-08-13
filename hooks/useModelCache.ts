@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { hasModelInCache, deleteModelAllInfoInCache } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
-import { SUPPORTED_MODELS } from "@/constants/models";
+import { models as Models } from "@/constants/models.json";
 
 export interface ManagedModel {
   id: string;
@@ -31,7 +31,7 @@ export interface StorageEstimateInfo {
 export function useModelCache() {
   const flatModels = useMemo(
     () =>
-      SUPPORTED_MODELS.flatMap((group) =>
+      Models.flatMap((group) =>
         group.options.map((option) => ({
           id: option.id,
           name: option.name,

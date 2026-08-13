@@ -31,7 +31,10 @@ async function streamAssistantReply(
   updateChatMessages: (id: string, msgs: Message[]) => void,
 ) {
   setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-  const completion = await engine.chat.completions.create({ stream: true, messages: chatHistory });
+  const completion = await engine.chat.completions.create({
+    stream: true,
+    messages: chatHistory,
+  });
   let resp = "";
   for await (const chunk of completion) {
     const delta = chunk.choices[0]?.delta?.content;
@@ -78,7 +81,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
           // Se houver um ID de chat salvo, sincroniza restaurando as mensagens e o ID atual
           if (savedCurrentChatId) {
-            const activeChat = parsedChats.find((c) => c.id === savedCurrentChatId);
+            const activeChat = parsedChats.find(
+              (c) => c.id === savedCurrentChatId,
+            );
             if (activeChat) {
               setCurrentChatId(savedCurrentChatId);
               setMessages(activeChat.messages);
@@ -99,7 +104,8 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   // Salva o ID do chat atual no localStorage sempre que ele mudar
   useEffect(() => {
-    if (currentChatId) localStorage.setItem("chatgpu-current-session", currentChatId);
+    if (currentChatId)
+      localStorage.setItem("chatgpu-current-session", currentChatId);
     else localStorage.removeItem("chatgpu-current-session");
   }, [currentChatId]);
 
@@ -120,7 +126,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    */
   const handleRenameChat = (chatId: string, newTitle: string) => {
     setChats((prev) =>
-      prev.map((chat) => (chat.id === chatId ? { ...chat, title: newTitle } : chat))
+      prev.map((chat) =>
+        chat.id === chatId ? { ...chat, title: newTitle } : chat,
+      ),
     );
   };
 
@@ -155,24 +163,51 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    *
    * @param chatId Identificador do chat a ser exportado.
    */
-  const exportChat = (chatId: string) => {
+  const exportChat = async (chatId: string) => {
     const chat = chats.find((c) => c.id === chatId);
+
     if (!chat) {
       toast.error("Chat não encontrado para exportação");
       return;
     }
 
     const chatData = JSON.stringify(chat, null, 2);
-    const blob = new Blob([chatData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${chat.title || "chat"}.json`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  }
+    const fileName = `${chat.title || "chat"}.json`;
+
+    try {
+      if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
+        const { save } = await import("@tauri-apps/plugin-dialog");
+        const { writeTextFile } = await import("@tauri-apps/plugin-fs");
+
+        const filePath = await save({
+          defaultPath: fileName,
+          filters: [{ name: "JSON", extensions: ["json"] }],
+        });
+
+        if (!filePath) return;
+
+        await writeTextFile(filePath, chatData);
+      } else {
+        const blob = new Blob([chatData], {
+          type: "application/json",
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = fileName;
+        link.click();
+
+        URL.revokeObjectURL(url);
+      }
+
+      toast.success("Chat exportado com sucesso");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao exportar o chat");
+    }
+  };
 
   /**
    * Atualiza as mensagens de um chat específico reordenando com base na data de atualização.
@@ -183,8 +218,10 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const updateChatMessages = (chatId: string, newMessages: Message[]) => {
     setChats((prev) =>
       prev
-        .map((chat) => (chat.id === chatId ? { ...chat, messages: newMessages } : chat))
-        .sort((a, b) => b.updatedAt - a.updatedAt)
+        .map((chat) =>
+          chat.id === chatId ? { ...chat, messages: newMessages } : chat,
+        )
+        .sort((a, b) => b.updatedAt - a.updatedAt),
     );
   };
 
@@ -213,7 +250,10 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const userMsg = prompt;
     setInput("");
 
-    const newMessages: Message[] = [...messages, { role: "user", content: userMsg }];
+    const newMessages: Message[] = [
+      ...messages,
+      { role: "user", content: userMsg },
+    ];
     setMessages(newMessages);
     setIsGenerating(true);
 
@@ -224,7 +264,8 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       activeChatId = Date.now().toString();
       setCurrentChatId(activeChatId);
 
-      const newTitle = userMsg.slice(0, 30) + (userMsg.length > 30 ? "..." : "");
+      const newTitle =
+        userMsg.slice(0, 30) + (userMsg.length > 30 ? "..." : "");
       const newChat: ChatSession = {
         id: activeChatId,
         title: newTitle,
@@ -238,7 +279,13 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chatHistory = [...newMessages];
 
     try {
-      await streamAssistantReply(engine, chatHistory, activeChatId, setMessages, updateChatMessages);
+      await streamAssistantReply(
+        engine,
+        chatHistory,
+        activeChatId,
+        setMessages,
+        updateChatMessages,
+      );
     } catch (error) {
       console.error("Erro na inferência:", error);
       toast.error(`Erro na inferência: ${error}`);
@@ -267,7 +314,13 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chatHistory = [...updatedMessages];
 
     try {
-      await streamAssistantReply(engine, chatHistory, currentChatId!, setMessages, updateChatMessages);
+      await streamAssistantReply(
+        engine,
+        chatHistory,
+        currentChatId!,
+        setMessages,
+        updateChatMessages,
+      );
     } catch (error) {
       console.error("Erro na inferência (edição):", error);
       toast.error(`Erro na inferência (edição): ${error}`);

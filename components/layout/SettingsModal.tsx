@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, X, Cpu, Download, Loader2, RefreshCw, Trash2 } from 'lucide-react';
-import { SUPPORTED_MODELS } from '@/constants/models';
+import { models as Models } from '@/constants/models.json';
 import { useModelCache, type ManagedModel } from '@/hooks/useModelCache';
 import {
   Select,
@@ -117,7 +117,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <SelectValue placeholder="Selecionar modelo" />
               </SelectTrigger>
               <SelectContent position="popper" className="bg-slate-100 dark:text-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                {SUPPORTED_MODELS.map((group) => (
+                {Models.map((group) => (
                   <SelectGroup key={group.label}>
                     <SelectLabel>{group.label}</SelectLabel>
                     {group.options.map((model) => (

@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { getExtension } from '@/constants/extensions'
 import { toast } from "sonner"
 
 /**
@@ -43,8 +42,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
 
   // Lida com o download do código
   const handleDownload = () => {
-    // Pega a extensão do arquivo ou usa 'txt' como padrão
-    const ext = getExtension(validLanguage);
     const filename = `snippet.${ext}`;
 
     // Cria um Blob com o conteúdo do código
@@ -72,8 +69,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
     return () => { document.body.style.overflow = 'unset'; };
   }, [isFullscreen]);
 
-  const validLanguage = language ? language.toLowerCase() : 'typescript';
-  const isHtml = validLanguage === 'html';
+  const ext = language ? language.toLowerCase() : 'txt';
+  const isHtml = ext === 'html';
 
   return (
     <div className="my-4 bg-gray-50 dark:bg-[#1E1E1E] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm w-full">
@@ -153,7 +150,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
         <div className="text-sm font-mono max-w-full overflow-x-auto">
           <div className="block dark:hidden">
             <SyntaxHighlighter
-              language={validLanguage}
+              language={ext}
               style={vs}
               customStyle={{ margin: 0, padding: '1rem', background: 'transparent', fontSize: '1rem', lineHeight: '1.5' }}
               PreTag="div"
@@ -163,7 +160,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           </div>
           <div className="hidden dark:block">
             <SyntaxHighlighter
-              language={validLanguage}
+              language={ext}
               style={vscDarkPlus}
               customStyle={{ margin: 0, padding: '1rem', background: 'transparent', fontSize: '0.875rem', lineHeight: '1.5' }}
               PreTag="div"
