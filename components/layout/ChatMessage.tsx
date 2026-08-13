@@ -212,7 +212,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               className="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
               <Lightbulb size={14} />
-              Mostrar raciocínio
+              <span className={`${isGenerating && isLastAssistant && 'shimmer'}`}>Mostrar raciocínio</span>
               <ChevronDown size={14} className={`transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </button>
             {showReasoning && (
@@ -274,8 +274,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         </div>
 
         {files.length > 0 && !isEditing && (
-          <div className={`mt-3 pt-3 flex flex-wrap gap-2 border-t ${msg.role === 'user' ? 'border-blue-400/30' : 'border-slate-300 dark:border-slate-700'
-            }`}>
+          <div className="mt-3 pt-3 flex flex-wrap gap-2">
             {files.map((file, idx) => {
               const isExpanded = expandedFiles[idx];
               const fileExtension = file.name.split('.').pop() || 'text';

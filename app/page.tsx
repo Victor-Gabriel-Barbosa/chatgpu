@@ -243,7 +243,7 @@ export default function ChatInterface() {
                     id="file-input"
                     ref={fileInputRef}
                     type="file"
-                    accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1"
+                    accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff,.tif"
                     multiple
                     onChange={handleFileChange}
                     className="hidden"
@@ -346,7 +346,7 @@ export default function ChatInterface() {
         theme={theme === "dark" || theme === "light" || theme === "system" ? theme : "system"}
         richColors
         closeButton
-        offset={{ bottom: 5}}
+        offset={{ bottom: 5, right: 5 }}
       />
     </div>
   );

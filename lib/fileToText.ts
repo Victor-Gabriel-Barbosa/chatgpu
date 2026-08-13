@@ -1,11 +1,17 @@
 import mammoth from "mammoth";
-import * as XLSX from "xlsx";
+import { createWorker, type Worker } from "tesseract.js";
 
-/** 
- * Variável para armazenar a promessa de carregamento da biblioteca pdfjs-dist.
- * Isso evita múltiplos carregamentos da biblioteca em chamadas subsequentes.
- */
+// Variável para armazenar a promessa de carregamento da biblioteca pdfjs-dist
 let pdfjsLibPromise: ReturnType<typeof loadPdfjs> | null = null;
+
+// Idiomas usados pelo Tesseract para reconhecimento de texto em imagens
+const OCR_LANGUAGES = "por+eng";
+
+// Extensões de imagem suportadas para extração de texto via OCR
+const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff", "tif"]);
+
+// Variável para armazenar a promessa de criação do worker do Tesseract.
+let tesseractWorkerPromise: Promise<Worker> | null = null;
 
 /** 
  * Carrega a biblioteca pdfjs-dist.
@@ -30,6 +36,25 @@ function getPdfjs() {
   if (typeof window === "undefined") throw new TypeError("A extração de PDF só funciona no navegador (client-side).");
   pdfjsLibPromise ??= loadPdfjs();
   return pdfjsLibPromise;
+}
+
+/**
+ * Retorna o worker do Tesseract, criando-o se ainda não estiver disponível.
+ * @throws {TypeError} Se chamado no lado do servidor (server-side).
+ * @returns Instância do worker do Tesseract.
+ */
+function getTesseractWorker(): Promise<Worker> {
+  if (typeof window === "undefined") throw new TypeError("A extração de texto de imagens só funciona no navegador (client-side).");
+  tesseractWorkerPromise ??= createWorker(OCR_LANGUAGES);
+  return tesseractWorkerPromise;
+}
+
+// Encerra o worker do Tesseract, liberando os recursos alocados
+export async function terminateOcrWorker(): Promise<void> {
+  if (!tesseractWorkerPromise) return;
+  const worker = await tesseractWorkerPromise;
+  await worker.terminate();
+  tesseractWorkerPromise = null;
 }
 
 /**
@@ -80,20 +105,15 @@ async function extractDocxText(file: File): Promise<string> {
 }
 
 /**
- * Extrai o texto de um arquivo XLSX (Excel).
+ * Extrai o texto de uma imagem via OCR (reconhecimento óptico de caracteres).
  *
- * @param file Arquivo XLSX a ser extraído.
- * @returns Conteúdo textual extraído do arquivo.
+ * @param file Arquivo de imagem a ser extraído.
+ * @returns Conteúdo textual reconhecido na imagem.
  */
-async function extractXlsxText(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const workbook = XLSX.read(buffer, { type: "array" });
-
-  return workbook.SheetNames.map((sheetName) => {
-    const sheet = workbook.Sheets[sheetName];
-    const csv = XLSX.utils.sheet_to_csv(sheet);
-    return `--- Planilha: ${sheetName} ---\n${csv}`;
-  }).join("\n\n");
+async function extractImageText(file: File): Promise<string> {
+  const worker = await getTesseractWorker();
+  const { data } = await worker.recognize(file);
+  return data.text.trim();
 }
 
 /**
@@ -107,7 +127,7 @@ export async function fileToPlainText(file: File): Promise<string> {
   const ext = getExtension(file.name);
   if (ext === "pdf" || file.type === "application/pdf") return extractPdfText(file);
   if (ext === "docx") return extractDocxText(file);
-  if (ext === "xlsx" || ext === "xls") return extractXlsxText(file);
+  if (IMAGE_EXTENSIONS.has(ext) || file.type.startsWith("image/")) return extractImageText(file);
 
   return file.text();
 }
