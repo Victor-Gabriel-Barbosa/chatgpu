@@ -303,7 +303,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <TooltipTrigger asChild>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant="secondary"
+                    variant="ghost"
                     className="items-center justify-start w-full"
                     size="icon"
                   >
@@ -352,7 +352,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Tooltip key={`config-${isSidebarOpen}`}>
             <TooltipTrigger asChild>
               <Button
-                variant="secondary"
+                variant="ghost"
                 onClick={() => setSettingsOpen(true)}
                 className="items-center justify-start w-full"
                 size="icon"
