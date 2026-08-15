@@ -242,7 +242,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </p>
         </div>
 
-        <DialogFooter className="mt-8">
+        <DialogFooter>
           <Button onClick={handleSave}>
             Salvar & Fechar
           </Button>

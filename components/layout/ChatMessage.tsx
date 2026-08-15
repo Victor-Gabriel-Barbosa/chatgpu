@@ -200,9 +200,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         </div>
       )}
 
-      <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user'
-        ? isEditing ? '' : 'px-3 text-background bg-foreground'
-        : ' px-0'
+      <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user' && !isEditing 
+        ? 'px-3 text-background bg-foreground'
+        : 'px-0'
         }`}
       >
         {displayReasoning && msg.role !== 'user' && (
@@ -233,6 +233,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           {isEditing ? (
             <div className="flex flex-col gap-2 w-full min-w-62.5 sm:min-w-100">
               <textarea
+                id="edit-input"
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={(e) => {

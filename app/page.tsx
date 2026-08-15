@@ -217,7 +217,7 @@ export default function ChatInterface() {
                 }}
                 placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
                 disabled={!isReady || isGenerating}
-                className="flex-1 px-2 pt-4 mx-2 pb-2 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-slate-500 disabled:placeholder-slate-500"
+                className="flex-1 m-4 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-muted-foreground disabled:placeholder-muted-foreground"
                 rows={1}
               />
             </div>
