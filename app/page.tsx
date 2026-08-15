@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
-import { SendHorizontal, Plus, Square, PanelLeftOpen, PanelLeftClose, Paperclip, X, HardDrive } from "lucide-react";
+import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/layout/ChatMessage";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -11,9 +11,10 @@ import { models as Models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "next-themes";
 import { useEngine } from "@/hooks/useEngine";
 import { useSession } from "@/hooks/useSession";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Select,
   SelectContent,
@@ -31,7 +32,7 @@ import {
 
 export default function ChatInterface() {
   // Estados do chat, modelo, UI e controle de execução
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const { engine, isReady, selectedModel, handleModelChange } = useEngine();
   const {
     messages,
@@ -49,7 +50,6 @@ export default function ChatInterface() {
     handleSubmitEdit,
     handleStop,
   } = useSession({ engine, isReady });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isModelManagerOpen, setIsModelManagerOpen] = useState(false);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
@@ -100,16 +100,9 @@ export default function ChatInterface() {
   };
 
   return (
-    <div
-      className={`flex h-dvh ${messages.length === 0
-        ? "bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]"
-        : ""
-        }`}
-    >
+    <>
       {/* Barra Lateral */}
       <Sidebar
-        isSidebarOpen={sidebarOpen}
-        setIsSidebarOpen={setSidebarOpen}
         chats={chats}
         currentChatId={currentChatId}
         setCurrentChatId={loadChat}
@@ -118,21 +111,18 @@ export default function ChatInterface() {
         exportChat={exportChat}
         renameChat={handleRenameChat}
         setSettingsOpen={setIsSettingsOpen}
-        theme={theme}
-        setTheme={setTheme}
       />
 
       {/* Área Principal */}
-      <main id="main-chat-area" className="flex-1 flex flex-col relative min-w-0">
+      <SidebarInset
+        id="main-chat-area"
+        className={`h-full min-h-0 overflow-hidden min-w-0 ${messages.length === 0
+          ? "bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]"
+          : "bg-transparent"
+          }`}
+      >
         <div className="bg-background md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-3 transition-colors duration-200">
-          <Button
-            variant="ghost"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label={sidebarOpen ? "Fechar barra lateral" : "Abrir barra lateral"}
-            size="icon"
-          >
-            {sidebarOpen ? <PanelLeftClose /> : <PanelLeftOpen />}
-          </Button>
+          <SidebarTrigger />
           <span className="font-medium truncate max-w-50">
             {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
           </span>
@@ -146,7 +136,7 @@ export default function ChatInterface() {
         </div>
 
         {/* Mensagens */}
-        <div className="flex-1 relative overflow-y-auto">
+        <div className="flex-1 min-h-0 relative overflow-y-auto">
           <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
             {messages.map((msg, index) => (
               <ChatMessage
@@ -311,7 +301,7 @@ export default function ChatInterface() {
             O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
           </div>
         </div>
-      </main>
+      </SidebarInset>
 
       { /* Modal de Configurações */}
       {isSettingsOpen && (
@@ -335,10 +325,10 @@ export default function ChatInterface() {
       { /* Toaster para notificações */}
       <Toaster
         position="bottom-right"
-        theme={theme}
+        theme={theme as "light" | "dark" | "system"}
         closeButton
         offset={{ bottom: 5, right: 5 }}
       />
-    </div>
+    </>
   );
 }
