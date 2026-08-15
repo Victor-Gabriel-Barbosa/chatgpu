@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { hasModelInCache, deleteModelAllInfoInCache } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
-import { models as Models } from "@/constants/models.json";
+import { models as Models } from "@/config/models.json";
 
 export interface ManagedModel {
   id: string;

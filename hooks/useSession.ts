@@ -67,6 +67,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [chats, setChats] = useState<ChatSession[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
   // Carrega as sessões de chat salvas e o chat atual do IndexedDB (via Dexie) ao montar o componente
   useEffect(() => {
@@ -100,6 +101,8 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       } catch (error: unknown) {
         console.error("Erro ao carregar sessões de chat salvas:", error);
         toast.error("Erro ao carregar sessões de chat salvas");
+      } finally {
+        if (isMounted) setIsSessionLoaded(true);
       }
     };
 
@@ -112,6 +115,8 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   // Salva o ID do chat atual no IndexedDB sempre que ele mudar
   useEffect(() => {
+    if (!isSessionLoaded) return;
+
     const persistCurrentChatId = async () => {
       try {
         if (currentChatId) {
@@ -176,8 +181,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * @param e Evento de clique do mouse.
    * @param chatId Identificador do chat a ser excluído.
    */
-  const deleteChat = (e: React.MouseEvent, chatId: string) => {
-    e.stopPropagation();
+  const deleteChat = (chatId: string) => {
     setChats((prev) => prev.filter((c) => c.id !== chatId));
     if (currentChatId === chatId) handleNewChat();
 

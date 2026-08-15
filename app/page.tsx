@@ -7,7 +7,8 @@ import { ChatMessage } from "@/components/layout/ChatMessage";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SettingsModal } from "@/components/layout/SettingsModal";
 import { ModelManagerModal } from "@/components/layout/ModelManagerModal";
-import { models as Models } from "@/constants/models.json";
+import { models as Models } from "@/config/models.json";
+import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/useTheme";
@@ -100,9 +101,9 @@ export default function ChatInterface() {
 
   return (
     <div
-      className={`flex h-dvh text-slate-900 dark:text-slate-100 ${messages.length === 0
+      className={`flex h-dvh ${messages.length === 0
         ? "bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]"
-        : "bg-slate-100 dark:bg-slate-950"
+        : ""
         }`}
     >
       {/* Barra Lateral */}
@@ -123,29 +124,30 @@ export default function ChatInterface() {
 
       {/* Área Principal */}
       <main id="main-chat-area" className="flex-1 flex flex-col relative min-w-0">
-        <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-950 transition-colors duration-200">
-          <button
-            type="button"
+        <div className="bg-background md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-3 transition-colors duration-200">
+          <Button
+            variant="ghost"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
+            aria-label={sidebarOpen ? "Fechar barra lateral" : "Abrir barra lateral"}
+            size="icon"
           >
-            {sidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
-          </button>
-          <span className="font-medium truncate max-w-50 text-slate-800 dark:text-slate-200">
+            {sidebarOpen ? <PanelLeftClose /> : <PanelLeftOpen />}
+          </Button>
+          <span className="font-medium truncate max-w-50">
             {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
           </span>
-          <button
-            type="button"
+          <Button
             onClick={handleNewChat}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors"
+            aria-label="Novo Chat"
+            size="icon"
           >
-            <Plus size={20} />
-          </button>
+            <Plus />
+          </Button>
         </div>
 
         {/* Mensagens */}
         <div className="flex-1 relative overflow-y-auto">
-          <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-8">
+          <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
             {messages.map((msg, index) => (
               <ChatMessage
                 key={index}
@@ -167,35 +169,35 @@ export default function ChatInterface() {
         <div
           className={`absolute left-0 right-0 p-4 transition-all duration-500 ease-in-out z-10 ${messages.length === 0
             ? "bottom-1/2 translate-y-1/2"
-            : "bottom-0 translate-y-0 bg-linear-to-b from-transparent to-slate-100 dark:to-slate-950 to-20%"
+            : "bottom-0 translate-y-0 bg-linear-to-b from-transparent to-background to-20%"
             }`}
         >
           {messages.length === 0 && isReady && (
             <div className="max-md:hidden flex flex-row items-center justify-center gap-4 mb-8 text-2xl">
               <Image src="/icon0.svg" alt="ChatGPU" width={54} height={54} className="mb-2" />
-              <span className="font-bold text-blue-500 text-center">Como posso ajudar hoje?</span>
+              <span className="font-bold text-primary text-center shimmer">Como posso ajudar hoje?</span>
             </div>
           )}
 
-          <div className="max-w-180 mx-auto bg-slate-100 dark:bg-slate-800 rounded-2xl shadow-md">
+          <div className="max-w-180 mx-auto bg-card rounded-2xl shadow-md">
             {/* Chips dos arquivos anexados */}
             {attachedFiles.length > 0 && (
               <div className="flex flex-wrap gap-2 px-4 pt-3">
                 {attachedFiles.map((file, i) => (
                   <div
                     key={`${file.name}-${i}`}
-                    className="flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs pl-2.5 pr-1.5 py-1 rounded-full border border-slate-200 dark:border-slate-600 shadow-sm"
+                    className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
                   >
-                    <Paperclip size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />
+                    <Paperclip className="shrink-0" size={20} />
                     <span className="max-w-32 truncate">{file.name}</span>
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       onClick={() => removeAttachedFile(i)}
                       aria-label={`Remover ${file.name}`}
-                      className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-full p-0.5 transition-colors"
+                      size="icon"
                     >
-                      <X size={12} />
-                    </button>
+                      <X />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -219,25 +221,19 @@ export default function ChatInterface() {
                 rows={1}
               />
             </div>
-            <div className="flex items-center justify-between px-2">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between p-2">
+              <div className="flex min-w-0 items-center gap-2">
                 {/* Botão de anexo de arquivos */}
                 <div className="relative">
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={!isReady}
                     aria-label={"Anexar arquivo"}
                     title="Anexar arquivo"
-                    className={`group flex items-center w-full bg-transparent hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors shrink-0 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 disabled:opacity-40 disabled:pointer-events-none 
-                      }`}
+                    size="icon"
                   >
-                    <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                      <div className="w-6 h-6 bg-slate-900 text-white dark:bg-white dark:text-black rounded-full flex items-center justify-center transition-colors">
-                        <Plus size={16} strokeWidth={2.5} />
-                      </div>
-                    </div>
-                  </button>
+                    <Plus strokeWidth={2.5} />
+                  </Button>
 
                   <input
                     id="file-input"
@@ -249,22 +245,37 @@ export default function ChatInterface() {
                     className="hidden"
                   />
                 </div>
+                <Tooltip key="model-manager-tooltip">
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setIsModelManagerOpen(true)}
+                      aria-label="Gerenciar modelos baixados"
+                      size="icon"
+                    >
+                      <HardDrive />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side={"bottom"}>
+                    <p>Gerenciar modelos baixados</p>
+                  </TooltipContent>
+                </Tooltip>
 
                 <Select value={selectedModel} onValueChange={handleModelChange}>
                   <SelectTrigger
                     id="model-select"
                     title="Selecionar modelo"
-                    className="max-w-20 sm:max-w-40 truncate p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm border-none"
+                    className="min-w-0 max-w-20 flex-1 truncate rounded-xl border-none p-3 text-sm sm:max-w-40"
                     disabled={isGenerating}
                   >
                     <SelectValue placeholder="Selecionar modelo" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-100 dark:text-white dark:bg-slate-800">
+                  <SelectContent>
                     {Models.map((group) => (
                       <SelectGroup key={group.label}>
                         <SelectLabel>{group.label}</SelectLabel>
                         {group.options.map((model) => (
-                          <SelectItem key={model.id} value={model.id} className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg cursor-pointer">
+                          <SelectItem key={model.id} value={model.id}>
                             {model.name}
                           </SelectItem>
                         ))}
@@ -272,50 +283,31 @@ export default function ChatInterface() {
                     ))}
                   </SelectContent>
                 </Select>
-
-                <Tooltip key="model-manager-tooltip">
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={() => setIsModelManagerOpen(true)}
-                      aria-label="Gerenciar modelos baixados"
-                      className="p-3 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors"
-                    >
-                      <HardDrive size={18} />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side={"right"}>
-                    <p>Gerenciar modelos baixados</p>
-                  </TooltipContent>
-                </Tooltip>
               </div>
 
               {isGenerating ? (
-                <button
-                  type="button"
+                <Button
                   onClick={handleStop}
-                  className="p-3 m-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-sm"
                   title="Parar geração"
                 >
-                  <Square fill="currentColor" size={20} />
-                </button>
+                  <Square fill="currentColor" />
+                </Button>
               ) : (
-                <button
-                  type="button"
+                <Button
                   onClick={() => {
                     handleSend(attachedFiles);
                     setAttachedFiles([]);
                   }}
                   disabled={!isReady || (attachedFiles.length === 0 && !input.trim())}
-                  className="p-2 m-1 text-white rounded-full disabled:bg-slate-300 dark:disabled:bg-slate-400 transition-colors shadow-sm bg-blue-600 hover:bg-blue-700"
                   title="Enviar"
+                  size="icon"
                 >
-                  <SendHorizontal size={20} />
-                </button>
+                  <SendHorizontal />
+                </Button>
               )}
             </div>
           </div>
-          <div className="text-center text-xs text-slate-500 mt-2">
+          <div className="text-center text-xs mt-2">
             O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
           </div>
         </div>
@@ -343,8 +335,7 @@ export default function ChatInterface() {
       { /* Toaster para notificações */}
       <Toaster
         position="bottom-right"
-        theme={theme === "dark" || theme === "light" || theme === "system" ? theme : "system"}
-        richColors
+        theme={theme}
         closeButton
         offset={{ bottom: 5, right: 5 }}
       />

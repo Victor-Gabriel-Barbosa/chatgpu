@@ -4,6 +4,8 @@ import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } fr
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 /**
  * Propriedades para o componente CodeBlock.
@@ -73,67 +75,57 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   const isHtml = ext === 'html';
 
   return (
-    <div className="my-4 bg-gray-50 dark:bg-[#1E1E1E] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm w-full">
-      <div className="bg-gray-200/50 dark:bg-gray-800/80 px-4 py-2 text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center border-b border-gray-200 dark:border-gray-800 min-w-0 overflow-auto">
+    <div className="my-4 bg-background border border-secondary rounded-xl overflow-hidden shadow-sm w-full">
+      <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b border-secondary min-w-0 overflow-auto">
         <div className="flex items-center gap-4">
           <span className="font-sans lowercase">{language || 'code'}</span>
 
           {isHtml && (
-            <div className="flex items-center gap-1 bg-gray-300/50 dark:bg-gray-900/50 p-0.5 rounded-lg">
-              <button
-                type="button"
-                onClick={() => setActiveTab('code')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${activeTab === 'code'
-                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                  : 'hover:text-gray-900 dark:hover:text-white'
-                  }`}
-              >
-                <Code2 size={14} />
-                <span className="max-sm:hidden">Código</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('preview')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${activeTab === 'preview'
-                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                  : 'hover:text-gray-900 dark:hover:text-white'
-                  }`}
-              >
-                <LayoutTemplate size={14} />
-                <span className="max-sm:hidden">Preview</span>
-              </button>
-            </div>
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => setActiveTab(value as 'code' | 'preview')}
+            >
+              <TabsList>
+                <TabsTrigger value="code">
+                  <Code2 />
+                  <span className="max-sm:hidden">Código</span>
+                </TabsTrigger>
+                <TabsTrigger value="preview">
+                  <LayoutTemplate />
+                  <span className="max-sm:hidden">Preview</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           )}
         </div>
 
         <div className="flex items-center gap-2">
           {isHtml && activeTab === 'preview' && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => setIsFullscreen(true)}
-              className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md transition-colors text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               title="Maximizar preview"
+              size="icon"
             >
-              <Maximize2 size={14} />
-            </button>
+              <Maximize2 />
+            </Button>
           )}
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={handleDownload}
-            className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
             title="Download"
+            size="icon"
           >
-            <Download size={14} />
-          </button>
-
-          <button
-            type="button"
+            <Download />
+          </Button>
+          <Button
+            variant="ghost"
             onClick={handleCopy}
-            className="flex items-center gap-1.5 p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700 rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors font-sans"
             title="Copiar código"
+            size="icon"
           >
-            {copied ? <Check className="text-blue-500" size={14} /> : <Copy size={14} />}
-          </button>
+            {copied ? <Check className="text-primary" /> : <Copy />}
+          </Button>
         </div>
       </div>
 
@@ -172,20 +164,20 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
       )}
 
       {isFullscreen && typeof document !== 'undefined' ? createPortal(
-        <div className="absolute inset-0 z-10 bg-white dark:bg-slate-900 flex flex-col animate-in fade-in duration-200">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-950">
+        <div className="absolute inset-0 z-10 bg-background flex flex-col animate-in fade-in duration-200">
+          <div className="flex items-center justify-between px-4 py-3 bg-background">
             <div className="flex items-center gap-2">
-              <LayoutTemplate size={16} className="text-blue-500" />
-              <span className="text-sm font-medium dark:text-white">Preview</span>
+              <LayoutTemplate className="text-primary" />
+              <span className="text-xl font-semibold text-primary">Preview</span>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => setIsFullscreen(false)}
-              className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900 transition-colors"
               title="Minimizar preview"
+              size="icon"
             >
-              <Minimize2 size={20} />
-            </button>
+              <Minimize2 />
+            </Button>
           </div>
           <div className="flex-1 bg-white">
             <iframe

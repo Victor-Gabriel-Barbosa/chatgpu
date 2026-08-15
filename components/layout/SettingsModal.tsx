@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { Settings, X, Cpu, Download, Loader2, RefreshCw, Trash2 } from 'lucide-react';
-import { models as Models } from '@/constants/models.json';
+import { Settings, Cpu, Download, Loader, RefreshCw, Trash2 } from 'lucide-react';
+import { models as Models } from '@/config/models.json';
 import { useModelCache, type ManagedModel } from '@/hooks/useModelCache';
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import {
   Select,
   SelectContent,
@@ -60,10 +68,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     onClose();
   };
 
-  // Baixa um modelo diretamente a partir da lista, sem precisar passar pelo seletor + Salvar
+  // Baixa um modelo diretamente a partir da lista
   const handleDownload = (modelId: string) => {
     setSelectedModel(modelId);
-    onClose();
   };
 
   // Pede confirmação antes de desinstalar o modelo atualmente em uso
@@ -82,46 +89,40 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-colors duration-200"
-      onClick={onClose}
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
     >
-      <div
-        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto shadow-xl dark:shadow-2xl relative transition-colors duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-        >
-          <X size={20} />
-        </button>
-        <h2 className="text-xl font-semibold mb-6 text-slate-900 dark:text-white flex items-center gap-2 transition-colors">
-          <Settings size={20} />
-          Configurações
-        </h2>
+      <DialogContent aria-label="Configurações" className="max-w-md max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Settings />
+            Configurações
+          </DialogTitle>
+        </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="model-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors">
+            <label htmlFor="model-select" className="block mb-1 transition-colors">
               Motor / Modelo
             </label>
 
-            <Select value={selectedModel} onValueChange={handleSelectChange}>
+            <Select value={selectMode} onValueChange={handleSelectChange}>
               <SelectTrigger
                 id="model-select"
                 title="Selecionar modelo"
-                className="w-full truncate p-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm border-none"
+                className="w-full truncate"
               >
                 <SelectValue placeholder="Selecionar modelo" />
               </SelectTrigger>
-              <SelectContent position="popper" className="bg-slate-100 dark:text-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+              <SelectContent position="popper">
                 {Models.map((group) => (
                   <SelectGroup key={group.label}>
                     <SelectLabel>{group.label}</SelectLabel>
                     {group.options.map((model) => (
-                      <SelectItem key={model.id} value={model.id} className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg">
+                      <SelectItem key={model.id} value={model.id}>
                         {model.name}
                       </SelectItem>
                     ))}
@@ -133,26 +134,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label htmlFor="downloaded-models" className="block text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
+              <label htmlFor="downloaded-models" className="block transition-colors">
                 Modelos baixados
               </label>
-              <button
+              <Button
                 id="downloaded-models"
-                type="button"
+                variant="ghost"
                 onClick={() => refreshCacheStatus()}
                 disabled={isChecking}
                 title="Verificar novamente"
                 aria-label="Verificar novamente"
-                className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors"
+                size="icon"
               >
-                <RefreshCw size={14} className={isChecking ? "animate-spin" : ""} />
-              </button>
+                <RefreshCw className={isChecking ? "animate-spin" : ""} />
+              </Button>
             </div>
 
             <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
               {isChecking && models.length === 0 ? (
-                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 py-3">
-                  <Loader2 size={14} className="animate-spin" />
+                <div className="flex items-center gap-2 text-xs py-3">
+                  <Loader className="animate-spin" />
                   Verificando modelos baixados...
                 </div>
               ) : (
@@ -164,61 +165,59 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   return (
                     <div
                       key={model.id}
-                      className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 px-3 py-2 transition-colors"
+                      className="flex items-center justify-between gap-2 rounded-lg border border-input bg-card px-3 py-2 transition-colors"
                     >
                       <div className="min-w-0">
-                        <p className="text-xs font-medium text-slate-800 dark:text-slate-100 truncate">
+                        <p className="text-xs font-medium truncate">
                           {model.name}
                         </p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <p className="text-[11px] text-muted-foreground">
                           {isActive ? "Baixado · em uso" : model.isCached ? "Baixado" : "Não baixado"}
                         </p>
                       </div>
 
                       {isConfirming ? (
                         <div className="flex items-center gap-1 shrink-0">
-                          <button
-                            type="button"
+                          <Button
+                            variant="destructive"
                             onClick={() => handleConfirmDelete(model.id)}
-                            className="text-[11px] font-medium px-2 py-1 rounded-md bg-red-500 hover:bg-red-600 text-white transition-colors"
                           >
                             Remover
-                          </button>
-                          <button
-                            type="button"
+                          </Button>
+                          <Button
+                            variant="secondary"
                             onClick={() => setConfirmingDeleteId(null)}
-                            className="text-[11px] font-medium px-2 py-1 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
                           >
                             Cancelar
-                          </button>
+                          </Button>
                         </div>
                       ) : model.isCached ? (
-                        <button
-                          type="button"
+                        <Button
+                          variant="destructive"
                           onClick={() => handleDeleteClick(model)}
                           disabled={isDeleting || isGenerating}
                           title="Desinstalar modelo"
                           aria-label={`Desinstalar ${model.name}`}
-                          className="shrink-0 p-1.5 rounded-md text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-500 disabled:opacity-40 disabled:pointer-events-none transition-colors"
                         >
                           {isDeleting ? (
-                            <Loader2 size={14} className="animate-spin" />
+                            <Loader className="animate-spin" />
                           ) : (
-                            <Trash2 size={14} />
+                            <>
+                              <Trash2 />
+                              Excluir
+                            </>
                           )}
-                        </button>
+                        </Button>
                       ) : (
-                        <button
-                          type="button"
+                        <Button
                           onClick={() => handleDownload(model.id)}
                           disabled={isGenerating}
                           title="Baixar modelo"
                           aria-label={`Baixar ${model.name}`}
-                          className="shrink-0 flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white transition-colors"
                         >
-                          <Download size={12} />
+                          <Download />
                           Baixar
-                        </button>
+                        </Button>
                       )}
                     </div>
                   );
@@ -227,32 +226,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
 
             {storageEstimate && (
-              <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
+              <p className="mt-2 text-[11px] text-muted-foreground">
                 {storageEstimate.usedGB} GB usados de {storageEstimate.quotaGB} GB no navegador
               </p>
             )}
           </div>
         </div>
 
-        <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg">
-          <p className="text-xs text-blue-800 dark:text-blue-200/80 flex gap-2 items-start">
-            <Cpu size={14} className="shrink-0 mt-0.5" />
+        <div className="mt-2 p-2 border rounded-lg">
+          <p className="text-xs text-primary flex gap-2 items-start">
+            <Cpu className="shrink-0 mt-0.5" />
             <span>
               <strong>Modelos WebGPU</strong> rodam no seu navegador usando o hardware do seu dispositivo. A primeira execução fará o download de múltiplos MB/GB de dados para o cache.
             </span>
           </p>
         </div>
 
-        <div className="mt-8 flex justify-end">
-          <button
-            type="button"
-            onClick={handleSave}
-            className="px-4 py-2 text-white dark:text-black bg-slate-900 dark:bg-slate-200 hover:bg-slate-800 dark:hover:bg-slate-200 rounded-md transition-colors"
-          >
+        <DialogFooter className="mt-8">
+          <Button onClick={handleSave}>
             Salvar & Fechar
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

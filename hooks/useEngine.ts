@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
-import { defaultModelId } from "@/constants/models.json";
+import { defaultModelId } from "@/config/models.json";
 
 const LOADING_TOAST_ID = "carregamento-modelo";
 const STORAGE_KEY = "chatgpu-model";

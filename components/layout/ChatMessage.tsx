@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 import { Message } from '@/types/chat';
+import { Button } from "@/components/ui/button"
 import Image from "next/image";
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -103,7 +104,7 @@ const reasoningComponents: Components = {
         code={String(children).replace(/\n$/, '')}
       />
     ) : (
-      <code className="bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-100 px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word transition-colors" {...rest}>
+      <code className="px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word transition-colors" {...rest}>
         {children}
       </code>
     );
@@ -189,9 +190,9 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} className={`${isGenerating ? "animate-[spin_2s_linear_infinite]" : ""}`} />
               {!msg.content.trim() && (
                 <div className="flex items-center gap-1.5 px-2">
-                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
               )}
             </div>
@@ -200,23 +201,22 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       )}
 
       <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user'
-        ? isEditing ? '' : 'px-3 text-white bg-blue-600'
-        : 'text-slate-900 dark:text-slate-100 px-0'
+        ? isEditing ? '' : 'px-3 text-background bg-foreground'
+        : ' px-0'
         }`}
       >
         {displayReasoning && msg.role !== 'user' && (
           <div className="mb-3 pb-3">
-            <button
-              type="button"
+            <Button
+              variant="link"
               onClick={() => setShowReasoning(!showReasoning)}
-              className="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
-              <Lightbulb size={14} />
-              <span className={`${isGenerating && isLastAssistant && 'shimmer'}`}>Mostrar raciocínio</span>
-              <ChevronDown size={14} className={`transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
-            </button>
+              <Lightbulb />
+              <span className={isGenerating && isLastAssistant ? 'shimmer' : ''}>Raciocínio</span>
+              <ChevronDown className={`transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
+            </Button>
             {showReasoning && (
-              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 text-blue-900 dark:bg-blue-950/30 dark:border-blue-900/50 rounded-lg text-xs dark:text-blue-100/90 leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
+              <div className="mt-2 p-3 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -241,25 +241,22 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                     onSaveEdit();
                   }
                 }}
-                className="field-sizing-content leading-6 w-full bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white p-3 resize-none overflow-y-auto max-h-55 rounded-xl text-sm"
+                className="field-sizing-content leading-6 w-full bg-secondary p-3 resize-none overflow-y-auto max-h-55 rounded-xl text-sm"
                 rows={1}
               />
               <div className="flex justify-end gap-2 mt-1">
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={onCancelEdit}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
                 >
                   Cancelar
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
                   onClick={onSaveEdit}
                   disabled={editValue.trim() === '' || editValue.trim() === msg.content}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-blue-500 enabled:hover:bg-blue-600 transition-colors"
                 >
                   Atualizar
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -281,20 +278,15 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
 
               return (
                 <div key={idx} className="flex flex-col gap-2 w-full">
-                  <button
-                    type="button"
-                    className={`flex items-center justify-between text-xs px-2.5 py-1.5 rounded-lg border hover:bg-blue-500 shadow-sm ${msg.role === 'user'
-                      ? 'bg-blue-500/20 border-blue-400/30 text-white'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200'
-                      }`}
+                  <Button
+                    variant="ghost"
                     onClick={() => toggleFile(idx)}
+                    className="justify-start"
                   >
-                    <div className="flex items-center gap-1.5">
-                      <Paperclip size={14} className="shrink-0" />
-                      <span className="font-medium truncate">{file.name}</span>
-                    </div>
-                    <ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                  </button>
+                    <Paperclip />
+                    <span className="font-medium truncate">{file.name}</span>
+                    <ChevronDown className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  </Button>
 
                   {/* Renderiza o conteúdo do arquivo se estiver expandido */}
                   {isExpanded && (
@@ -312,25 +304,25 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
         )}
 
         {!isEditing && (
-          <div className="absolute flex items-center gap-1 opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 left-0 -bottom-8 transition-all">
-            <button
-              type="button"
+          <div className="absolute flex items-center opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 right-0 -bottom-8 transition-all text-primary">
+            <Button
+              variant="ghost"
               onClick={() => handleCopyMessage(msg.content, index)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Copiar mensagem"
+              size="icon-sm"
             >
-              {copiedMessageIndex === index ? <Check className="text-blue-500" size={16} /> : <Copy size={16} />}
-            </button>
+              {copiedMessageIndex === index ? <Check /> : <Copy />}
+            </Button>
 
             {msg.role === 'user' && handleSubmitEdit && (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => setIsEditing(true)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 title="Editar mensagem"
+                size="icon-sm"
               >
-                <Pencil size={16} />
-              </button>
+                <Pencil />
+              </Button>
             )}
           </div>
         )}

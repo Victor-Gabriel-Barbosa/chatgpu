@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Download, HardDrive, Loader2, RefreshCw, Trash2, X } from "lucide-react";
+import { Download, HardDrive, Loader, RefreshCw, Trash2, X } from "lucide-react";
 import { useModelCache, type ManagedModel } from "@/hooks/useModelCache";
+import { Button } from "@/components/ui/button"
 
 interface ModelManagerModalProps {
   selectedModel: string;
@@ -60,51 +61,51 @@ export function ModelManagerModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg max-h-[80vh] flex flex-col rounded-2xl bg-white dark:bg-slate-800 shadow-lg"
+        className="w-full max-w-lg max-h-[80vh] flex flex-col rounded-2xl bg-popover shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabeçalho */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+        <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center gap-2">
-            <HardDrive size={18} />
-            <h2 className="font-semibold text-slate-900 dark:text-white">
+            <HardDrive />
+            <h2 className="font-semibold">
               Modelos baixados
             </h2>
           </div>
           <div className="flex items-center gap-1">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => refreshCacheStatus()}
               disabled={isChecking}
               aria-label="Verificar novamente"
               title="Verificar novamente"
-              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 transition-colors"
+              size="icon"
             >
-              <RefreshCw size={18} className={isChecking ? "animate-spin" : ""} />
-            </button>
-            <button
-              type="button"
+              <RefreshCw className={isChecking ? "animate-spin" : ""} />
+            </Button>
+            <Button
+              variant="ghost"
               onClick={onClose}
               aria-label="Fechar"
               title="Fechar"
-              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+              size="icon"
             >
-              <X size={20} />
-            </button>
+              <X />
+            </Button>
           </div>
         </div>
 
         {/* Lista de modelos */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {isChecking && models.length === 0 ? (
-            <div className="flex items-center justify-center gap-2 text-sm text-slate-500 py-8">
-              <Loader2 size={16} className="animate-spin" />
+            <div className="flex items-center justify-center gap-2 text-sm py-8">
+              <Loader className="animate-spin" />
               Verificando modelos baixados...
             </div>
           ) : (
             Object.entries(groups).map(([groupLabel, groupModels]) => (
               <div key={groupLabel}>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide mb-2">
                   {groupLabel}
                 </h3>
                 <div className="space-y-1.5">
@@ -116,65 +117,63 @@ export function ModelManagerModal({
                     return (
                       <div
                         key={model.id}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 px-3 py-2.5"
+                        className="flex items-center justify-between gap-3 rounded-xl border bg-card px-3 py-2.5"
                       >
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
+                          <p className="text-sm font-medium truncate">
                             {model.name}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-muted-foreground">
                             {isActive
                               ? "Baixado · em uso"
                               : model.isCached
-                              ? "Baixado"
-                              : "Não baixado"}
+                                ? "Baixado"
+                                : "Não baixado"}
                           </p>
                         </div>
 
                         {isConfirming ? (
                           <div className="flex items-center gap-1.5 shrink-0">
-                            <button
-                              type="button"
+                            <Button
+                              variant="destructive"
                               onClick={() => handleConfirmDelete(model.id)}
-                              className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors"
                             >
                               Remover
-                            </button>
-                            <button
-                              type="button"
+                            </Button>
+                            <Button
+                              variant="secondary"
                               onClick={() => setConfirmingDeleteId(null)}
-                              className="text-xs font-medium px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
                             >
                               Cancelar
-                            </button>
+                            </Button>
                           </div>
                         ) : model.isCached ? (
-                          <button
-                            type="button"
+                          <Button
+                            variant="destructive"
                             onClick={() => handleDeleteClick(model)}
                             disabled={isDeleting || isGenerating}
                             title="Desinstalar modelo"
                             aria-label={`Desinstalar ${model.name}`}
-                            className="shrink-0 p-2 rounded-lg text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-500 disabled:opacity-40 disabled:pointer-events-none transition-colors"
                           >
                             {isDeleting ? (
-                              <Loader2 size={16} className="animate-spin" />
+                              <Loader className="animate-spin" />
                             ) : (
-                              <Trash2 size={16} />
+                              <>
+                                <Trash2 />
+                                Excluir
+                              </>
                             )}
-                          </button>
+                          </Button>
                         ) : (
-                          <button
-                            type="button"
+                          <Button
                             onClick={() => handleDownload(model.id)}
                             disabled={isGenerating}
                             title="Baixar modelo"
                             aria-label={`Baixar ${model.name}`}
-                            className="shrink-0 flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 text-white transition-colors"
                           >
-                            <Download size={14} />
+                            <Download />
                             Baixar
-                          </button>
+                          </Button>
                         )}
                       </div>
                     );
@@ -187,7 +186,7 @@ export function ModelManagerModal({
 
         {/* Rodapé com uso de armazenamento */}
         {storageEstimate && (
-          <div className="border-t border-slate-200 dark:border-slate-700 p-4 text-xs text-slate-500 dark:text-slate-400">
+          <div className="border-t p-4 text-xs text-muted-foreground">
             <div className="flex items-center justify-between mb-1.5">
               <span>Armazenamento usado no navegador</span>
               <span>
@@ -196,7 +195,7 @@ export function ModelManagerModal({
             </div>
             <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
+                className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, storageEstimate.percent)}%` }}
               />
             </div>
