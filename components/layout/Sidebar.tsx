@@ -104,13 +104,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
   const isExpanded = state === "expanded";
-  
+
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    Promise.resolve(() => setMounted(true));
-  }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -300,15 +296,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton tooltip="Tema">
-                  {!mounted ? (
-                    <Monitor />
-                  ) : theme === "light" ? (
-                    <Sun />
-                  ) : theme === "dark" ? (
-                    <Moon />
-                  ) : (
-                    <Monitor />
-                  )}
+                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
                   <span>Tema</span>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

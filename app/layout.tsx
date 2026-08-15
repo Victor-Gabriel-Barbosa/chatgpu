@@ -5,7 +5,7 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ServiceWorkerRegister } from "@/components/layout/ServiceWorkerRegister";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/ui/theme-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -40,7 +40,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ServiceWorkerRegister />
           <TooltipProvider>
             <SidebarProvider

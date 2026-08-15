@@ -4,6 +4,15 @@ import { useState } from "react";
 import { Download, HardDrive, Loader, RefreshCw, Trash2, X } from "lucide-react";
 import { useModelCache, type ManagedModel } from "@/hooks/useModelCache";
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog"
 
 interface ModelManagerModalProps {
   selectedModel: string;
@@ -56,21 +65,17 @@ export function ModelManagerModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-lg max-h-[80vh] flex flex-col rounded-2xl bg-popover shadow-lg"
-        onClick={(e) => e.stopPropagation()}
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        className="max-w-lg max-h-[80vh] flex flex-col gap-0 p-0 rounded-2xl [&>button]:hidden"
       >
         {/* Cabeçalho */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <DialogHeader className="flex-row items-center justify-between gap-2 p-4 border-b space-y-0">
           <div className="flex items-center gap-2">
             <HardDrive />
-            <h2 className="font-semibold">
+            <DialogTitle className="font-semibold text-base">
               Modelos baixados
-            </h2>
+            </DialogTitle>
           </div>
           <div className="flex items-center gap-1">
             <Button
@@ -83,17 +88,22 @@ export function ModelManagerModal({
             >
               <RefreshCw className={isChecking ? "animate-spin" : ""} />
             </Button>
-            <Button
-              variant="ghost"
-              onClick={onClose}
-              aria-label="Fechar"
-              title="Fechar"
-              size="icon"
-            >
-              <X />
-            </Button>
+            <DialogClose asChild>
+              <Button
+                variant="ghost"
+                aria-label="Fechar"
+                title="Fechar"
+                size="icon"
+              >
+                <X />
+              </Button>
+            </DialogClose>
           </div>
-        </div>
+        </DialogHeader>
+
+        <DialogDescription className="sr-only">
+          Visualize os modelos já baixados, baixe novos modelos ou remova modelos que não são mais necessários.
+        </DialogDescription>
 
         {/* Lista de modelos */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
@@ -186,22 +196,22 @@ export function ModelManagerModal({
 
         {/* Rodapé com uso de armazenamento */}
         {storageEstimate && (
-          <div className="border-t p-4 text-xs text-muted-foreground">
+          <DialogFooter className="border-t p-4 text-xs text-muted-foreground sm:justify-start block">
             <div className="flex items-center justify-between mb-1.5">
               <span>Armazenamento usado no navegador</span>
               <span>
                 {storageEstimate.usedGB} GB / {storageEstimate.quotaGB} GB
               </span>
             </div>
-            <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
               <div
-                className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
+                className="h-full bg-foreground rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, storageEstimate.percent)}%` }}
               />
             </div>
-          </div>
+          </DialogFooter>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
