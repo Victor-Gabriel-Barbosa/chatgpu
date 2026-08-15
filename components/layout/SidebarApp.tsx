@@ -32,7 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Sidebar as SidebarPrimitive,
+  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
@@ -54,7 +54,7 @@ import {
  * gerenciado internamente pelo `SidebarProvider` (ver app/layout.tsx) e
  * acessado aqui via o hook `useSidebar`.
  */
-export interface SidebarProps {
+export interface SidebarAppProps {
   /** Lista das conversas (chats) existentes. */
   chats: Chat[];
   /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
@@ -91,7 +91,7 @@ export interface SidebarProps {
  * @param props.setTheme Função para aplicar novo tema visual.
  * @returns Elemento React contendo o layout da barra lateral de navegação.
  */
-export const Sidebar: React.FC<SidebarProps> = ({
+export const SidebarApp: React.FC<SidebarAppProps> = ({
   chats,
   currentChatId,
   setCurrentChatId,
@@ -104,7 +104,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
   const isExpanded = state === "expanded";
-
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
 
@@ -145,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <SidebarPrimitive collapsible="icon">
+    <Sidebar collapsible="icon">
       {/* Cabeçalho (Logo e Toggle) */}
       <SidebarHeader>
         <div className="flex h-10 items-center">
@@ -303,19 +302,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="end">
                 <DropdownMenuItem
-                  className={theme === "light" ? "bg-accent text-accent-foreground" : ""}
+                  className={theme === "light" ? "bg-accent" : ""}
                   onClick={() => setTheme("light")}
                 >
                   <Sun /> Claro
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className={theme === "dark" ? "bg-accent text-accent-foreground" : ""}
+                  className={theme === "dark" ? "bg-accent" : ""}
                   onClick={() => setTheme("dark")}
                 >
                   <Moon /> Escuro
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className={theme === "system" ? "bg-accent text-accent-foreground" : ""}
+                  className={theme === "system" ? "bg-accent" : ""}
                   onClick={() => setTheme("system")}
                 >
                   <Monitor /> Sistema
@@ -334,6 +333,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </SidebarFooter>
 
       <SidebarRail />
-    </SidebarPrimitive>
+    </Sidebar>
   );
 };

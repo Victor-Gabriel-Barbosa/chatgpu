@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/layout/ChatMessage";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { SidebarApp } from "@/components/layout/SidebarApp";
 import { SettingsModal } from "@/components/layout/SettingsModal";
 import { ModelManagerModal } from "@/components/layout/ModelManagerModal";
 import { models as Models } from "@/config/models.json";
@@ -102,7 +102,7 @@ export default function ChatInterface() {
   return (
     <>
       {/* Barra Lateral */}
-      <Sidebar
+      <SidebarApp
         chats={chats}
         currentChatId={currentChatId}
         setCurrentChatId={loadChat}
@@ -116,10 +116,7 @@ export default function ChatInterface() {
       {/* Área Principal */}
       <SidebarInset
         id="main-chat-area"
-        className={`h-full min-h-0 overflow-hidden min-w-0 ${messages.length === 0
-          ? "bg-[radial-gradient(ellipse_at_center,#dbeafe_0%,#f0f4ff_60%,#f8fafc_100%)] dark:bg-[radial-gradient(ellipse_at_center,#0d1b3e_0%,#050d1a_40%,#000000_100%)]"
-          : "bg-transparent"
-          }`}
+        className={`h-full min-h-0 overflow-hidden min-w-0`}
       >
         <div className="bg-background md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-3 transition-colors duration-200">
           <SidebarTrigger />
