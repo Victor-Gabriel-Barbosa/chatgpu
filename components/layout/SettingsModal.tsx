@@ -95,7 +95,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         if (!open) onClose();
       }}
     >
-      <DialogContent aria-label="Configurações" className="max-w-md max-h-[85vh] overflow-y-auto">
+      <DialogContent aria-describedby="Configurações" className="max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings />
