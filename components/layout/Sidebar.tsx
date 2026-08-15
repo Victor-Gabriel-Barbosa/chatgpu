@@ -202,7 +202,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton variant="outline" onClick={createNewChat} tooltip="Novo Chat">
-                  <Plus strokeWidth={2.5} />
+                  <Plus />
                   <span>Novo Chat</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -212,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Lista de Conversas */}
         <SidebarGroup>
-          <SidebarGroupLabel>Conversas</SidebarGroupLabel>
+          <SidebarGroupLabel className="group-data-[collapsible=icon]:pointer-events-none">Conversas</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {chats.map((chat) => (
