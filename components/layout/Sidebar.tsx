@@ -212,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Lista de Conversas */}
         <SidebarGroup>
-          <SidebarGroupLabel className="group-data-[collapsible=icon]:pointer-events-none">Conversas</SidebarGroupLabel>
+          <SidebarGroupLabel>Conversas</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {chats.map((chat) => (
