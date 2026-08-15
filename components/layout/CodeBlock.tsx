@@ -124,7 +124,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
             title="Copiar código"
             size="icon"
           >
-            {copied ? <Check className="text-primary" /> : <Copy />}
+            {copied ? <Check className="text-foreground" /> : <Copy />}
           </Button>
         </div>
       </div>
@@ -167,8 +167,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
         <div className="absolute inset-0 z-10 bg-background flex flex-col animate-in fade-in duration-200">
           <div className="flex items-center justify-between px-4 py-3 bg-background">
             <div className="flex items-center gap-2">
-              <LayoutTemplate className="text-primary" />
-              <span className="text-xl font-semibold text-primary">Preview</span>
+              <LayoutTemplate className="text-foreground" />
+              <span className="text-xl font-semibold text-foreground">Preview</span>
             </div>
             <Button
               variant="ghost"

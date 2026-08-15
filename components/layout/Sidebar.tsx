@@ -158,7 +158,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="flex flex-1 items-center gap-2 overflow-hidden px-1 group-data-[collapsible=icon]:hidden"
           >
             <Image src="/icon0.svg" alt="ChatGPU" width={22} height={22} className="shrink-0" />
-            <span className="font-semibold text-primary shimmer truncate whitespace-nowrap">
+            <span className="font-semibold text-foreground shimmer truncate whitespace-nowrap">
               ChatGPU
             </span>
           </Link>

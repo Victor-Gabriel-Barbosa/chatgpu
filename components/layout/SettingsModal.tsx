@@ -234,7 +234,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         <div className="mt-2 p-2 border rounded-lg">
-          <p className="text-xs text-primary flex gap-2 items-start">
+          <p className="text-xs text-foreground flex gap-2 items-start">
             <Cpu className="shrink-0 mt-0.5" />
             <span>
               <strong>Modelos WebGPU</strong> rodam no seu navegador usando o hardware do seu dispositivo. A primeira execução fará o download de múltiplos MB/GB de dados para o cache.
