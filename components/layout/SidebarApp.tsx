@@ -147,10 +147,10 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
     <Sidebar collapsible="icon">
       {/* Cabeçalho (Logo e Toggle) */}
       <SidebarHeader>
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
           <Link
             href="/"
-            className="flex flex-1 items-center ps-1 gap-2 overflow-hidden px-1 group-data-[collapsible=icon]:hidden"
+            className="flex flex-1 items-center gap-2 overflow-hidden group-data-[collapsible=icon]:hidden"
           >
             <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} className="shrink-0" />
             <span className="font-semibold text-foreground shimmer truncate whitespace-nowrap">
