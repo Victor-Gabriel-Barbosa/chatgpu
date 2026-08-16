@@ -115,7 +115,7 @@ export function ModelManagerModal({
           ) : (
             Object.entries(groups).map(([groupLabel, groupModels]) => (
               <div key={groupLabel}>
-                <h3 className="text-xs font-semibold uppercase tracking-wide mb-2">
+                <h3 className="text-xs text-muted-foreground font-semibold uppercase tracking-wide mb-2">
                   {groupLabel}
                 </h3>
                 <div className="space-y-1.5">
@@ -205,7 +205,7 @@ export function ModelManagerModal({
             </div>
             <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
               <div
-                className="h-full bg-foreground rounded-full transition-all duration-300 ease-out"
+                className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, storageEstimate.percent)}%` }}
               />
             </div>

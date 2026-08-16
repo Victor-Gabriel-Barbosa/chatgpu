@@ -111,6 +111,7 @@ export default function ChatInterface() {
         exportChat={exportChat}
         renameChat={handleRenameChat}
         setSettingsOpen={setIsSettingsOpen}
+        handleStop={handleStop}
       />
 
       {/* Área Principal */}
@@ -154,7 +155,7 @@ export default function ChatInterface() {
 
         {/* Entrada de Texto */}
         <div
-          className={`absolute left-0 right-0 p-4 transition-all duration-500 ease-in-out z-10 ${messages.length === 0
+          className={`absolute max-w-3xl mx-auto left-0 right-0 px-4 transition-all duration-500 ease-in-out z-10 ${messages.length === 0
             ? "bottom-1/2 translate-y-1/2"
             : "bottom-0 translate-y-0 bg-linear-to-b from-transparent to-background to-20%"
             }`}
@@ -162,7 +163,7 @@ export default function ChatInterface() {
           {messages.length === 0 && isReady && (
             <div className="max-md:hidden flex flex-row items-center justify-center gap-2 mb-8 text-2xl">
               <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
-              <span className="font-bold text-foreground text-center shimmer">Como posso ajudar hoje?</span>
+              <span className="font-bold text-primary text-center shimmer">Como posso ajudar hoje?</span>
             </div>
           )}
 
@@ -294,7 +295,7 @@ export default function ChatInterface() {
               )}
             </div>
           </div>
-          <div className="text-center text-xs mt-2">
+          <div className="text-center text-muted-foreground text-xs py-2">
             O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
           </div>
         </div>

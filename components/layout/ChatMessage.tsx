@@ -216,7 +216,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               <ChevronDown className={`transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </Button>
             {showReasoning && (
-              <div className="mt-2 p-3 border border-primary text-foreground rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
+              <div className="mt-2 p-3 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -310,6 +310,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               variant="ghost"
               onClick={() => handleCopyMessage(msg.content, index)}
               title="Copiar mensagem"
+              className="text-muted-foreground"
               size="icon-sm"
             >
               {copiedMessageIndex === index ? <Check /> : <Copy />}
@@ -320,6 +321,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                 variant="ghost"
                 onClick={() => setIsEditing(true)}
                 title="Editar mensagem"
+                className="text-muted-foreground"
                 size="icon-sm"
               >
                 <Pencil />

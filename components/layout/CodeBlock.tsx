@@ -75,8 +75,8 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   const isHtml = ext === 'html';
 
   return (
-    <div className="my-4 bg-background border border-secondary rounded-xl overflow-hidden shadow-sm w-full">
-      <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b border-secondary min-w-0 overflow-auto">
+    <div className="my-4 bg-background border rounded-xl overflow-hidden shadow-sm w-full">
+      <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b min-w-0 overflow-auto">
         <div className="flex items-center gap-4">
           <span className="font-sans lowercase">{language || 'code'}</span>
 
@@ -124,7 +124,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
             title="Copiar código"
             size="icon"
           >
-            {copied ? <Check className="text-foreground" /> : <Copy />}
+            {copied ? <Check /> : <Copy />}
           </Button>
         </div>
       </div>

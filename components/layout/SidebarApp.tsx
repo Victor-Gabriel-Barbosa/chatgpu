@@ -71,12 +71,12 @@ export interface SidebarAppProps {
   renameChat: (id: string, newTitle: string) => void;
   /** Função para exibir o modal de configurações. */
   setSettingsOpen: (isOpen: boolean) => void;
+  /** Função para parar a geração do chat atual */
+  handleStop: () => void;
 }
 
 /**
  * Componente de barra lateral para navegação entre chats, criação de novos chats e acesso às configurações.
- * Construído sobre as primitivas `Sidebar` do shadcn/ui (colapsa para uma trilha de ícones no
- * desktop e vira um painel off-canvas no mobile).
  *
  * @param props Propriedades do componente.
  * @param props.chats Lista de chats disponíveis.
@@ -87,8 +87,7 @@ export interface SidebarAppProps {
  * @param props.exportChat Função para exportar um chat.
  * @param props.renameChat Função para renomear um chat.
  * @param props.setSettingsOpen Função para abrir as configurações.
- * @param props.theme Tema visual atualmente aplicado.
- * @param props.setTheme Função para aplicar novo tema visual.
+ * @param props.handleStop Função para parar a geração do chat atual.
  * @returns Elemento React contendo o layout da barra lateral de navegação.
  */
 export const SidebarApp: React.FC<SidebarAppProps> = ({
@@ -99,7 +98,8 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
   deleteChat,
   exportChat,
   renameChat,
-  setSettingsOpen
+  setSettingsOpen,
+  handleStop
 }) => {
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
@@ -153,7 +153,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
             className="flex flex-1 items-center mx-[6.5px] gap-2 overflow-hidden group-data-[collapsible=icon]:hidden"
           >
             <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
-            <span className="font-semibold text-foreground shimmer truncate whitespace-nowrap">
+            <span className="font-semibold text-primary shimmer truncate whitespace-nowrap">
               ChatGPU
             </span>
           </Link>
@@ -197,7 +197,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton variant="outline" onClick={createNewChat} tooltip="Novo Chat">
-                  <Plus />
+                  <Plus strokeWidth={2.5} />
                   <span>Novo Chat</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -214,7 +214,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                 <SidebarMenuItem key={chat.id}>
                   {editingChatId === chat.id ? (
                     <div className="flex h-8 items-center gap-2 rounded-md px-2">
-                      <MessageSquare className="size-4" />
+                      <MessageSquare className="size-4 shrink-0" />
                       <input
                         id={`chat-title-input-${chat.id}`}
                         ref={inputRef}
@@ -231,7 +231,10 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                       <TooltipTrigger asChild>
                         <SidebarMenuButton
                           isActive={currentChatId === chat.id}
-                          onClick={() => handleSelectChat(chat.id)}
+                          onClick={() => {
+                            handleStop()
+                            handleSelectChat(chat.id)
+                          }}
                         >
                           <MessageSquare />
                           <span>{chat.title}</span>
