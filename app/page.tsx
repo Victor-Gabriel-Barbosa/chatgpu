@@ -3,10 +3,10 @@
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive } from "lucide-react";
 import Image from "next/image";
-import { ChatMessage } from "@/components/layout/chat-message";
-import { SidebarApp } from "@/components/layout/sidebar-app";
-import { SettingsModal } from "@/components/layout/settings-modal";
-import { ModelManagerModal } from "@/components/layout/model-manager-modal";
+import { ChatMessage } from "@/components/chat/chat-message";
+import { AppSidebar } from "@/components/chat/app-sidebar";
+import { SettingsModal } from "@/components/chat/settings-modal";
+import { ModelManagerModal } from "@/components/chat/model-manager-modal";
 import { models as Models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
@@ -104,7 +104,7 @@ export default function ChatInterface() {
   return (
     <>
       {/* Barra Lateral */}
-      <SidebarApp
+      <AppSidebar
         chats={chats}
         currentChatId={currentChatId}
         setCurrentChatId={loadChat}
