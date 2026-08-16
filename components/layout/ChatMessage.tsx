@@ -190,13 +190,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           {isLastAssistant && (
             <div className="flex gap-4 w-full justify-start">
               <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} className={`${isGenerating ? "animate-[spin_2s_linear_infinite]" : ""}`} />
-              {!msg.content.trim() && (
-                <div className="flex items-center gap-1.5 px-2">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-              )}
             </div>
           )}
         </div>

@@ -133,7 +133,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     };
 
     persistCurrentChatId();
-  }, [currentChatId]);
+  }, [currentChatId, isSessionLoaded]);
 
   // Cria uma nova sessão de chat, limpando as mensagens e resetando o estado atual.
   const handleNewChat = () => {
