@@ -300,7 +300,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                   <span>Tema</span>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="end">
+              <DropdownMenuContent side={isMobile ? "bottom" : isExpanded ? "top" : "right"} align="end">
                 <DropdownMenuItem
                   className={theme === "light" ? "bg-accent" : ""}
                   onClick={() => setTheme("light")}
