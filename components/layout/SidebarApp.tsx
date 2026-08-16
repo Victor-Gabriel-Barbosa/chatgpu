@@ -147,12 +147,12 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
     <Sidebar collapsible="icon">
       {/* Cabeçalho (Logo e Toggle) */}
       <SidebarHeader>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center">
           <Link
             href="/"
-            className="flex flex-1 items-center gap-2 overflow-hidden group-data-[collapsible=icon]:hidden"
+            className="flex flex-1 items-center mx-[6.5px] gap-2 overflow-hidden group-data-[collapsible=icon]:hidden"
           >
-            <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} className="shrink-0" />
+            <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
             <span className="font-semibold text-foreground shimmer truncate whitespace-nowrap">
               ChatGPU
             </span>
@@ -164,8 +164,8 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                 variant="ghost"
                 onClick={toggleSidebar}
                 aria-label={isExpanded ? "Fechar barra lateral" : "Abrir barra lateral"}
-                className="group/toggle shrink-0"
-                size="icon-sm"
+                className="group/toggle"
+                size="icon"
               >
                 {isExpanded ? (
                   <PanelLeftClose />
@@ -178,7 +178,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                       width={20}
                       height={20}
                     />
-                    <PanelLeftOpen className="absolute transition-opacity duration-200 opacity-0 group-hover/toggle:opacity-100" />
+                    <PanelLeftOpen className="absolute transition-opacity duration-400 opacity-0 group-hover/toggle:opacity-100" />
                   </>
                 )}
               </Button>
@@ -214,7 +214,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                 <SidebarMenuItem key={chat.id}>
                   {editingChatId === chat.id ? (
                     <div className="flex h-8 items-center gap-2 rounded-md px-2">
-                      <MessageSquare className="size-4 shrink-0" />
+                      <MessageSquare className="size-4" />
                       <input
                         id={`chat-title-input-${chat.id}`}
                         ref={inputRef}

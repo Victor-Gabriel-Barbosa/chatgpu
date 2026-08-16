@@ -160,8 +160,8 @@ export default function ChatInterface() {
             }`}
         >
           {messages.length === 0 && isReady && (
-            <div className="max-md:hidden flex flex-row items-center justify-center gap-4 mb-8 text-2xl">
-              <Image src="/icon0.svg" alt="ChatGPU" width={54} height={54} className="mb-2" />
+            <div className="max-md:hidden flex flex-row items-center justify-center gap-2 mb-8 text-2xl">
+              <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
               <span className="font-bold text-foreground text-center shimmer">Como posso ajudar hoje?</span>
             </div>
           )}

@@ -196,7 +196,7 @@ export function ModelManagerModal({
 
         {/* Rodapé com uso de armazenamento */}
         {storageEstimate && (
-          <DialogFooter className="border-t p-4 text-xs text-muted-foreground sm:justify-start block">
+          <DialogFooter className="border-t m-2 text-xs text-muted-foreground sm:justify-start block">
             <div className="flex items-center justify-between mb-1.5">
               <span>Armazenamento usado no navegador</span>
               <span>
