@@ -162,7 +162,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                 className="group/toggle"
                 size="icon"
               >
-                {isExpanded ? (
+                {isExpanded || isMobile ? (
                   <PanelLeftClose />
                 ) : (
                   <>
