@@ -30,6 +30,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+import { cn } from "@/lib/utils"
+
 export default function ChatInterface() {
   // Estados do chat, modelo, UI e controle de execução
   const { theme } = useTheme();
@@ -159,12 +161,19 @@ export default function ChatInterface() {
             : "bottom-0 translate-y-0 bg-linear-to-b from-transparent to-background to-20%"
             }`}
         >
-          {messages.length === 0 && isReady && (
-            <div className="max-md:hidden flex flex-row items-center justify-center gap-2 mb-8 text-2xl">
-              <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
-              <span className="font-bold text-primary text-center shimmer">Como posso ajudar hoje?</span>
-            </div>
-          )}
+          <div
+            className={cn(
+              "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
+              messages.length === 0 && isReady
+                ? "opacity-100 translate-y-0 mb-8 max-h-20"
+                : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
+            )}
+          >
+            <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
+            <span className="font-bold text-primary text-center shimmer">
+              Como posso ajudar hoje?
+            </span>
+          </div>
 
           <div className="max-w-180 mx-auto bg-card rounded-2xl shadow-md">
             {/* Chips dos arquivos anexados */}
