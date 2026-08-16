@@ -71,8 +71,6 @@ export interface SidebarAppProps {
   renameChat: (id: string, newTitle: string) => void;
   /** Função para exibir o modal de configurações. */
   setSettingsOpen: (isOpen: boolean) => void;
-  /** Função para parar a geração do chat atual */
-  handleStop: () => void;
 }
 
 /**
@@ -86,8 +84,6 @@ export interface SidebarAppProps {
  * @param props.deleteChat Função para excluir um chat.
  * @param props.exportChat Função para exportar um chat.
  * @param props.renameChat Função para renomear um chat.
- * @param props.setSettingsOpen Função para abrir as configurações.
- * @param props.handleStop Função para parar a geração do chat atual.
  * @returns Elemento React contendo o layout da barra lateral de navegação.
  */
 export const SidebarApp: React.FC<SidebarAppProps> = ({
@@ -98,8 +94,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
   deleteChat,
   exportChat,
   renameChat,
-  setSettingsOpen,
-  handleStop
+  setSettingsOpen
 }) => {
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
@@ -231,10 +226,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                       <TooltipTrigger asChild>
                         <SidebarMenuButton
                           isActive={currentChatId === chat.id}
-                          onClick={() => {
-                            handleStop()
-                            handleSelectChat(chat.id)
-                          }}
+                          onClick={() => handleSelectChat(chat.id)}
                         >
                           <MessageSquare />
                           <span>{chat.title}</span>

@@ -111,7 +111,6 @@ export default function ChatInterface() {
         exportChat={exportChat}
         renameChat={handleRenameChat}
         setSettingsOpen={setIsSettingsOpen}
-        handleStop={handleStop}
       />
 
       {/* Área Principal */}
