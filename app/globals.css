@@ -157,6 +157,10 @@ button:active {
   opacity: 0.8;
 }
 
+img {
+  user-select: none; 
+}
+
 .custom-scrollbar {
   scrollbar-width: thin;
 }

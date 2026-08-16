@@ -10,6 +10,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
+import { cn } from "@/lib/utils"
+
 /**
  * Propriedades do componente ChatMessage.
  */
@@ -210,10 +212,11 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
             <Button
               variant="link"
               onClick={() => setShowReasoning(!showReasoning)}
+              className="max-w-full min-w-0"
             >
-              <Lightbulb />
-              <span className={isGenerating && isLastAssistant ? 'shimmer' : ''}>Raciocínio</span>
-              <ChevronDown className={`transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
+              <Lightbulb className="shrink-0" />
+              <span className={cn("min-w-0 truncate", isGenerating && isLastAssistant ? 'shimmer' : '')}>Raciocínio</span>
+              <ChevronDown className={`shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </Button>
             {showReasoning && (
               <div className="mt-2 p-3 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">

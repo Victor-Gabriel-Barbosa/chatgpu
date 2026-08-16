@@ -118,7 +118,7 @@ export default function ChatInterface() {
       {/* Área Principal */}
       <SidebarInset
         id="main-chat-area"
-        className={`h-full min-h-0 overflow-hidden min-w-0`}
+        className="h-full min-h-0 overflow-hidden min-w-0 flex flex-col"
       >
         <div className="bg-background md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-3 transition-colors duration-200">
           <SidebarTrigger />
@@ -134,177 +134,183 @@ export default function ChatInterface() {
           </Button>
         </div>
 
-        {/* Mensagens */}
-        <div className="flex-1 min-h-0 relative overflow-y-auto">
-          <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
-            {messages.map((msg, index) => (
-              <ChatMessage
-                key={index}
-                msg={msg}
-                index={index}
-                copiedMessageIndex={copiedMessageIndex}
-                handleCopyMessage={handleCopyMessage}
-                handleSubmitEdit={handleSubmitEdit}
-                isLastAssistant={index === lastAssistantIndex}
-                isGenerating={isGenerating}
-              />
-            ))}
-            {/* Elemento âncora para o scroll */}
-            <div className="h-40" ref={messagesEndRef} />
+        {/* Mensagens: só ocupa espaço no fluxo quando existe conteúdo */}
+        {messages.length > 0 && (
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
+              {messages.map((msg, index) => (
+                <ChatMessage
+                  key={index}
+                  msg={msg}
+                  index={index}
+                  copiedMessageIndex={copiedMessageIndex}
+                  handleCopyMessage={handleCopyMessage}
+                  handleSubmitEdit={handleSubmitEdit}
+                  isLastAssistant={index === lastAssistantIndex}
+                  isGenerating={isGenerating}
+                />
+              ))}
+              {/* Elemento âncora para o scroll */}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Entrada de Texto */}
+        {/* Entrada de Texto: item normal do flex, sempre grudado embaixo */}
         <div
-          className={`absolute max-w-3xl mx-auto left-0 right-0 px-4 transition-all duration-500 ease-in-out z-10 ${messages.length === 0
-            ? "bottom-1/2 translate-y-1/2"
-            : "bottom-0 translate-y-0 bg-linear-to-b from-transparent to-background to-20%"
-            }`}
+          className={cn(
+            "w-full flex flex-col transition-all duration-500 ease-in-out",
+            messages.length === 0
+              ? "flex-1 justify-center"
+              : "shrink-0 bg-linear-to-b from-transparent to-background to-20%"
+          )}
         >
-          <div
-            className={cn(
-              "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
-              messages.length === 0 && isReady
-                ? "opacity-100 translate-y-0 mb-8 max-h-20"
-                : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
-            )}
-          >
-            <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
-            <span className="font-bold text-primary text-center shimmer">
-              Como posso ajudar hoje?
-            </span>
-          </div>
+          <div className="max-w-3xl w-full mx-auto px-4">
+            <div
+              className={cn(
+                "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
+                messages.length === 0 && isReady
+                  ? "opacity-100 translate-y-0 mb-8 max-h-20"
+                  : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
+              )}
+            >
+              <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
+              <span className="font-bold text-primary text-center shimmer">
+                Como posso ajudar hoje?
+              </span>
+            </div>
 
-          <div className="max-w-180 mx-auto bg-card rounded-2xl shadow-md">
-            {/* Chips dos arquivos anexados */}
-            {attachedFiles.length > 0 && (
-              <div className="flex flex-wrap gap-2 px-4 pt-3">
-                {attachedFiles.map((file, i) => (
-                  <div
-                    key={`${file.name}-${i}`}
-                    className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
-                  >
-                    <Paperclip className="shrink-0" size={20} />
-                    <span className="max-w-32 truncate">{file.name}</span>
+            <div className="max-w-180 mx-auto bg-card rounded-2xl shadow-md">
+              {/* Chips dos arquivos anexados */}
+              {attachedFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 px-4 pt-3">
+                  {attachedFiles.map((file, i) => (
+                    <div
+                      key={`${file.name}-${i}`}
+                      className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
+                    >
+                      <Paperclip className="shrink-0" size={20} />
+                      <span className="max-w-32 truncate">{file.name}</span>
+                      <Button
+                        variant="ghost"
+                        onClick={() => removeAttachedFile(i)}
+                        aria-label={`Remover ${file.name}`}
+                        size="icon"
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center">
+                <textarea
+                  id="chat-input"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend(attachedFiles);
+                      setAttachedFiles([]);
+                    }
+                  }}
+                  placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
+                  disabled={!isReady || isGenerating}
+                  className="flex-1 m-4 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-muted-foreground disabled:placeholder-muted-foreground"
+                  rows={1}
+                />
+              </div>
+              <div className="flex flex-wrap items-center justify-between p-2">
+                <div className="flex flex-wrap min-w-0 items-center gap-2">
+                  {/* Botão de anexo de arquivos */}
+                  <div className="relative">
                     <Button
-                      variant="ghost"
-                      onClick={() => removeAttachedFile(i)}
-                      aria-label={`Remover ${file.name}`}
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={!isReady}
+                      aria-label={"Anexar arquivo"}
+                      title="Anexar arquivo"
                       size="icon"
                     >
-                      <X />
+                      <Plus strokeWidth={2.5} />
                     </Button>
-                  </div>
-                ))}
-              </div>
-            )}
 
-            <div className="flex items-center">
-              <textarea
-                id="chat-input"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend(attachedFiles);
-                    setAttachedFiles([]);
-                  }
-                }}
-                placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
-                disabled={!isReady || isGenerating}
-                className="flex-1 m-4 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-muted-foreground disabled:placeholder-muted-foreground"
-                rows={1}
-              />
-            </div>
-            <div className="flex items-center justify-between p-2">
-              <div className="flex min-w-0 items-center gap-2">
-                {/* Botão de anexo de arquivos */}
-                <div className="relative">
+                    <input
+                      id="file-input"
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff,.tif"
+                      multiple
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </div>
+                  <Tooltip key="model-manager-tooltip">
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setIsModelManagerOpen(true)}
+                        aria-label="Gerenciar modelos baixados"
+                        size="icon"
+                      >
+                        <HardDrive />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side={"bottom"}>
+                      <p>Gerenciar modelos baixados</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Select value={selectedModel} onValueChange={handleModelChange}>
+                    <SelectTrigger
+                      id="model-select"
+                      title="Selecionar modelo"
+                      className="min-w-0 max-w-20 flex-1 truncate rounded-xl border-none p-3 text-sm sm:max-w-40"
+                      disabled={isGenerating}
+                    >
+                      <SelectValue placeholder="Selecionar modelo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Models.map((group) => (
+                        <SelectGroup key={group.label}>
+                          <SelectLabel>{group.label}</SelectLabel>
+                          {group.options.map((model) => (
+                            <SelectItem key={model.id} value={model.id}>
+                              {model.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {isGenerating ? (
                   <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={!isReady}
-                    aria-label={"Anexar arquivo"}
-                    title="Anexar arquivo"
+                    onClick={handleStop}
+                    title="Parar geração"
+                  >
+                    <Square fill="currentColor" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      handleSend(attachedFiles);
+                      setAttachedFiles([]);
+                    }}
+                    disabled={!isReady || (attachedFiles.length === 0 && !input.trim())}
+                    title="Enviar"
                     size="icon"
                   >
-                    <Plus strokeWidth={2.5} />
+                    <SendHorizontal />
                   </Button>
-
-                  <input
-                    id="file-input"
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff,.tif"
-                    multiple
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
-                <Tooltip key="model-manager-tooltip">
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      onClick={() => setIsModelManagerOpen(true)}
-                      aria-label="Gerenciar modelos baixados"
-                      size="icon"
-                    >
-                      <HardDrive />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side={"bottom"}>
-                    <p>Gerenciar modelos baixados</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                <Select value={selectedModel} onValueChange={handleModelChange}>
-                  <SelectTrigger
-                    id="model-select"
-                    title="Selecionar modelo"
-                    className="min-w-0 max-w-20 flex-1 truncate rounded-xl border-none p-3 text-sm sm:max-w-40"
-                    disabled={isGenerating}
-                  >
-                    <SelectValue placeholder="Selecionar modelo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Models.map((group) => (
-                      <SelectGroup key={group.label}>
-                        <SelectLabel>{group.label}</SelectLabel>
-                        {group.options.map((model) => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ))}
-                  </SelectContent>
-                </Select>
+                )}
               </div>
-
-              {isGenerating ? (
-                <Button
-                  onClick={handleStop}
-                  title="Parar geração"
-                >
-                  <Square fill="currentColor" />
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => {
-                    handleSend(attachedFiles);
-                    setAttachedFiles([]);
-                  }}
-                  disabled={!isReady || (attachedFiles.length === 0 && !input.trim())}
-                  title="Enviar"
-                  size="icon"
-                >
-                  <SendHorizontal />
-                </Button>
-              )}
             </div>
-          </div>
-          <div className="text-center text-muted-foreground text-xs py-2">
-            O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
+            <div className="text-center text-muted-foreground text-xs py-2">
+              O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
+            </div>
           </div>
         </div>
       </SidebarInset>
