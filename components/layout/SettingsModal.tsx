@@ -109,9 +109,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               Motor / Modelo
             </label>
 
-            <Select value={selectMode} onValueChange={handleSelectChange}>
+            <Select name="settings-model" value={selectMode} onValueChange={handleSelectChange}>
               <SelectTrigger
-                id="model-select"
                 title="Selecionar modelo"
                 className="w-full truncate"
               >

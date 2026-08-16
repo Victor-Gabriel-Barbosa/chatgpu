@@ -262,9 +262,8 @@ export default function ChatInterface() {
                     </TooltipContent>
                   </Tooltip>
 
-                  <Select value={selectedModel} onValueChange={handleModelChange}>
+                  <Select name="selected-model" value={selectedModel} onValueChange={handleModelChange}>
                     <SelectTrigger
-                      id="model-select"
                       title="Selecionar modelo"
                       className="min-w-0 max-w-20 flex-1 truncate rounded-xl border-none p-3 text-sm sm:max-w-40"
                       disabled={isGenerating}

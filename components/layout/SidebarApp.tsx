@@ -251,9 +251,7 @@ export const SidebarApp: React.FC<SidebarAppProps> = ({
                         </SidebarMenuAction>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent side={isMobile ? "bottom" : "right"} align="start">
-                        <DropdownMenuItem
-                          onClick={() => exportChat(chat.id)}
-                        >
+                        <DropdownMenuItem onClick={() => exportChat(chat.id)}>
                           <Upload />
                           Exportar
                         </DropdownMenuItem>
