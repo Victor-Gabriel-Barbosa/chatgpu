@@ -189,13 +189,13 @@ export default function ChatInterface() {
                       key={`${file.name}-${i}`}
                       className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
                     >
-                      <Paperclip className="shrink-0" size={20} />
+                      <Paperclip className="shrink-0" size={16} />
                       <span className="max-w-32 truncate">{file.name}</span>
                       <Button
                         variant="ghost"
                         onClick={() => removeAttachedFile(i)}
                         aria-label={`Remover ${file.name}`}
-                        size="icon"
+                        size="icon-xs"
                       >
                         <X />
                       </Button>
@@ -288,7 +288,8 @@ export default function ChatInterface() {
                 {isGenerating ? (
                   <Button
                     onClick={handleStop}
-                    title="Parar geração"
+                    title="Parar de responder"
+                    size="icon"
                   >
                     <Square fill="currentColor" />
                   </Button>
