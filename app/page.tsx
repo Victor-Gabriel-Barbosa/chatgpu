@@ -3,10 +3,10 @@
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive } from "lucide-react";
 import Image from "next/image";
-import { ChatMessage } from "@/components/layout/ChatMessage";
-import { SidebarApp } from "@/components/layout/SidebarApp";
-import { SettingsModal } from "@/components/layout/SettingsModal";
-import { ModelManagerModal } from "@/components/layout/ModelManagerModal";
+import { ChatMessage } from "@/components/layout/chat-message";
+import { SidebarApp } from "@/components/layout/sidebar-app";
+import { SettingsModal } from "@/components/layout/settings-modal";
+import { ModelManagerModal } from "@/components/layout/model-manager-modal";
 import { models as Models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";

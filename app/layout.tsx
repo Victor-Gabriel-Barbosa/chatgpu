@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { ServiceWorkerRegister } from "@/components/layout/ServiceWorkerRegister";
+import { ServiceWorkerRegister } from "@/components/layout/service-worker-register";
 import { ThemeProvider } from "@/components/ui/theme-provider"
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";

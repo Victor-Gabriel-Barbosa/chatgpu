@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
-import { CodeBlock } from './CodeBlock';
+import { CodeBlock } from './code-block';
 import { Message } from '@/types/chat';
 import { Button } from "@/components/ui/button"
 import Image from "next/image";

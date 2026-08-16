@@ -54,7 +54,7 @@ import {
  * gerenciado internamente pelo `SidebarProvider` (ver app/layout.tsx) e
  * acessado aqui via o hook `useSidebar`.
  */
-export interface SidebarAppProps {
+export interface AppSidebarProps {
   /** Lista das conversas (chats) existentes. */
   chats: Chat[];
   /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
@@ -86,7 +86,7 @@ export interface SidebarAppProps {
  * @param props.renameChat Função para renomear um chat.
  * @returns Elemento React contendo o layout da barra lateral de navegação.
  */
-export const SidebarApp: React.FC<SidebarAppProps> = ({
+export const AppSidebar: React.FC<AppSidebarProps> = ({
   chats,
   currentChatId,
   setCurrentChatId,
