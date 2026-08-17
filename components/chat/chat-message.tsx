@@ -127,7 +127,7 @@ const messageComponents: Components = {
         code={String(children).replace(/\n$/, '')}
       />
     ) : (
-      <code className="bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200 px-1.5 py-0.5 rounded text-sm font-mono wrap-break-word transition-colors" {...rest}>
+      <code className="px-1.5 py-0.5 rounded text-sm font-mono wrap-break-word transition-colors" {...rest}>
         {children}
       </code>
     );
@@ -196,7 +196,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       )}
 
       <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user' && !isEditing 
-        ? 'px-3 text-background bg-foreground'
+        ? 'px-3 text-background bg-primary'
         : 'px-0'
         }`}
       >

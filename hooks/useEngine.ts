@@ -3,7 +3,7 @@ import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 import { defaultModelId } from "@/config/models.json";
 
-const LOADING_TOAST_ID = "carregamento-modelo";
+const LOADING_TOAST_ID = "loading-model";
 const STORAGE_KEY = "chatgpu-model";
 
 // Singleton do motor WebGPU (worker + engine) para reaproveitamento entre trocas de modelo e remontagens do componente

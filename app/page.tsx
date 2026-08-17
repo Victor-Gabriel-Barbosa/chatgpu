@@ -63,6 +63,7 @@ export default function ChatInterface() {
 
   // Índice da última mensagem do assistente para controle de UI
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
+  const hasMessages = messages.length > 0;
 
   // Faz scroll para a última mensagem
   const scrollToBottom = () => {
@@ -134,42 +135,46 @@ export default function ChatInterface() {
           </Button>
         </div>
 
-        {/* Mensagens: só ocupa espaço no fluxo quando existe conteúdo */}
-        {messages.length > 0 && (
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
-              {messages.map((msg, index) => (
-                <ChatMessage
-                  key={index}
-                  msg={msg}
-                  index={index}
-                  copiedMessageIndex={copiedMessageIndex}
-                  handleCopyMessage={handleCopyMessage}
-                  handleSubmitEdit={handleSubmitEdit}
-                  isLastAssistant={index === lastAssistantIndex}
-                  isGenerating={isGenerating}
-                />
-              ))}
-              {/* Elemento âncora para o scroll */}
-              <div ref={messagesEndRef} />
-            </div>
-          </div>
-        )}
-
-        {/* Entrada de Texto: item normal do flex, sempre grudado embaixo */}
+        {/* Container central */}
         <div
           className={cn(
-            "w-full flex flex-col transition-all duration-500 ease-in-out",
-            messages.length === 0
-              ? "flex-1 justify-center"
-              : "shrink-0 bg-linear-to-b from-transparent to-background to-20%"
+            "flex-1 min-h-0 flex flex-col",
+            !hasMessages && "justify-center"
           )}
         >
-          <div className="max-w-3xl w-full mx-auto px-4">
+          {/* Mensagens */}
+          {hasMessages && (
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
+                {messages.map((msg, index) => (
+                  <ChatMessage
+                    key={index}
+                    msg={msg}
+                    index={index}
+                    copiedMessageIndex={copiedMessageIndex}
+                    handleCopyMessage={handleCopyMessage}
+                    handleSubmitEdit={handleSubmitEdit}
+                    isLastAssistant={index === lastAssistantIndex}
+                    isGenerating={isGenerating}
+                  />
+                ))}
+                {/* Elemento âncora para o scroll */}
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+          )}
+
+          {/* Entrada de Texto */}
+          <div
+            className={cn(
+              "max-w-3xl w-full mx-auto px-4 shrink-0",
+              hasMessages && "bg-linear-to-b from-transparent to-background to-20% pt-4"
+            )}
+          >
             <div
               className={cn(
                 "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
-                messages.length === 0 && isReady
+                !hasMessages && isReady
                   ? "opacity-100 translate-y-0 mb-8 max-h-20"
                   : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
               )}
@@ -189,13 +194,13 @@ export default function ChatInterface() {
                       key={`${file.name}-${i}`}
                       className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
                     >
-                      <Paperclip className="shrink-0" size={16} />
+                      <Paperclip className="shrink-0" size={20} />
                       <span className="max-w-32 truncate">{file.name}</span>
                       <Button
                         variant="ghost"
                         onClick={() => removeAttachedFile(i)}
                         aria-label={`Remover ${file.name}`}
-                        size="icon-xs"
+                        size="icon"
                       >
                         <X />
                       </Button>
@@ -246,6 +251,7 @@ export default function ChatInterface() {
                       className="hidden"
                     />
                   </div>
+                  {/* Botão de gerenciamento de modelos */}
                   <Tooltip key="model-manager-tooltip">
                     <TooltipTrigger asChild>
                       <Button
@@ -262,7 +268,12 @@ export default function ChatInterface() {
                     </TooltipContent>
                   </Tooltip>
 
-                  <Select name="selected-model" value={selectedModel} onValueChange={handleModelChange}>
+                  {/* Seletor de modelos */}
+                  <Select
+                    name="model-select"
+                    value={selectedModel}
+                    onValueChange={handleModelChange}
+                  >
                     <SelectTrigger
                       title="Selecionar modelo"
                       className="min-w-0 max-w-20 flex-1 truncate rounded-xl border-none p-3 text-sm sm:max-w-40"
@@ -285,6 +296,7 @@ export default function ChatInterface() {
                   </Select>
                 </div>
 
+                {/* Botão de enviar/parar resposta do modelo */}
                 {isGenerating ? (
                   <Button
                     onClick={handleStop}
@@ -315,7 +327,7 @@ export default function ChatInterface() {
         </div>
       </SidebarInset>
 
-      { /* Modal de Configurações */}
+      {/* Modal de Configurações */}
       {isSettingsOpen && (
         <SettingsModal
           selectedModel={selectedModel}
@@ -324,7 +336,7 @@ export default function ChatInterface() {
         />
       )}
 
-      { /* Modal de Gerenciamento de Modelos Baixados */}
+      {/* Modal de Gerenciamento de Modelos Baixados */}
       {isModelManagerOpen && (
         <ModelManagerModal
           selectedModel={selectedModel}
@@ -334,7 +346,7 @@ export default function ChatInterface() {
         />
       )}
 
-      { /* Toaster para notificações */}
+      {/* Toaster para notificações */}
       <Toaster
         position="bottom-right"
         theme={theme as "light" | "dark" | "system"}
