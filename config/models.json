@@ -53,16 +53,16 @@
           "name": "Qwen 2.5 7B"
         },
         {
+          "id": "Qwen3-8B-q4f16_1-MLC",
+          "name": "Qwen 3 8B"
+        },
+        {
           "id": "Hermes-3-Llama-3.1-8B-q4f16_1-MLC",
           "name": "Hermes 3 Llama 3.1 8B"
         },
         {
           "id": "gemma-2-9b-it-q4f16_1-MLC",
           "name": "Gemma 2 9B"
-        },
-        {
-          "id": "Qwen3-8B-q4f16_1-MLC",
-          "name": "Qwen 3 8B"
         },
         {
           "id": "Phi-4-mini-instruct-q4f16_1-MLC",
