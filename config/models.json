@@ -8,18 +8,6 @@
           "name": "Qwen 2.5 1.5B"
         },
         {
-          "id": "SmolLM2-1.7B-Instruct-q4f16_1-MLC",
-          "name": "SmolLM2 1.7B"
-        },
-        {
-          "id": "Llama-3.2-1B-Instruct-q4f16_1-MLC",
-          "name": "Llama 3.2 1B"
-        },
-        {
-          "id": "Llama-3.2-3B-Instruct-q4f16_1-MLC",
-          "name": "Llama 3.2 3B"
-        },
-        {
           "id": "Qwen2.5-3B-Instruct-q4f16_1-MLC",
           "name": "Qwen 2.5 3B"
         },
@@ -34,6 +22,18 @@
         {
           "id": "gemma-2-2b-it-q4f16_1-MLC",
           "name": "Gemma 2 2B"
+        },
+        {
+          "id": "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+          "name": "Llama 3.2 1B"
+        },
+        {
+          "id": "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+          "name": "Llama 3.2 3B"
+        },
+        {
+          "id": "SmolLM2-1.7B-Instruct-q4f16_1-MLC",
+          "name": "SmolLM2 1.7B"
         }
       ]
     },
