@@ -114,6 +114,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
             variant="ghost"
             onClick={handleDownload}
             title="Download"
+            className="text-muted-foreground"
             size="icon"
           >
             <Download />
@@ -122,6 +123,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
             variant="ghost"
             onClick={handleCopy}
             title="Copiar código"
+            className="text-muted-foreground"
             size="icon"
           >
             {copied ? <Check /> : <Copy />}

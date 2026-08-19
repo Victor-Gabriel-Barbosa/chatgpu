@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, type ChangeEvent } from "react";
+import { useState, useRef, type ChangeEvent } from "react";
 import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/chat/chat-message";

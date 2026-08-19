@@ -159,7 +159,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                 variant="ghost"
                 onClick={toggleSidebar}
                 aria-label={isExpanded ? "Fechar barra lateral" : "Abrir barra lateral"}
-                className="group/toggle"
+                className="group/toggle text-muted-foreground"
                 size="icon"
               >
                 {isExpanded || isMobile ? (
