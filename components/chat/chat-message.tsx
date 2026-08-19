@@ -170,7 +170,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       className="group w-full max-w-full min-w-0"
     >
       {!isUser && (
-        <MessageAvatar className={isGenerating && isLastAssistant ? "animate-[spin_2s_linear_infinite]" : ""}>
+        <MessageAvatar className={isGenerating && isLastAssistant ? "animate-spin" : ""}>
           <Avatar>
             <AvatarImage src="/icon0.svg" alt="ChatGPU" />
             <AvatarFallback>AI</AvatarFallback>
