@@ -176,7 +176,7 @@ http://localhost:3000
 
 ```
 chatgpu/
-├── app/                          # Next.js App Router
+├── app/                         # Next.js App Router
 │   ├── layout.tsx               # Layout raiz da aplicação
 │   ├── page.tsx                 # Página principal
 │   └── globals.css              # Estilos globais
