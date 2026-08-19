@@ -254,7 +254,7 @@ chatgpu/
 ├── next.config.ts               # Next.js config
 ├── package.json                 # Dependências do projeto
 ├── package-lock.json
-├── postcss.config.mjs            # PostCSS config
+├── postcss.config.mjs           # PostCSS config
 ├── tsconfig.json                # TypeScript config
 └── typedoc.json                 # TypeDoc config
 ```
@@ -336,7 +336,5 @@ Feito com 🧠 e ☕ por **Victor Gabriel Barbosa**
 ### ⭐ Curtiu o projeto?
 
 Deixa uma estrela no repositório — ajuda bastante a dar visibilidade pro projeto! 🚀
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Victor-Gabriel-Barbosa/chatgpu&type=Date)](https://star-history.com/#Victor-Gabriel-Barbosa/chatgpu&Date)
 
 </div>
