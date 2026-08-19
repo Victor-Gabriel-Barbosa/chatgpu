@@ -105,12 +105,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="model-select" className="block mb-1 transition-colors">
+            <label htmlFor="settings-model" className="block mb-1 transition-colors">
               Motor / Modelo
             </label>
 
             <Select name="settings-model" value={selectMode} onValueChange={handleSelectChange}>
               <SelectTrigger
+                id="settings-model"
                 title="Selecionar modelo"
                 className="w-full truncate"
               >
@@ -164,7 +165,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   return (
                     <div
                       key={model.id}
-                      className="flex items-center justify-between gap-2 rounded-lg border border-input bg-card px-3 py-2 transition-colors"
+                      className="flex items-center justify-between gap-2 rounded-lg border bg-card px-3 py-2 transition-colors"
                     >
                       <div className="min-w-0">
                         <p className="text-xs font-medium truncate">
@@ -233,7 +234,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         <div className="mt-2 p-2 border rounded-lg">
-          <p className="text-xs text-foreground flex gap-2 items-start">
+          <p className="text-xs text-foreground flex gap-2 items-center">
             <Cpu className="shrink-0 mt-0.5" />
             <span>
               <strong>Modelos WebGPU</strong> rodam no seu navegador usando o hardware do seu dispositivo. A primeira execução fará o download de múltiplos MB/GB de dados para o cache.

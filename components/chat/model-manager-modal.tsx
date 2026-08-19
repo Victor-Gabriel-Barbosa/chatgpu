@@ -70,7 +70,7 @@ export function ModelManagerModal({
         className="max-w-lg max-h-[80vh] flex flex-col gap-0 p-0 rounded-2xl [&>button]:hidden"
       >
         {/* Cabeçalho */}
-        <DialogHeader className="flex-row items-center justify-between gap-2 p-4 border-b space-y-0">
+        <DialogHeader className="flex-row items-center justify-between gap-2 p-4 space-y-0">
           <div className="flex items-center gap-2">
             <HardDrive />
             <DialogTitle className="font-semibold text-base">
@@ -196,7 +196,7 @@ export function ModelManagerModal({
 
         {/* Rodapé com uso de armazenamento */}
         {storageEstimate && (
-          <DialogFooter className="border-t m-2 text-xs text-muted-foreground sm:justify-start block">
+          <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
             <div className="flex items-center justify-between mb-1.5">
               <span>Armazenamento usado no navegador</span>
               <span>
