@@ -28,13 +28,13 @@ Um chat de IA rodando **100% no navegador**, utilizando **WebLLM (MLC)** para ex
 
 ## 📷 Capturas de Tela
 
-> <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6655e5a7-61ae-4808-8142-5497e4e14fbb" />
+> ![Home](./screenshots/chatgpu_home.jpg)
 
-> <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/bc43e479-5fa4-49c3-87f1-a33fc579604f" />
+> ![Chat](./screenshots/chatgpu_chat.jpg)
 
-> <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/1db3b125-2c71-4082-85d3-8872715777c4" />
+> ![Modelos](./screenshots/chatgpu_models.jpg)
 
-> <img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/089115ff-9b3e-4427-92b8-7cf1e4fdd7eb" />
+> ![Configurações](./screenshots/chatgpu_settings.jpg)
 
 ---
 
