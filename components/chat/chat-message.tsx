@@ -1,34 +1,26 @@
 import React, { useState } from 'react';
 import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
 import { CodeBlock } from './code-block';
-import { Message } from '@/types/chat';
-import { Button } from "@/components/ui/button"
-import Image from "next/image";
+import { Message as MessageType } from '@/types/chat';
+import { Button } from "@/components/ui/button";
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
+import { Message, MessageAvatar, MessageContent, MessageFooter } from "@/components/ui/message";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-/**
- * Propriedades do componente ChatMessage.
- */
 export interface ChatMessageProps {
-  /** A mensagem a ser exibida. */
-  msg: Message;
-  /** Índice da mensagem na lista de mensagens. */
+  msg: MessageType;
   index: number;
-  /** Índice da mensagem que foi copiada recentemente, ou null se nenhuma foi copiada. */
   copiedMessageIndex: number | null;
-  /** Função para copiar o conteúdo da mensagem. */
   handleCopyMessage: (content: string, index: number) => void;
-  /** Função opcional para enviar o novo conteúdo de uma mensagem editada. */
   handleSubmitEdit?: (newContent: string, index: number) => void;
-  /** Indica se esta é a última mensagem gerada pelo assistente. */
   isLastAssistant?: boolean;
-  /** Indica se a mensagem está sendo gerada. */
   isGenerating?: boolean;
 }
 
@@ -59,7 +51,6 @@ const parseMessageContent = (content: string) => {
   const files: { name: string, content: string }[] = [];
   let processedContent = content;
 
-  // Regex para capturar e extrair arquivos no formato <file name="arquivo.ext">...</file>
   const fileRegex = /<file name="([^"]+)">([\s\S]*?)<\/file>/g;
   let match;
   while ((match = fileRegex.exec(processedContent)) !== null) {
@@ -69,10 +60,8 @@ const parseMessageContent = (content: string) => {
     });
   }
 
-  // Remove o texto bruto dos arquivos para que não polua o chat
   processedContent = processedContent.replace(/<file name="[^"]+">[\s\S]*?<\/file>/g, '').trim();
 
-  // Verifica tag completa <think>...</think>
   const thinkMatch = new RegExp(/<think>([\s\S]*?)<\/think>/).exec(processedContent);
   if (thinkMatch) {
     return {
@@ -82,7 +71,6 @@ const parseMessageContent = (content: string) => {
     };
   }
 
-  // Fallback para quando o modelo ainda está gerando a resposta (streaming)
   const openThinkMatch = new RegExp(/<think>([\s\S]*)/).exec(processedContent);
   if (openThinkMatch) {
     return {
@@ -101,10 +89,7 @@ const reasoningComponents: Components = {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
-      <CodeBlock
-        language={match[1]}
-        code={String(children).replace(/\n$/, '')}
-      />
+      <CodeBlock language={match[1]} code={String(children).replace(/\n$/, '')} />
     ) : (
       <code className="px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word transition-colors" {...rest}>
         {children}
@@ -122,10 +107,7 @@ const messageComponents: Components = {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
-      <CodeBlock
-        language={match[1]}
-        code={String(children).replace(/\n$/, '')}
-      />
+      <CodeBlock language={match[1]} code={String(children).replace(/\n$/, '')} />
     ) : (
       <code className="px-1.5 py-0.5 rounded text-sm font-mono wrap-break-word transition-colors" {...rest}>
         {children}
@@ -163,61 +145,57 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
 
   const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
   const displayReasoning = parsedThink || msg.reasoning;
+  const isUser = msg.role === 'user';
 
-  // Lida com a expansão e colapso do conteúdo dos arquivos
   const toggleFile = (idx: number) => {
     setExpandedFiles(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
 
-  // Lida com o salvamento da edição
   const onSaveEdit = () => {
     const trimmedValue = editValue.trim();
-    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index);
+    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) {
+      handleSubmitEdit(trimmedValue, index);
+    }
     setIsEditing(false);
   };
 
-  // Lida com o cancelamento da edição
   const onCancelEdit = () => {
     setEditValue(msg.content);
     setIsEditing(false);
   };
 
   return (
-    <div className={`flex gap-3 w-full max-w-full min-w-0 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-      {/* Ícone do Assistente */}
-      {msg.role !== 'user' && (
-        <div className="w-7 sm:w-8 shrink-0 flex justify-center items-baseline pt-2.5">
-          {isLastAssistant && (
-            <div className="flex gap-4 w-full justify-start">
-              <Image src="/icon0.svg" alt="ChatGPU" width={24} height={24} className={`${isGenerating ? "animate-[spin_2s_linear_infinite]" : ""}`} />
-            </div>
-          )}
-        </div>
+    <Message
+      align={isUser ? 'end' : 'start'}
+      className="group w-full max-w-full min-w-0"
+    >
+      {!isUser && (
+        <MessageAvatar className={isGenerating && isLastAssistant ? "animate-[spin_2s_linear_infinite]" : ""}>
+          <Avatar>
+            <AvatarImage src="/icon0.svg" alt="ChatGPU" />
+            <AvatarFallback>AI</AvatarFallback>
+          </Avatar>
+        </MessageAvatar>
       )}
 
-      <div className={`group relative min-w-0 max-w-full rounded-3xl py-2.5 ${msg.role === 'user' && !isEditing 
-        ? 'px-3 text-background bg-primary'
-        : 'px-0'
-        }`}
-      >
-        {displayReasoning && msg.role !== 'user' && (
+      <MessageContent className="min-h-16">
+        {/* Bloco de Raciocínio */}
+        {displayReasoning && !isUser && (
           <div className="mb-3 pb-3">
             <Button
               variant="link"
               onClick={() => setShowReasoning(!showReasoning)}
-              className="max-w-full min-w-0"
+              className="max-w-full min-w-0 p-0 h-auto"
             >
-              <Lightbulb className="shrink-0" />
-              <span className={cn("min-w-0 truncate", isGenerating && isLastAssistant ? 'shimmer' : '')}>Raciocínio</span>
-              <ChevronDown className={`shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
+              <Lightbulb className="w-4 h-4 shrink-0 mr-1" />
+              <span className={cn("min-w-0 truncate text-xs", isGenerating && isLastAssistant ? 'shimmer' : '')}>
+                Raciocínio
+              </span>
+              <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </Button>
             {showReasoning && (
-              <div className="mt-2 p-3 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200 transition-colors">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm, remarkMath]}
-                  rehypePlugins={[rehypeKatex]}
-                  components={reasoningComponents}
-                >
+              <div className="mt-2 p-3 border border-primary/20 bg-primary/5 text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
                   {preprocessLaTeX(displayReasoning)}
                 </ReactMarkdown>
               </div>
@@ -225,107 +203,88 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           </div>
         )}
 
-        <div className="wrap-break-word leading-relaxed space-y-2 w-full max-w-full">
-          {isEditing ? (
-            <div className="flex flex-col gap-2 w-full min-w-62.5 sm:min-w-100">
-              <textarea
-                id="edit-input"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    onSaveEdit();
-                  }
-                }}
-                className="field-sizing-content leading-6 w-full bg-secondary p-3 resize-none overflow-y-auto max-h-55 rounded-xl text-sm"
-                rows={1}
-              />
-              <div className="flex justify-end gap-2 mt-1">
-                <Button
-                  variant="secondary"
-                  onClick={onCancelEdit}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={onSaveEdit}
-                  disabled={editValue.trim() === '' || editValue.trim() === msg.content}
-                >
-                  Atualizar
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath]}
-              rehypePlugins={[rehypeKatex]}
-              components={messageComponents}
-            >
-              {preprocessLaTeX(mainContent)}
-            </ReactMarkdown>
-          )}
-        </div>
-
-        {files.length > 0 && !isEditing && (
-          <div className="mt-3 pt-3 flex flex-wrap gap-2">
-            {files.map((file, idx) => {
-              const isExpanded = expandedFiles[idx];
-              const fileExtension = file.name.split('.').pop() || 'text';
-
-              return (
-                <div key={idx} className="flex flex-col gap-2 w-full">
-                  <Button
-                    variant="ghost"
-                    onClick={() => toggleFile(idx)}
-                    className="justify-start"
-                  >
-                    <Paperclip />
-                    <span className="font-medium truncate">{file.name}</span>
-                    <ChevronDown className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                  </Button>
-
-                  {/* Renderiza o conteúdo do arquivo se estiver expandido */}
-                  {isExpanded && (
-                    <div className="w-full animate-in fade-in slide-in-from-top-1 duration-200">
-                      <CodeBlock
-                        language={fileExtension}
-                        code={file.content}
-                      />
-                    </div>
-                  )}
+        <Bubble variant={isUser && !isEditing ? "default" : "ghost"}>
+          <BubbleContent className={cn("wrap-break-word", isEditing && "w-full p-0")}>
+            {isEditing ? (
+              <div className="flex flex-col gap-2 w-full min-w-62.5 sm:min-w-100">
+                <textarea
+                  id="edit-input"
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      onSaveEdit();
+                    }
+                  }}
+                  className="field-sizing-content leading-6 w-full bg-secondary p-3 resize-none overflow-y-auto max-h-55 rounded-xl text-sm outline-none border"
+                  rows={1}
+                />
+                <div className="flex justify-end gap-2 mt-1">
+                  <Button variant="secondary" size="sm" onClick={onCancelEdit}>Cancelar</Button>
+                  <Button size="sm" onClick={onSaveEdit} disabled={editValue.trim() === '' || editValue.trim() === msg.content}>Atualizar</Button>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            ) : (
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
+                {preprocessLaTeX(mainContent)}
+              </ReactMarkdown>
+            )}
 
+            {/* Arquivos Anexados */}
+            {files.length > 0 && !isEditing && (
+              <div className="mt-3 pt-3 border-t border-border/50 flex flex-wrap gap-2">
+                {files.map((file, idx) => {
+                  const isExpanded = expandedFiles[idx];
+                  const fileExtension = file.name.split('.').pop() || 'text';
+
+                  return (
+                    <div key={idx} className="flex flex-col gap-2 w-full">
+                      <Button variant="ghost" size="sm" onClick={() => toggleFile(idx)} className="justify-start">
+                        <Paperclip className="w-4 h-4 mr-1" />
+                        <span className="font-medium truncate">{file.name}</span>
+                        <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                      </Button>
+                      {isExpanded && (
+                        <div className="w-full animate-in fade-in slide-in-from-top-1 duration-200">
+                          <CodeBlock language={fileExtension} code={file.content} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </BubbleContent>
+        </Bubble>
+
+        {/* Rodapé da mensagem para ações extras */}
         {!isEditing && (
-          <div className="absolute flex items-center opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 right-0 -bottom-8 transition-all text-foreground">
+          <MessageFooter className="m-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center gap-1">
             <Button
               variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground"
               onClick={() => handleCopyMessage(msg.content, index)}
               title="Copiar mensagem"
-              className="text-muted-foreground"
-              size="icon-sm"
             >
-              {copiedMessageIndex === index ? <Check /> : <Copy />}
+              {copiedMessageIndex === index ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             </Button>
 
-            {msg.role === 'user' && handleSubmitEdit && (
+            {isUser && handleSubmitEdit && (
               <Button
                 variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground"
                 onClick={() => setIsEditing(true)}
                 title="Editar mensagem"
-                className="text-muted-foreground"
-                size="icon-sm"
               >
-                <Pencil />
+                <Pencil className="w-4 h-4" />
               </Button>
             )}
-          </div>
+          </MessageFooter>
         )}
-      </div>
-    </div>
+      </MessageContent>
+    </Message>
   );
 };

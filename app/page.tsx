@@ -29,6 +29,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from "@/components/ui/message-scroller"
 
 import { cn } from "@/lib/utils"
 
@@ -57,23 +65,12 @@ export default function ChatInterface() {
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
-  // Ref para o final da lista de mensagens e para o input de arquivos
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Ref para o input de arquivos
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Índice da última mensagem do assistente para controle de UI
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const hasMessages = messages.length > 0;
-
-  // Faz scroll para a última mensagem
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Faz scroll para o final sempre que as mensagens ou o chat atual mudarem
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages.length, currentChatId]);
 
   // Copia o conteúdo de uma mensagem para a área de transferência
   const handleCopyMessage = (content: string, index: number) => {
@@ -121,11 +118,13 @@ export default function ChatInterface() {
         id="main-chat-area"
         className="h-full min-h-0 overflow-hidden min-w-0 flex flex-col"
       >
-        <div className="bg-background md:hidden fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-3 transition-colors duration-200">
+        <div className="bg-background md:hidden sticky top-0 z-10 flex h-14 items-center justify-between p-3 transition-colors duration-200">
           <SidebarTrigger />
+
           <span className="font-medium truncate max-w-50">
             {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
           </span>
+
           <Button
             onClick={handleNewChat}
             aria-label="Novo Chat"
@@ -144,33 +143,39 @@ export default function ChatInterface() {
         >
           {/* Mensagens */}
           {hasMessages && (
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              <div className="max-w-3xl mt-15 mx-auto p-4 md:p-8 space-y-12">
-                {messages.map((msg, index) => (
-                  <ChatMessage
-                    key={index}
-                    msg={msg}
-                    index={index}
-                    copiedMessageIndex={copiedMessageIndex}
-                    handleCopyMessage={handleCopyMessage}
-                    handleSubmitEdit={handleSubmitEdit}
-                    isLastAssistant={index === lastAssistantIndex}
-                    isGenerating={isGenerating}
-                  />
-                ))}
-                {/* Elemento âncora para o scroll */}
-                <div ref={messagesEndRef} />
-              </div>
+            <div className="flex min-h-0 flex-1 flex-col">
+              <MessageScrollerProvider>
+                <MessageScroller>
+                  <MessageScrollerViewport>
+                    <MessageScrollerContent className="max-w-3xl mx-auto w-full p-8">
+                      {messages.map((message, index) => (
+                        <MessageScrollerItem
+                          key={index}
+                          messageId={index.toString()}
+                          scrollAnchor={message.role === "user"}
+                        >
+                          <ChatMessage
+                            key={index}
+                            msg={message}
+                            index={index}
+                            copiedMessageIndex={copiedMessageIndex}
+                            handleCopyMessage={handleCopyMessage}
+                            handleSubmitEdit={handleSubmitEdit}
+                            isLastAssistant={index === lastAssistantIndex}
+                            isGenerating={isGenerating}
+                          />
+                        </MessageScrollerItem>
+                      ))}
+                    </MessageScrollerContent>
+                  </MessageScrollerViewport>
+                  <MessageScrollerButton />
+                </MessageScroller>
+              </MessageScrollerProvider>
             </div>
           )}
 
           {/* Entrada de Texto */}
-          <div
-            className={cn(
-              "max-w-3xl w-full mx-auto px-4 shrink-0",
-              hasMessages && "bg-linear-to-b from-transparent to-background to-20% pt-4"
-            )}
-          >
+          <div className="max-w-3xl w-full mx-auto px-4 shrink-0">
             <div
               className={cn(
                 "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
@@ -227,19 +232,25 @@ export default function ChatInterface() {
                   rows={1}
                 />
               </div>
-              <div className="flex flex-wrap items-center justify-between p-2">
+              <div className="flex flex-wrap items-center justify-between m-2 p-2">
                 <div className="flex flex-wrap min-w-0 items-center gap-2">
                   {/* Botão de anexo de arquivos */}
                   <div className="relative">
-                    <Button
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={!isReady}
-                      aria-label={"Anexar arquivo"}
-                      title="Anexar arquivo"
-                      size="icon"
-                    >
-                      <Plus strokeWidth={2.5} />
-                    </Button>
+                    <Tooltip key="attach-file">
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={!isReady}
+                          aria-label={"Anexar arquivo"}
+                          size="icon"
+                        >
+                          <Plus strokeWidth={2.5} />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side={"bottom"}>
+                        <p>Anexar arquivo(s)</p>
+                      </TooltipContent>
+                    </Tooltip>
 
                     <input
                       id="file-input"
@@ -257,7 +268,7 @@ export default function ChatInterface() {
                       <Button
                         variant="secondary"
                         onClick={() => setIsModelManagerOpen(true)}
-                        aria-label="Gerenciar modelos baixados"
+                        aria-label="Gerenciar modelos"
                         size="icon"
                       >
                         <HardDrive />
@@ -298,25 +309,37 @@ export default function ChatInterface() {
 
                 {/* Botão de enviar/parar resposta do modelo */}
                 {isGenerating ? (
-                  <Button
-                    onClick={handleStop}
-                    title="Parar de responder"
-                    size="icon"
-                  >
-                    <Square fill="currentColor" />
-                  </Button>
+                  <Tooltip key="stop-generating">
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleStop}
+                        size="icon"
+                      >
+                        <Square fill="currentColor" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side={"bottom"}>
+                      <p>Parar resposta</p>
+                    </TooltipContent>
+                  </Tooltip>
                 ) : (
-                  <Button
-                    onClick={() => {
-                      handleSend(attachedFiles);
-                      setAttachedFiles([]);
-                    }}
-                    disabled={!isReady || (attachedFiles.length === 0 && !input.trim())}
-                    title="Enviar"
-                    size="icon"
-                  >
-                    <SendHorizontal />
-                  </Button>
+                  <Tooltip key="send-message">
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => {
+                          handleSend(attachedFiles);
+                          setAttachedFiles([]);
+                        }}
+                        disabled={!isReady || (attachedFiles.length === 0 && !input.trim())}
+                        size="icon"
+                      >
+                        <SendHorizontal />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side={"bottom"}>
+                      <p>Enviar</p>
+                    </TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             </div>

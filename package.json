@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.82",
+    "@shadcn/react": "^0.3.0",
     "@tauri-apps/plugin-dialog": "^2.7.2",
     "@tauri-apps/plugin-fs": "^2.5.1",
     "@vercel/analytics": "^2.0.1",
