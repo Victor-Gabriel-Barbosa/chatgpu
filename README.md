@@ -21,7 +21,7 @@
 [![Licença MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-**[🚀 Testar agora](https://chatgpu-nu.vercel.app/) · [📥 Baixar app desktop](#-download-do-app-desktop) · [🧠 Como funciona](#-como-funciona) · [🐛 Reportar bug](https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues)**
+<p align="center"> <a href="https://chatgpu-nu.vercel.app/"><img src="https://img.shields.io/badge/🚀_Testar_agora-4285F4?style=for-the-badge&logoColor=white" alt="Testar agora" /></a> <a href="#-download-do-app-desktop"><img src="https://img.shields.io/badge/📥_Baixar_app_desktop-24C8DB?style=for-the-badge&logoColor=white" alt="Baixar app desktop" /></a> <a href="#-como-funciona"><img src="https://img.shields.io/badge/🧠_Como_funciona-7C3AED?style=for-the-badge&logoColor=white" alt="Como funciona" /></a> <a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues"><img src="https://img.shields.io/badge/🐛_Reportar_bug-E5484D?style=for-the-badge&logoColor=white" alt="Reportar bug" /></a> </p> </div>
 
 </div>
 
