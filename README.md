@@ -18,7 +18,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/Victor-Gabriel-Barbosa/chatgpu?style=social)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Victor-Gabriel-Barbosa/chatgpu)
-![GitHub license](https://img.shields.io/github/license/Victor-Gabriel-Barbosa/chatgpu)
+[![Licença MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 **[🚀 Testar agora](https://chatgpu-nu.vercel.app/) · [🧠 Como funciona](#-como-funciona) · [🐛 Reportar bug](https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues)**
