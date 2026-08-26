@@ -21,7 +21,7 @@
 [![Licença MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-**[🚀 Testar agora](https://chatgpu-nu.vercel.app/) · [🧠 Como funciona](#-como-funciona) · [🐛 Reportar bug](https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues)**
+<p align="center"> <a href="https://chatgpu-nu.vercel.app/"><img src="https://img.shields.io/badge/🚀_Testar_agora-4285F4?style=for-the-badge&logoColor=white" alt="Testar agora" /></a> <a href="#-download-do-app-desktop"><img src="https://img.shields.io/badge/📥_Baixar_app_desktop-24C8DB?style=for-the-badge&logoColor=white" alt="Baixar app desktop" /></a> <a href="#-como-funciona"><img src="https://img.shields.io/badge/🧠_Como_funciona-7C3AED?style=for-the-badge&logoColor=white" alt="Como funciona" /></a> <a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues"><img src="https://img.shields.io/badge/🐛_Reportar_bug-E5484D?style=for-the-badge&logoColor=white" alt="Reportar bug" /></a> </p> </div>
 
 </div>
 
@@ -31,6 +31,7 @@
 
 - [Por que ChatGPU?](#-por-que-chatgpu)
 - [Demo](#-demo)
+- [Download do app desktop](#-download-do-app-desktop)
 - [Funcionalidades](#-funcionalidades)
 - [Capturas de tela](#-capturas-de-tela)
 - [Como funciona](#-como-funciona)
@@ -67,6 +68,41 @@ Experimente sem instalar nada:
 
 ---
 
+## 📥 Download do app desktop
+
+Prefere um aplicativo nativo em vez do navegador? O ChatGPU também roda como app desktop (empacotado com **Tauri**), disponível para Windows, macOS e Linux na [página de releases](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/tag/v1.0.0) — versão atual: **v1.0.0**.
+
+| Sistema | Arquivo | Tamanho |
+| --- | --- | --- |
+| 🪟 **Windows** — instalador | [`chatgpu_1.0.0_x64-setup.exe`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_x64-setup.exe) | 9.46 MB |
+| 🪟 **Windows** — pacote MSI | [`chatgpu_1.0.0_x64_en-US.msi`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_x64_en-US.msi) | 10.5 MB |
+| 🍎 **macOS** — Apple Silicon | [`chatgpu_1.0.0_aarch64.dmg`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_aarch64.dmg) | 12.5 MB |
+| 🐧 **Linux** — Debian/Ubuntu (.deb) | [`chatgpu_1.0.0_amd64.deb`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_amd64.deb) | 10.5 MB |
+| 🐧 **Linux** — Fedora/RHEL (.rpm) | [`chatgpu-1.0.0-1.x86_64.rpm`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu-1.0.0-1.x86_64.rpm) | 10.5 MB |
+| 🐧 **Linux** — universal (AppImage) | [`chatgpu_1.0.0_amd64.AppImage`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_amd64.AppImage) | 84.4 MB |
+
+> ⚠️ **macOS**: por enquanto só há build para **Apple Silicon (aarch64)** — ainda não há `.dmg` para Macs Intel.
+> Também é possível baixar o código-fonte direto ([`.zip`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/archive/refs/tags/v1.0.0.zip) / [`.tar.gz`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/archive/refs/tags/v1.0.0.tar.gz)) e compilar você mesmo com Tauri.
+
+<details>
+<summary>🔐 Checksums SHA-256 (clique para expandir)</summary>
+
+| Arquivo | SHA-256 |
+| --- | --- |
+| `chatgpu_1.0.0_x64-setup.exe` | `3e15222c9323b7a4656f37218ac3546e3a21889a46b0d90c2471e95dce47aa08` |
+| `chatgpu_1.0.0_x64_en-US.msi` | `8ee06119c123ae4ec6ac7fc2dc09dee7fa51e2eb88eb565d580efa9b9691210b` |
+| `chatgpu_1.0.0_aarch64.dmg` | `afaf555c2339795df88120d360db124d856ef9ed11154ec435b90ffdce98af4c` |
+| `chatgpu_aarch64.app.tar.gz` | `650d4288e9b0263beca3f91f7cd9045cdc5e73a93166ada34ae887a30c3b1683` |
+| `chatgpu_1.0.0_amd64.deb` | `d19bd23748f00281ff28fd0bda8e1222a1131aca457c5fac8433ca960134e3cd` |
+| `chatgpu-1.0.0-1.x86_64.rpm` | `055bf4d290ebc0e669cf048fabe1f560e20b51ec8484c29004f8fa4deb5986d2` |
+| `chatgpu_1.0.0_amd64.AppImage` | `a24841310c306b477a373c7bbf740d8ef35bd80669058318b51f1b84bcd946fe` |
+
+Use `sha256sum <arquivo>` (Linux/macOS) ou `Get-FileHash <arquivo> -Algorithm SHA256` (PowerShell) para conferir a integridade do download.
+
+</details>
+
+---
+
 ## ✨ Funcionalidades
 
 - ⚡ **Execução local de LLMs** direto no navegador, acelerada por WebGPU
@@ -86,22 +122,51 @@ Experimente sem instalar nada:
 | Home | Chat |
 | :---: | :---: |
 | ![Home](./screenshots/chatgpu_home.jpg) | ![Chat](./screenshots/chatgpu_chat.jpg) |
-
 | Modelos | Configurações |
-| :---: | :---: |
 | ![Modelos](./screenshots/chatgpu_models.jpg) | ![Configurações](./screenshots/chatgpu_settings.jpg) |
 
 ---
 
 ## 🧠 Como funciona
 
+[#-como-funciona](#-como-funciona)
+
 ```mermaid
-flowchart LR
-    A[👤 Você digita uma mensagem] --> B[🧵 Web Worker]
-    B --> C[🧠 Modelo carregado via WebLLM]
-    C -->|WebGPU| D[⚡ Inferência 100% local]
-    D -->|Streaming de tokens| E[💬 Interface atualizada em tempo real]
+flowchart TB
+    A[👤 Você digita e envia uma mensagem] --> B[🖥️ Thread principal - UI React]
+    B -->|postMessage| C[🧵 Web Worker]
+
+    subgraph WK[🧵 Web Worker - roda em background, mantém a UI livre]
+        direction TB
+        C --> D{📦 Modelo já<br/>está em cache?}
+        D -->|Não| E[⬇️ Baixa o modelo<br/>WebLLM MLC]
+        D -->|Sim| F[⚡ Carrega direto do cache]
+        E --> F
+        F --> G[🧠 Engine WebLLM inicializada]
+        G -->|WebGPU disponível| H[🔮 Inferência 100% local]
+    end
+
+    H -->|streaming de tokens| I[💬 UI atualizada em tempo real]
+    I -.->|próxima mensagem| A
+
+    classDef userStep fill:#4f46e5,stroke:#312e81,color:#fff,stroke-width:1px
+    classDef workerStep fill:#0891b2,stroke:#164e63,color:#fff,stroke-width:1px
+    classDef gpuStep fill:#ea580c,stroke:#9a3412,color:#fff,stroke-width:1px
+
+    class A,B,I userStep
+    class C,D,E,F,G workerStep
+    class H gpuStep
 ```
+
+O projeto utiliza o **`@mlc-ai/web-llm`**, que roda modelos de linguagem direto no navegador combinando três peças:
+
+- **Web Workers** (`lib/worker.ts`) — a UI (thread principal) nunca trava: ela só envia a mensagem pro worker e escuta a resposta chegar em streaming
+- **Cache do modelo** (`hooks/useModelCache.ts`) — na primeira vez, o navegador baixa os pesos do modelo (pode levar alguns minutos); depois disso, o carregamento é quase instantâneo
+- **WebGPU + WebAssembly** (`hooks/useEngine.ts`) — a inferência roda acelerada por GPU quando disponível, com WebAssembly cuidando do runtime
+
+Resumindo o fluxo: mensagem → worker → (baixa ou carrega do cache) → engine WebLLM → inferência local via WebGPU → tokens voltam em streaming pra thread principal, atualizando a UI em tempo real.
+
+---
 
 O projeto utiliza o **`@mlc-ai/web-llm`**, que permite rodar modelos de linguagem diretamente no navegador combinando:
 
@@ -169,6 +234,8 @@ Depois abra:
 ```
 http://localhost:3000
 ```
+
+> 💡 Não quer compilar nada? Baixe o [app desktop pronto](#-download-do-app-desktop) para o seu sistema operacional.
 
 ---
 
@@ -316,6 +383,9 @@ Depende do suporte a WebGPU do navegador e do hardware disponível — dispositi
 
 **Posso usar no celular?**
 Em tese sim, desde que o navegador do dispositivo suporte WebGPU, mas a experiência varia bastante.
+
+**Preciso instalar o app desktop ou dá pra usar direto no navegador?**
+Os dois funcionam igual por baixo dos panos (mesmo motor WebLLM). O app desktop é só uma conveniência — ícone na área de trabalho, sem depender de manter uma aba aberta. Use o [link do site](https://chatgpu-nu.vercel.app/) se quiser testar sem instalar nada.
 
 ---
 
