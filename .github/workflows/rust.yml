@@ -1,0 +1,84 @@
+name: Build Tauri
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            args: ""
+            artifact: windows
+
+          - platform: macos-latest
+            args: "--target aarch64-apple-darwin"
+            artifact: macos-arm64
+
+          - platform: macos-13
+            args: "--target x86_64-apple-darwin"
+            artifact: macos-x64
+
+          - platform: ubuntu-22.04
+            args: ""
+            artifact: linux
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Add Rust targets
+        if: runner.os == 'macOS'
+        run: |
+          rustup target add \
+            aarch64-apple-darwin \
+            x86_64-apple-darwin
+
+      - name: Build Tauri
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "ChatGPU ${{ github.ref_name }}"
+          releaseBody: "Build automático do ChatGPU"
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
