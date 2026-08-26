@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Cpu, Download, Loader, RefreshCw, Trash2 } from 'lucide-react';
+import { Settings, Cpu, Download, Loader, RefreshCw, Trash2, Film } from 'lucide-react';
 import { models as Models } from '@/config/models.json';
 import { useModelCache, type ManagedModel } from '@/hooks/useModelCache';
 import { Button } from "@/components/ui/button"
@@ -32,6 +32,8 @@ export interface SettingsModalProps {
   onClose: () => void;
   /** Indica se uma resposta está sendo gerada, para desabilitar ações de download/exclusão. */
   isGenerating?: boolean;
+  /** Função para abrir e assistir ao vídeo de introdução novamente. */
+  onWatchIntroVideo?: () => void;
 }
 
 /**
@@ -44,7 +46,7 @@ export interface SettingsModalProps {
  * @returns Elemento React contendo o modal de configurações.
  */
 export const SettingsModal: React.FC<SettingsModalProps> = ({
-  selectedModel, setSelectedModel, onClose, isGenerating = false
+  selectedModel, setSelectedModel, onClose, isGenerating = false, onWatchIntroVideo
 }) => {
   const [selectMode, setSelectMode] = useState<string>(selectedModel);
   const {
@@ -241,6 +243,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </span>
           </p>
         </div>
+
+        {onWatchIntroVideo && (
+          <div className="pt-2 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2 text-xs"
+              onClick={() => {
+                onClose();
+                onWatchIntroVideo();
+              }}
+            >
+              <Film className="size-4 text-primary" />
+              Assistir vídeo de introdução
+            </Button>
+          </div>
+        )}
 
         <DialogFooter>
           <Button onClick={handleSave}>

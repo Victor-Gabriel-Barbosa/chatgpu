@@ -7,6 +7,7 @@ import { ChatMessage } from "@/components/chat/chat-message";
 import { AppSidebar } from "@/components/chat/app-sidebar";
 import { SettingsModal } from "@/components/chat/settings-modal";
 import { ModelManagerModal } from "@/components/chat/model-manager-modal";
+import { StartupVideo } from "@/components/chat/startup-video";
 import { models as Models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
@@ -62,6 +63,7 @@ export default function ChatInterface() {
   } = useSession({ engine, isReady });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isModelManagerOpen, setIsModelManagerOpen] = useState(false);
+  const [isStartupVideoOpen, setIsStartupVideoOpen] = useState(true);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
@@ -356,6 +358,7 @@ export default function ChatInterface() {
           selectedModel={selectedModel}
           setSelectedModel={handleModelChange}
           onClose={() => setIsSettingsOpen(false)}
+          onWatchIntroVideo={() => setIsStartupVideoOpen(true)}
         />
       )}
 
@@ -369,7 +372,13 @@ export default function ChatInterface() {
         />
       )}
 
-      {/* Toaster para notificações */}
+      {/* Vídeo de Introdução na Inicialização */}
+      <StartupVideo
+        isOpen={isStartupVideoOpen}
+        onClose={() => setIsStartupVideoOpen(false)}
+      />
+
+      {/* Toaster para notificações*/}
       <Toaster
         position="bottom-right"
         theme={theme as "light" | "dark" | "system"}
