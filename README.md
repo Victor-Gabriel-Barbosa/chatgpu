@@ -122,9 +122,7 @@ Use `sha256sum <arquivo>` (Linux/macOS) ou `Get-FileHash <arquivo> -Algorithm SH
 | Home | Chat |
 | :---: | :---: |
 | ![Home](./screenshots/chatgpu_home.jpg) | ![Chat](./screenshots/chatgpu_chat.jpg) |
-
 | Modelos | Configurações |
-| :---: | :---: |
 | ![Modelos](./screenshots/chatgpu_models.jpg) | ![Configurações](./screenshots/chatgpu_settings.jpg) |
 
 ---
