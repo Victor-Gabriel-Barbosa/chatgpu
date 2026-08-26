@@ -105,6 +105,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
               variant="ghost"
               onClick={() => setIsFullscreen(true)}
               title="Maximizar preview"
+              className="text-muted-foreground"
               size="icon"
             >
               <Maximize2 />
