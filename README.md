@@ -131,13 +131,44 @@ Use `sha256sum <arquivo>` (Linux/macOS) ou `Get-FileHash <arquivo> -Algorithm SH
 
 ## 🧠 Como funciona
 
+[#-como-funciona](#-como-funciona)
+
 ```mermaid
-flowchart LR
-    A[👤 Você digita uma mensagem] --> B[🧵 Web Worker]
-    B --> C[🧠 Modelo carregado via WebLLM]
-    C -->|WebGPU| D[⚡ Inferência 100% local]
-    D -->|Streaming de tokens| E[💬 Interface atualizada em tempo real]
+flowchart TB
+    A[👤 Você digita e envia uma mensagem] --> B[🖥️ Thread principal - UI React]
+    B -->|postMessage| C[🧵 Web Worker]
+
+    subgraph WK[🧵 Web Worker - roda em background, mantém a UI livre]
+        direction TB
+        C --> D{📦 Modelo já<br/>está em cache?}
+        D -->|Não| E[⬇️ Baixa o modelo<br/>WebLLM MLC]
+        D -->|Sim| F[⚡ Carrega direto do cache]
+        E --> F
+        F --> G[🧠 Engine WebLLM inicializada]
+        G -->|WebGPU disponível| H[🔮 Inferência 100% local]
+    end
+
+    H -->|streaming de tokens| I[💬 UI atualizada em tempo real]
+    I -.->|próxima mensagem| A
+
+    classDef userStep fill:#4f46e5,stroke:#312e81,color:#fff,stroke-width:1px
+    classDef workerStep fill:#0891b2,stroke:#164e63,color:#fff,stroke-width:1px
+    classDef gpuStep fill:#ea580c,stroke:#9a3412,color:#fff,stroke-width:1px
+
+    class A,B,I userStep
+    class C,D,E,F,G workerStep
+    class H gpuStep
 ```
+
+O projeto utiliza o **`@mlc-ai/web-llm`**, que roda modelos de linguagem direto no navegador combinando três peças:
+
+- **Web Workers** (`lib/worker.ts`) — a UI (thread principal) nunca trava: ela só envia a mensagem pro worker e escuta a resposta chegar em streaming
+- **Cache do modelo** (`hooks/useModelCache.ts`) — na primeira vez, o navegador baixa os pesos do modelo (pode levar alguns minutos); depois disso, o carregamento é quase instantâneo
+- **WebGPU + WebAssembly** (`hooks/useEngine.ts`) — a inferência roda acelerada por GPU quando disponível, com WebAssembly cuidando do runtime
+
+Resumindo o fluxo: mensagem → worker → (baixa ou carrega do cache) → engine WebLLM → inferência local via WebGPU → tokens voltam em streaming pra thread principal, atualizando a UI em tempo real.
+
+---
 
 O projeto utiliza o **`@mlc-ai/web-llm`**, que permite rodar modelos de linguagem diretamente no navegador combinando:
 
