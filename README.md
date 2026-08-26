@@ -21,7 +21,7 @@
 [![Licença MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-**[🚀 Testar agora](https://chatgpu-nu.vercel.app/) · [🧠 Como funciona](#-como-funciona) · [🐛 Reportar bug](https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues)**
+**[🚀 Testar agora](https://chatgpu-nu.vercel.app/) · [📥 Baixar app desktop](#-download-do-app-desktop) · [🧠 Como funciona](#-como-funciona) · [🐛 Reportar bug](https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues)**
 
 </div>
 
@@ -31,6 +31,7 @@
 
 - [Por que ChatGPU?](#-por-que-chatgpu)
 - [Demo](#-demo)
+- [Download do app desktop](#-download-do-app-desktop)
 - [Funcionalidades](#-funcionalidades)
 - [Capturas de tela](#-capturas-de-tela)
 - [Como funciona](#-como-funciona)
@@ -64,6 +65,41 @@ Experimente sem instalar nada:
 **👉 https://chatgpu-nu.vercel.app/**
 
 > ⚠️ Na primeira visita o navegador precisa baixar o modelo escolhido — isso pode levar alguns minutos, dependendo da sua conexão.
+
+---
+
+## 📥 Download do app desktop
+
+Prefere um aplicativo nativo em vez do navegador? O ChatGPU também roda como app desktop (empacotado com **Tauri**), disponível para Windows, macOS e Linux na [página de releases](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/tag/v1.0.0) — versão atual: **v1.0.0**.
+
+| Sistema | Arquivo | Tamanho |
+| --- | --- | --- |
+| 🪟 **Windows** — instalador | [`chatgpu_1.0.0_x64-setup.exe`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_x64-setup.exe) | 9.46 MB |
+| 🪟 **Windows** — pacote MSI | [`chatgpu_1.0.0_x64_en-US.msi`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_x64_en-US.msi) | 10.5 MB |
+| 🍎 **macOS** — Apple Silicon | [`chatgpu_1.0.0_aarch64.dmg`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_aarch64.dmg) | 12.5 MB |
+| 🐧 **Linux** — Debian/Ubuntu (.deb) | [`chatgpu_1.0.0_amd64.deb`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_amd64.deb) | 10.5 MB |
+| 🐧 **Linux** — Fedora/RHEL (.rpm) | [`chatgpu-1.0.0-1.x86_64.rpm`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu-1.0.0-1.x86_64.rpm) | 10.5 MB |
+| 🐧 **Linux** — universal (AppImage) | [`chatgpu_1.0.0_amd64.AppImage`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_amd64.AppImage) | 84.4 MB |
+
+> ⚠️ **macOS**: por enquanto só há build para **Apple Silicon (aarch64)** — ainda não há `.dmg` para Macs Intel.
+> Também é possível baixar o código-fonte direto ([`.zip`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/archive/refs/tags/v1.0.0.zip) / [`.tar.gz`](https://github.com/Victor-Gabriel-Barbosa/chatgpu/archive/refs/tags/v1.0.0.tar.gz)) e compilar você mesmo com Tauri.
+
+<details>
+<summary>🔐 Checksums SHA-256 (clique para expandir)</summary>
+
+| Arquivo | SHA-256 |
+| --- | --- |
+| `chatgpu_1.0.0_x64-setup.exe` | `3e15222c9323b7a4656f37218ac3546e3a21889a46b0d90c2471e95dce47aa08` |
+| `chatgpu_1.0.0_x64_en-US.msi` | `8ee06119c123ae4ec6ac7fc2dc09dee7fa51e2eb88eb565d580efa9b9691210b` |
+| `chatgpu_1.0.0_aarch64.dmg` | `afaf555c2339795df88120d360db124d856ef9ed11154ec435b90ffdce98af4c` |
+| `chatgpu_aarch64.app.tar.gz` | `650d4288e9b0263beca3f91f7cd9045cdc5e73a93166ada34ae887a30c3b1683` |
+| `chatgpu_1.0.0_amd64.deb` | `d19bd23748f00281ff28fd0bda8e1222a1131aca457c5fac8433ca960134e3cd` |
+| `chatgpu-1.0.0-1.x86_64.rpm` | `055bf4d290ebc0e669cf048fabe1f560e20b51ec8484c29004f8fa4deb5986d2` |
+| `chatgpu_1.0.0_amd64.AppImage` | `a24841310c306b477a373c7bbf740d8ef35bd80669058318b51f1b84bcd946fe` |
+
+Use `sha256sum <arquivo>` (Linux/macOS) ou `Get-FileHash <arquivo> -Algorithm SHA256` (PowerShell) para conferir a integridade do download.
+
+</details>
 
 ---
 
@@ -169,6 +205,8 @@ Depois abra:
 ```
 http://localhost:3000
 ```
+
+> 💡 Não quer compilar nada? Baixe o [app desktop pronto](#-download-do-app-desktop) para o seu sistema operacional.
 
 ---
 
@@ -316,6 +354,9 @@ Depende do suporte a WebGPU do navegador e do hardware disponível — dispositi
 
 **Posso usar no celular?**
 Em tese sim, desde que o navegador do dispositivo suporte WebGPU, mas a experiência varia bastante.
+
+**Preciso instalar o app desktop ou dá pra usar direto no navegador?**
+Os dois funcionam igual por baixo dos panos (mesmo motor WebLLM). O app desktop é só uma conveniência — ícone na área de trabalho, sem depender de manter uma aba aberta. Use o [link do site](https://chatgpu-nu.vercel.app/) se quiser testar sem instalar nada.
 
 ---
 
