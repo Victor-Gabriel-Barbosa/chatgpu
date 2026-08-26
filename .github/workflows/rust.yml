@@ -5,6 +5,15 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag/versão para o release manual (ex: v0.1.0)"
+        required: true
+        default: "v0.0.0-dev"
+
+# Necessário para o tauri-action poder criar/atualizar a Release
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -50,6 +59,11 @@ jobs:
       - name: Rust setup
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri -> target"
+
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: |
@@ -73,15 +87,25 @@ jobs:
             aarch64-apple-darwin \
             x86_64-apple-darwin
 
+      - name: Resolve tag name
+        id: tag
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ github.event.inputs.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build Tauri
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: "App ${{ github.ref_name }}"
-          releaseBody: "Build automático"
-          releaseDraft: false
+          tagName: ${{ steps.tag.outputs.name }}
+          releaseName: "ChatGPU ${{ steps.tag.outputs.name }}"
+          releaseBody: "Build automático gerado pelo GitHub Actions."
+          releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
 
@@ -92,3 +116,4 @@ jobs:
           path: |
             src-tauri/target/release/bundle/
             src-tauri/target/*/release/bundle/
+          if-no-files-found: ignore
