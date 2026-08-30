@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
-import { useEngine } from "@/hooks/useEngine";
-import { useSession } from "@/hooks/useSession";
+import { useEngine } from "@/hooks/use-engine";
+import { useSession } from "@/hooks/use-session";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Select,

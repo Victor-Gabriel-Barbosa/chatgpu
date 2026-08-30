@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Settings, Cpu, Download, Loader, RefreshCw, Trash2, Film } from 'lucide-react';
 import { models as Models } from '@/config/models.json';
-import { useModelCache, type ManagedModel } from '@/hooks/useModelCache';
+import { useModelCache, type ManagedModel } from '@/hooks/use-model-cache';
 import { Button } from "@/components/ui/button"
 import {
   Dialog,

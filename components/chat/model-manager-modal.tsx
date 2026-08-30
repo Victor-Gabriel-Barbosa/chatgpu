@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Download, HardDrive, Loader, RefreshCw, Trash2, X } from "lucide-react";
-import { useModelCache, type ManagedModel } from "@/hooks/useModelCache";
+import { useModelCache, type ManagedModel } from "@/hooks/use-model-cache";
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
