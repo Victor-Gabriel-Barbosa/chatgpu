@@ -51,7 +51,9 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         })
-        .catch(() => caches.match('/'));
+        .catch(() => {
+          return new Response(null, { status: 504, statusText: "Offline e não cacheado" });
+        });
     })
   );
 });
