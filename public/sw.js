@@ -1,4 +1,4 @@
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE_NAME = `chatgpu-cache-${VERSION}`;
 
 const ASSETS_TO_CACHE = [
