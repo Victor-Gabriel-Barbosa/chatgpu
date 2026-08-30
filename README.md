@@ -31,6 +31,7 @@
 
 - [Por que ChatGPU?](#-por-que-chatgpu)
 - [Demo](#-demo)
+- [Documentação](https://victor-gabriel-barbosa.github.io/chatgpu/)
 - [Download do app desktop](#-download-do-app-desktop)
 - [Funcionalidades](#-funcionalidades)
 - [Capturas de tela](#-capturas-de-tela)
