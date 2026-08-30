@@ -1,42 +1,253 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>chatgpu</title><meta name="description" content="Documentation for chatgpu"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">chatgpu</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>chatgpu</h1></div><div class="tsd-panel tsd-typography"><h1 id="🤖-chatgpu" class="tsd-anchor-link">🤖 ChatGPU<a href="#🤖-chatgpu" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
-<p>Um chat de IA rodando <strong>100% no navegador</strong>, utilizando <strong>WebLLM (MLC)</strong> para executar modelos localmente com aceleração por GPU (quando disponível).</p>
-<blockquote>
-<p>Sem backend. Sem API paga. Tudo direto no seu browser.</p>
-</blockquote>
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>chatgpu</title><meta name="description" content="Documentation for chatgpu"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">chatgpu</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>chatgpu</h1></div><div class="tsd-panel tsd-typography"><div align="center">
+<h1 id="🤖-chatgpu" class="tsd-anchor-link">🤖 ChatGPU<a href="#🤖-chatgpu" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<h3 id="seu-próprio-chatgpt-rodando-100-dentro-do-navegador" class="tsd-anchor-link">Seu próprio ChatGPT, rodando 100% dentro do navegador<a href="#seu-próprio-chatgpt-rodando-100-dentro-do-navegador" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p><em>Sem backend. Sem API paga. Sem seus dados saindo da sua máquina.</em></p>
+<p><img src="https://img.shields.io/badge/Next.js-black?logo=next.js&amp;logoColor=white" alt="Next.js">
+<img src="https://img.shields.io/badge/React-20232A?logo=react&amp;logoColor=61DAFB" alt="React">
+<img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript">
+<img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&amp;logoColor=white" alt="Tailwind CSS">
+<img src="https://img.shields.io/badge/WebLLM-7C3AED" alt="WebLLM">
+<img src="https://img.shields.io/badge/WebGPU-4285F4" alt="WebGPU">
+<img src="https://img.shields.io/badge/Tauri-24C8DB?logo=tauri&amp;logoColor=white" alt="Tauri">
+<img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&amp;logoColor=white" alt="shadcn/ui">
+<img src="https://img.shields.io/badge/Dexie.js-FF6F00" alt="Dexie"></p>
+<p><img src="https://img.shields.io/github/stars/Victor-Gabriel-Barbosa/chatgpu?style=social" alt="GitHub stars">
+<img src="https://img.shields.io/github/last-commit/Victor-Gabriel-Barbosa/chatgpu" alt="GitHub last commit">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="Licença MIT"></a>
+<img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></p>
+<p align="center"> <a href="https://chatgpu-nu.vercel.app/"><img src="https://img.shields.io/badge/🚀_Testar_agora-4285F4?style=for-the-badge&logoColor=white" alt="Testar agora" /></a> <a href="#-download-do-app-desktop"><img src="https://img.shields.io/badge/📥_Baixar_app_desktop-24C8DB?style=for-the-badge&logoColor=white" alt="Baixar app desktop" /></a> <a href="#-como-funciona"><img src="https://img.shields.io/badge/🧠_Como_funciona-7C3AED?style=for-the-badge&logoColor=white" alt="Como funciona" /></a> <a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/issues"><img src="https://img.shields.io/badge/🐛_Reportar_bug-E5484D?style=for-the-badge&logoColor=white" alt="Reportar bug" /></a> </p> </div>
+</div>
 <hr>
-<h2 id="🚀-demo" class="tsd-anchor-link">🚀 Demo<a href="#🚀-demo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<blockquote>
-<p><a href="https://chatgpu-nu.vercel.app/">https://chatgpu-nu.vercel.app/</a></p>
-</blockquote>
-<hr>
-<h2 id="✨-features" class="tsd-anchor-link">✨ Features<a href="#✨-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h2 id="📑-sumário" class="tsd-anchor-link">📑 Sumário<a href="#📑-sumário" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>
-<li>⚡ Execução de LLMs diretamente no navegador (WebGPU)</li>
-<li>🧠 Suporte a múltiplos modelos (Qwen, Llama, Phi, Gemma...)</li>
-<li>💬 Interface de chat moderna (estilo ChatGPT)</li>
-<li>🧾 Histórico de conversas salvo no <code>localStorage</code></li>
-<li>🧵 Streaming de respostas em tempo real</li>
-<li>⏹️ Interrupção de geração de resposta</li>
-<li>📝 Edição de mensagens e regeneração</li>
-<li>🎨 Tema claro/escuro</li>
-<li>📱 Layout responsivo</li>
+<li><a href="#-por-que-chatgpu">Por que ChatGPU?</a></li>
+<li><a href="#-demo">Demo</a></li>
+<li><a href="#-download-do-app-desktop">Download do app desktop</a></li>
+<li><a href="#-funcionalidades">Funcionalidades</a></li>
+<li><a href="#-capturas-de-tela">Capturas de tela</a></li>
+<li><a href="#-como-funciona">Como funciona</a></li>
+<li><a href="#-modelos-suportados">Modelos suportados</a></li>
+<li><a href="#-instala%C3%A7%C3%A3o">Instalação</a></li>
+<li><a href="#-estrutura-do-projeto">Estrutura do projeto</a></li>
+<li><a href="#-persist%C3%AAncia">Persistência</a></li>
+<li><a href="#-contribui%C3%A7%C3%A3o">Contribuição</a></li>
+<li><a href="#-faq">FAQ</a></li>
+<li><a href="#-licen%C3%A7a">Licença</a></li>
 </ul>
 <hr>
-<h2 id="📷-capturas-de-tela" class="tsd-anchor-link">📷 Capturas de Tela<a href="#📷-capturas-de-tela" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h2 id="🎯-por-que-chatgpu" class="tsd-anchor-link">🎯 Por que ChatGPU?<a href="#🎯-por-que-chatgpu" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>A maioria dos chats de IA manda cada mensagem sua para um servidor de terceiros. O <strong>ChatGPU</strong> faz o oposto: ele baixa o modelo de linguagem uma vez e roda toda a inferência <strong>dentro do seu navegador</strong>, usando WebGPU para acelerar por hardware. Nada do que você digita sai da sua máquina.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>🤖 ChatGPU</th>
+<th>☁️ Chat na nuvem tradicional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔒 Privacidade</td>
+<td>Tudo roda localmente, nada é enviado</td>
+<td>Mensagens trafegam por servidores externos</td>
+</tr>
+<tr>
+<td>💸 Custo</td>
+<td>Gratuito, sem chave de API</td>
+<td>Geralmente requer assinatura ou créditos</td>
+</tr>
+<tr>
+<td>🌐 Internet</td>
+<td>Só é necessária para baixar o modelo</td>
+<td>Necessária a cada mensagem enviada</td>
+</tr>
+<tr>
+<td>⚡ Processamento</td>
+<td>Usa a GPU do seu próprio dispositivo</td>
+<td>Depende da infraestrutura do provedor</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🚀-demo" class="tsd-anchor-link">🚀 Demo<a href="#🚀-demo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Experimente sem instalar nada:</p>
+<p><strong>👉 <a href="https://chatgpu-nu.vercel.app/">https://chatgpu-nu.vercel.app/</a></strong></p>
 <blockquote>
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6655e5a7-61ae-4808-8142-5497e4e14fbb" />
-</blockquote>
-<blockquote>
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/bc43e479-5fa4-49c3-87f1-a33fc579604f" />
-</blockquote>
-<blockquote>
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/1db3b125-2c71-4082-85d3-8872715777c4" />
-</blockquote>
-<blockquote>
-<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/089115ff-9b3e-4427-92b8-7cf1e4fdd7eb" />
+<p>⚠️ Na primeira visita o navegador precisa baixar o modelo escolhido — isso pode levar alguns minutos, dependendo da sua conexão.</p>
 </blockquote>
 <hr>
-<h2 id="🛠️-tecnologias" class="tsd-anchor-link">🛠️ Tecnologias<a href="#🛠️-tecnologias" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h2 id="📥-download-do-app-desktop" class="tsd-anchor-link">📥 Download do app desktop<a href="#📥-download-do-app-desktop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Prefere um aplicativo nativo em vez do navegador? O ChatGPU também roda como app desktop (empacotado com <strong>Tauri</strong>), disponível para Windows, macOS e Linux na <a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/tag/v1.0.0">página de releases</a> — versão atual: <strong>v1.0.0</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Sistema</th>
+<th>Arquivo</th>
+<th>Tamanho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🪟 <strong>Windows</strong> — instalador</td>
+<td><a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_x64-setup.exe"><code>chatgpu_1.0.0_x64-setup.exe</code></a></td>
+<td>9.46 MB</td>
+</tr>
+<tr>
+<td>🪟 <strong>Windows</strong> — pacote MSI</td>
+<td><a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_x64_en-US.msi"><code>chatgpu_1.0.0_x64_en-US.msi</code></a></td>
+<td>10.5 MB</td>
+</tr>
+<tr>
+<td>🍎 <strong>macOS</strong> — Apple Silicon</td>
+<td><a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_aarch64.dmg"><code>chatgpu_1.0.0_aarch64.dmg</code></a></td>
+<td>12.5 MB</td>
+</tr>
+<tr>
+<td>🐧 <strong>Linux</strong> — Debian/Ubuntu (.deb)</td>
+<td><a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_amd64.deb"><code>chatgpu_1.0.0_amd64.deb</code></a></td>
+<td>10.5 MB</td>
+</tr>
+<tr>
+<td>🐧 <strong>Linux</strong> — Fedora/RHEL (.rpm)</td>
+<td><a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu-1.0.0-1.x86_64.rpm"><code>chatgpu-1.0.0-1.x86_64.rpm</code></a></td>
+<td>10.5 MB</td>
+</tr>
+<tr>
+<td>🐧 <strong>Linux</strong> — universal (AppImage)</td>
+<td><a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/releases/download/v1.0.0/chatgpu_1.0.0_amd64.AppImage"><code>chatgpu_1.0.0_amd64.AppImage</code></a></td>
+<td>84.4 MB</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>macOS</strong>: por enquanto só há build para <strong>Apple Silicon (aarch64)</strong> — ainda não há <code>.dmg</code> para Macs Intel.
+Também é possível baixar o código-fonte direto (<a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/archive/refs/tags/v1.0.0.zip"><code>.zip</code></a> / <a href="https://github.com/Victor-Gabriel-Barbosa/chatgpu/archive/refs/tags/v1.0.0.tar.gz"><code>.tar.gz</code></a>) e compilar você mesmo com Tauri.</p>
+</blockquote>
+<details>
+<summary>🔐 Checksums SHA-256 (clique para expandir)</summary>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>SHA-256</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>chatgpu_1.0.0_x64-setup.exe</code></td>
+<td><code>3e15222c9323b7a4656f37218ac3546e3a21889a46b0d90c2471e95dce47aa08</code></td>
+</tr>
+<tr>
+<td><code>chatgpu_1.0.0_x64_en-US.msi</code></td>
+<td><code>8ee06119c123ae4ec6ac7fc2dc09dee7fa51e2eb88eb565d580efa9b9691210b</code></td>
+</tr>
+<tr>
+<td><code>chatgpu_1.0.0_aarch64.dmg</code></td>
+<td><code>afaf555c2339795df88120d360db124d856ef9ed11154ec435b90ffdce98af4c</code></td>
+</tr>
+<tr>
+<td><code>chatgpu_aarch64.app.tar.gz</code></td>
+<td><code>650d4288e9b0263beca3f91f7cd9045cdc5e73a93166ada34ae887a30c3b1683</code></td>
+</tr>
+<tr>
+<td><code>chatgpu_1.0.0_amd64.deb</code></td>
+<td><code>d19bd23748f00281ff28fd0bda8e1222a1131aca457c5fac8433ca960134e3cd</code></td>
+</tr>
+<tr>
+<td><code>chatgpu-1.0.0-1.x86_64.rpm</code></td>
+<td><code>055bf4d290ebc0e669cf048fabe1f560e20b51ec8484c29004f8fa4deb5986d2</code></td>
+</tr>
+<tr>
+<td><code>chatgpu_1.0.0_amd64.AppImage</code></td>
+<td><code>a24841310c306b477a373c7bbf740d8ef35bd80669058318b51f1b84bcd946fe</code></td>
+</tr>
+</tbody>
+</table>
+<p>Use <code>sha256sum &lt;arquivo&gt;</code> (Linux/macOS) ou <code>Get-FileHash &lt;arquivo&gt; -Algorithm SHA256</code> (PowerShell) para conferir a integridade do download.</p>
+</details>
+<hr>
+<h2 id="✨-funcionalidades" class="tsd-anchor-link">✨ Funcionalidades<a href="#✨-funcionalidades" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li>⚡ <strong>Execução local de LLMs</strong> direto no navegador, acelerada por WebGPU</li>
+<li>🧠 <strong>Múltiplos modelos</strong> disponíveis — Qwen, Llama, Phi, Gemma e outros</li>
+<li>💬 <strong>Interface moderna</strong>, no estilo ChatGPT</li>
+<li>🧾 <strong>Histórico de conversas</strong> salvo automaticamente no navegador</li>
+<li>🧵 <strong>Streaming em tempo real</strong> das respostas, token a token</li>
+<li>⏹️ <strong>Interrupção da geração</strong> a qualquer momento</li>
+<li>📝 <strong>Edição de mensagens</strong> com regeneração de resposta</li>
+<li>🎨 <strong>Tema claro/escuro</strong></li>
+<li>📱 <strong>Layout responsivo</strong>, funciona em desktop e mobile</li>
+</ul>
+<hr>
+<h2 id="📷-capturas-de-tela" class="tsd-anchor-link">📷 Capturas de tela<a href="#📷-capturas-de-tela" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Home</th>
+<th style="text-align:center">Chat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="media/chatgpu_home.jpg" alt="Home"></td>
+<td style="text-align:center"><img src="media/chatgpu_chat.jpg" alt="Chat"></td>
+</tr>
+<tr>
+<td style="text-align:center">Modelos</td>
+<td style="text-align:center">Configurações</td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="media/chatgpu_models.jpg" alt="Modelos"></td>
+<td style="text-align:center"><img src="media/chatgpu_settings.jpg" alt="Configurações"></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="🧠-como-funciona" class="tsd-anchor-link">🧠 Como funciona<a href="#🧠-como-funciona" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><a href="#-como-funciona">#-como-funciona</a></p>
+<pre><code class="mermaid">flowchart TB
+    A[👤 Você digita e envia uma mensagem] --> B[🖥️ Thread principal - UI React]
+    B -->|postMessage| C[🧵 Web Worker]
+
+    subgraph WK[🧵 Web Worker - roda em background, mantém a UI livre]
+        direction TB
+        C --> D{📦 Modelo já<br/>está em cache?}
+        D -->|Não| E[⬇️ Baixa o modelo<br/>WebLLM MLC]
+        D -->|Sim| F[⚡ Carrega direto do cache]
+        E --> F
+        F --> G[🧠 Engine WebLLM inicializada]
+        G -->|WebGPU disponível| H[🔮 Inferência 100% local]
+    end
+
+    H -->|streaming de tokens| I[💬 UI atualizada em tempo real]
+    I -.->|próxima mensagem| A
+
+    classDef userStep fill:#4f46e5,stroke:#312e81,color:#fff,stroke-width:1px
+    classDef workerStep fill:#0891b2,stroke:#164e63,color:#fff,stroke-width:1px
+    classDef gpuStep fill:#ea580c,stroke:#9a3412,color:#fff,stroke-width:1px
+
+    class A,B,I userStep
+    class C,D,E,F,G workerStep
+    class H gpuStep
+</code><button type="button">Copy</button></pre>
+
+<p>O projeto utiliza o <strong><code>@mlc-ai/web-llm</code></strong>, que roda modelos de linguagem direto no navegador combinando três peças:</p>
+<ul>
+<li><strong>Web Workers</strong> (<code>lib/worker.ts</code>) — a UI (thread principal) nunca trava: ela só envia a mensagem pro worker e escuta a resposta chegar em streaming</li>
+<li><strong>Cache do modelo</strong> (<code>hooks/useModelCache.ts</code>) — na primeira vez, o navegador baixa os pesos do modelo (pode levar alguns minutos); depois disso, o carregamento é quase instantâneo</li>
+<li><strong>WebGPU + WebAssembly</strong> (<code>hooks/useEngine.ts</code>) — a inferência roda acelerada por GPU quando disponível, com WebAssembly cuidando do runtime</li>
+</ul>
+<p>Resumindo o fluxo: mensagem → worker → (baixa ou carrega do cache) → engine WebLLM → inferência local via WebGPU → tokens voltam em streaming pra thread principal, atualizando a UI em tempo real.</p>
+<hr>
+<p>O projeto utiliza o <strong><code>@mlc-ai/web-llm</code></strong>, que permite rodar modelos de linguagem diretamente no navegador combinando:</p>
+<ul>
+<li><strong>WebGPU</strong> — acelera a inferência usando a GPU disponível</li>
+<li><strong>WebAssembly</strong> — executa partes do runtime de forma otimizada</li>
+<li><strong>Web Workers</strong> — mantém a UI fluida enquanto o modelo processa em segundo plano</li>
+</ul>
+<p>Resumindo o fluxo: o modelo é carregado no browser → as mensagens vão para o worker → o modelo gera a resposta em streaming → a interface atualiza em tempo real.</p>
+<hr>
+<h2 id="🛠️-stack-tecnológica" class="tsd-anchor-link">🛠️ Stack tecnológica<a href="#🛠️-stack-tecnológica" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <table>
 <thead>
 <tr>
@@ -51,89 +262,132 @@
 </tr>
 <tr>
 <td>React</td>
-<td>Interface e estados</td>
+<td>Interface e gerenciamento de estado</td>
 </tr>
 <tr>
 <td>TypeScript</td>
-<td>Tipagem</td>
+<td>Tipagem estática</td>
 </tr>
 <tr>
 <td>Tailwind CSS</td>
 <td>Estilização</td>
 </tr>
 <tr>
+<td>shadcn/ui</td>
+<td>Componentes de UI</td>
+</tr>
+<tr>
 <td>WebLLM (MLC)</td>
-<td>Execução dos modelos LLM</td>
+<td>Execução dos modelos LLM no navegador</td>
 </tr>
 <tr>
 <td>Web Workers</td>
 <td>Processamento em background</td>
 </tr>
+<tr>
+<td>Dexie.js</td>
+<td>Persistência local (IndexedDB)</td>
+</tr>
+<tr>
+<td>Tauri</td>
+<td>Empacotamento como app desktop</td>
+</tr>
 </tbody>
 </table>
 <hr>
+<h2 id="🧩-modelos-suportados" class="tsd-anchor-link">🧩 Modelos suportados<a href="#🧩-modelos-suportados" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Os modelos são definidos em <code>/constants/models.ts</code>. Alguns exemplos disponíveis:</p>
+<table>
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Origem</th>
+<th>Bom para</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qwen2.5</td>
+<td>Alibaba</td>
+<td>Bom equilíbrio entre qualidade e desempenho</td>
+</tr>
+<tr>
+<td>Llama 3</td>
+<td>Meta</td>
+<td>Respostas de propósito geral com boa qualidade</td>
+</tr>
+<tr>
+<td>Phi-3</td>
+<td>Microsoft</td>
+<td>Modelo leve, ideal para hardware mais modesto</td>
+</tr>
+<tr>
+<td>Gemma</td>
+<td>Google</td>
+<td>Alternativa compacta e rápida</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ Modelos maiores exigem mais RAM/VRAM e podem não rodar bem em todos os dispositivos — prefira os modelos menores em notebooks sem GPU dedicada.</p>
+</blockquote>
+<hr>
 <h2 id="📦-instalação" class="tsd-anchor-link">📦 Instalação<a href="#📦-instalação" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong>Pré-requisitos:</strong></p>
+<ul>
+<li><a href="https://nodejs.org/">Node.js</a> 18 ou superior</li>
+<li>Um navegador com suporte a <strong>WebGPU</strong> (Chrome, Edge ou outro navegador Chromium recente)</li>
+</ul>
 <pre><code class="bash"><span class="hl-0"># Clone o repositório</span><br/><span class="hl-1">git</span><span class="hl-2"> </span><span class="hl-3">clone</span><span class="hl-2"> </span><span class="hl-3">https://github.com/Victor-Gabriel-Barbosa/chatgpu.git</span><br/><br/><span class="hl-0"># Entre na pasta</span><br/><span class="hl-1">cd</span><span class="hl-2"> </span><span class="hl-3">chatgpu</span><br/><br/><span class="hl-0"># Instale as dependências</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">install</span><br/><br/><span class="hl-0"># Rode o projeto</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">dev</span>
 </code><button type="button">Copy</button></pre>
 
-<p>Abra em:</p>
+<p>Depois abra:</p>
 <pre><code><span class="hl-4">http</span><span class="hl-2">:</span><span class="hl-0">//localhost:3000</span>
 </code><button>Copy</button></pre>
 
-<hr>
-<h2 id="⚙️-como-funciona" class="tsd-anchor-link">⚙️ Como funciona<a href="#⚙️-como-funciona" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>O projeto utiliza o <strong>@mlc-ai/web-llm</strong>, que permite rodar modelos de linguagem diretamente no navegador usando:</p>
-<ul>
-<li>WebGPU</li>
-<li>WebAssembly</li>
-<li>Web Workers</li>
-</ul>
-<p>O fluxo é basicamente:</p>
-<ol>
-<li>O modelo é carregado no browser</li>
-<li>As mensagens são enviadas para o worker</li>
-<li>O modelo gera a resposta em streaming</li>
-<li>A UI atualiza em tempo real</li>
-</ol>
-<hr>
-<h2 id="🧠-modelos-suportados" class="tsd-anchor-link">🧠 Modelos suportados<a href="#🧠-modelos-suportados" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Os modelos são definidos em:</p>
-<pre><code><span class="hl-2">/</span><span class="hl-5">constants</span><span class="hl-2">/</span><span class="hl-5">models</span><span class="hl-2">.</span><span class="hl-5">ts</span>
-</code><button>Copy</button></pre>
-
-<p>Exemplos:</p>
-<ul>
-<li>Qwen2.5</li>
-<li>Llama 3</li>
-<li>Phi-3</li>
-<li>Gemma</li>
-</ul>
 <blockquote>
-<p>⚠️ Modelos mais pesados exigem mais RAM/VRAM e podem não rodar em todos os dispositivos.</p>
+<p>💡 Não quer compilar nada? Baixe o <a href="#-download-do-app-desktop">app desktop pronto</a> para o seu sistema operacional.</p>
 </blockquote>
 <hr>
 <h2 id="📁-estrutura-do-projeto" class="tsd-anchor-link">📁 Estrutura do projeto<a href="#📁-estrutura-do-projeto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<pre><code><span class="hl-5">app</span><span class="hl-2">/</span><br/><span class="hl-2"> ├── </span><span class="hl-5">components</span><span class="hl-2">/</span><br/><span class="hl-2"> │   ├── </span><span class="hl-5">ChatMessage</span><span class="hl-2">.</span><span class="hl-5">tsx</span><br/><span class="hl-2"> │   ├── </span><span class="hl-5">Sidebar</span><span class="hl-2">.</span><span class="hl-5">tsx</span><br/><span class="hl-2"> │   ├── </span><span class="hl-5">SettingsModal</span><span class="hl-2">.</span><span class="hl-5">tsx</span><br/><span class="hl-2"> │   └── </span><span class="hl-5">CodeBlock</span><span class="hl-2">.</span><span class="hl-5">tsx</span><br/><span class="hl-2"> │</span><br/><span class="hl-2"> ├── </span><span class="hl-5">page</span><span class="hl-2">.</span><span class="hl-5">tsx</span><br/><span class="hl-2"> │</span><br/><span class="hl-5">lib</span><span class="hl-2">/</span><br/><span class="hl-2"> └── </span><span class="hl-5">worker</span><span class="hl-2">.</span><span class="hl-5">ts</span><br/><br/><span class="hl-5">constants</span><span class="hl-2">/</span><br/><span class="hl-2"> └── </span><span class="hl-5">models</span><span class="hl-2">.</span><span class="hl-5">ts</span>
+<pre><code><span class="hl-5">chatgpu</span><span class="hl-2">/</span><br/><span class="hl-2">├── </span><span class="hl-5">app</span><span class="hl-2">/                         # </span><span class="hl-5">Next</span><span class="hl-2">.</span><span class="hl-5">js</span><span class="hl-2"> </span><span class="hl-5">App</span><span class="hl-2"> </span><span class="hl-5">Router</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">layout</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">               # </span><span class="hl-5">Layout</span><span class="hl-2"> </span><span class="hl-5">raiz</span><span class="hl-2"> </span><span class="hl-5">da</span><span class="hl-2"> </span><span class="hl-5">aplicação</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">page</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">                 # </span><span class="hl-5">Página</span><span class="hl-2"> </span><span class="hl-5">principal</span><br/><span class="hl-2">│   └── </span><span class="hl-5">globals</span><span class="hl-2">.</span><span class="hl-5">css</span><span class="hl-2">              # </span><span class="hl-5">Estilos</span><span class="hl-2"> </span><span class="hl-5">globais</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">components</span><span class="hl-2">/                  # </span><span class="hl-5">Componentes</span><span class="hl-2"> </span><span class="hl-5">React</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">chat</span><span class="hl-2">/                    # </span><span class="hl-5">Componentes</span><span class="hl-2"> </span><span class="hl-5">específicos</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">chat</span><br/><span class="hl-2">│   │   ├── </span><span class="hl-5">app</span><span class="hl-2">-</span><span class="hl-5">sidebar</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">      # </span><span class="hl-5">Sidebar</span><span class="hl-2"> </span><span class="hl-5">da</span><span class="hl-2"> </span><span class="hl-5">aplicação</span><br/><span class="hl-2">│   │   ├── </span><span class="hl-5">chat</span><span class="hl-2">-</span><span class="hl-5">message</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">     # </span><span class="hl-5">Componente</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">mensagem</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">chat</span><br/><span class="hl-2">│   │   ├── </span><span class="hl-5">code</span><span class="hl-2">-</span><span class="hl-5">block</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">       # </span><span class="hl-5">Bloco</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">código</span><br/><span class="hl-2">│   │   ├── </span><span class="hl-5">model</span><span class="hl-2">-</span><span class="hl-5">manager</span><span class="hl-2">-</span><span class="hl-5">modal</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">  # </span><span class="hl-5">Modal</span><span class="hl-2"> </span><span class="hl-5">para</span><span class="hl-2"> </span><span class="hl-5">gerenciar</span><span class="hl-2"> </span><span class="hl-5">modelos</span><br/><span class="hl-2">│   │   ├── </span><span class="hl-5">service</span><span class="hl-2">-</span><span class="hl-5">worker</span><span class="hl-2">-</span><span class="hl-5">register</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">  # </span><span class="hl-5">Registro</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">service</span><span class="hl-2"> </span><span class="hl-5">worker</span><br/><span class="hl-2">│   │   └── </span><span class="hl-5">settings</span><span class="hl-2">-</span><span class="hl-5">modal</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">   # </span><span class="hl-5">Modal</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">configurações</span><br/><span class="hl-2">│   │</span><br/><span class="hl-2">│   └── </span><span class="hl-5">ui</span><span class="hl-2">/                      # </span><span class="hl-5">Componentes</span><span class="hl-2"> </span><span class="hl-7">UI</span><span class="hl-2"> </span><span class="hl-1">genéricos</span><span class="hl-2"> (</span><span class="hl-5">Design</span><span class="hl-2"> </span><span class="hl-5">System</span><span class="hl-2">)</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">avatar</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">           # </span><span class="hl-5">Avatar</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">usuário</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">bubble</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">           # </span><span class="hl-5">Bubble</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">mensagem</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">button</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">           # </span><span class="hl-5">Botão</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">dialog</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">           # </span><span class="hl-5">Diálogo</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">dropdown</span><span class="hl-2">-</span><span class="hl-5">menu</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">    # </span><span class="hl-5">Menu</span><span class="hl-2"> </span><span class="hl-5">suspenso</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">field</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">            # </span><span class="hl-5">Campo</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">formulário</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">input</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">            # </span><span class="hl-5">Input</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">label</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">            # </span><span class="hl-5">Label</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">message</span><span class="hl-2">-</span><span class="hl-5">scroller</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2"> # </span><span class="hl-5">Scroll</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">mensagens</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">message</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">          # </span><span class="hl-5">Componente</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">mensagem</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">select</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">           # </span><span class="hl-5">Select</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">separator</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">        # </span><span class="hl-5">Separador</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">sheet</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">            # </span><span class="hl-1">Sheet</span><span class="hl-2"> (</span><span class="hl-5">drawer</span><span class="hl-2">)</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">sidebar</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">          # </span><span class="hl-5">Sidebar</span><span class="hl-2"> </span><span class="hl-5">genérica</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">skeleton</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">         # </span><span class="hl-5">Skeleton</span><span class="hl-2"> </span><span class="hl-5">loader</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">sonner</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">           # </span><span class="hl-5">Toast</span><span class="hl-2"> </span><span class="hl-5">notifications</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">tabs</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">             # </span><span class="hl-5">Abas</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">textarea</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">         # </span><span class="hl-5">Textarea</span><br/><span class="hl-2">│       ├── </span><span class="hl-5">theme</span><span class="hl-2">-</span><span class="hl-5">provider</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">   # </span><span class="hl-5">Provider</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">tema</span><br/><span class="hl-2">│       └── </span><span class="hl-5">tooltip</span><span class="hl-2">.</span><span class="hl-5">tsx</span><span class="hl-2">          # </span><span class="hl-5">Tooltip</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">hooks</span><span class="hl-2">/                       # </span><span class="hl-5">Custom</span><span class="hl-2"> </span><span class="hl-5">React</span><span class="hl-2"> </span><span class="hl-5">Hooks</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">use</span><span class="hl-2">-</span><span class="hl-5">mobile</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">            # </span><span class="hl-5">Hook</span><span class="hl-2"> </span><span class="hl-5">para</span><span class="hl-2"> </span><span class="hl-5">detectar</span><span class="hl-2"> </span><span class="hl-5">mobile</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">useEngine</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">             # </span><span class="hl-5">Hook</span><span class="hl-2"> </span><span class="hl-5">para</span><span class="hl-2"> </span><span class="hl-5">gerenciar</span><span class="hl-2"> </span><span class="hl-5">engine</span><span class="hl-2"> </span><span class="hl-5">WebLLM</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">useModelCache</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">         # </span><span class="hl-5">Hook</span><span class="hl-2"> </span><span class="hl-5">para</span><span class="hl-2"> </span><span class="hl-5">cachear</span><span class="hl-2"> </span><span class="hl-5">modelos</span><br/><span class="hl-2">│   └── </span><span class="hl-5">useSession</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">            # </span><span class="hl-5">Hook</span><span class="hl-2"> </span><span class="hl-5">para</span><span class="hl-2"> </span><span class="hl-5">gerenciar</span><span class="hl-2"> </span><span class="hl-5">sessão</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">chat</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">lib</span><span class="hl-2">/                         # </span><span class="hl-5">Utilitários</span><span class="hl-2"> </span><span class="hl-5">e</span><span class="hl-2"> </span><span class="hl-5">helpers</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">fileToText</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">            # </span><span class="hl-5">Converter</span><span class="hl-2"> </span><span class="hl-5">arquivo</span><span class="hl-2"> </span><span class="hl-5">para</span><span class="hl-2"> </span><span class="hl-5">texto</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">utils</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">                 # </span><span class="hl-5">Funções</span><span class="hl-2"> </span><span class="hl-5">utilitárias</span><span class="hl-2"> </span><span class="hl-5">genéricas</span><br/><span class="hl-2">│   └── </span><span class="hl-5">worker</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">                # </span><span class="hl-5">Web</span><span class="hl-2"> </span><span class="hl-5">Worker</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">types</span><span class="hl-2">/                       # </span><span class="hl-5">Definições</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">tipos</span><span class="hl-2"> </span><span class="hl-5">TypeScript</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">chat</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">                  # </span><span class="hl-5">Tipos</span><span class="hl-2"> </span><span class="hl-5">relacionados</span><span class="hl-2"> </span><span class="hl-5">ao</span><span class="hl-2"> </span><span class="hl-5">chat</span><br/><span class="hl-2">│   └── </span><span class="hl-5">theme</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">                 # </span><span class="hl-5">Tipos</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">tema</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">config</span><span class="hl-2">/                      # </span><span class="hl-5">Configurações</span><br/><span class="hl-2">│   └── </span><span class="hl-5">models</span><span class="hl-2">.</span><span class="hl-5">json</span><span class="hl-2">              # </span><span class="hl-5">Configuração</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">modelos</span><span class="hl-2"> </span><span class="hl-5">disponíveis</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">db</span><span class="hl-2">/                          # </span><span class="hl-5">Banco</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">dados</span><br/><span class="hl-2">│   └── </span><span class="hl-5">database</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">              # </span><span class="hl-5">Setup</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">banco</span><span class="hl-2"> </span><span class="hl-5">de</span><span class="hl-2"> </span><span class="hl-5">dados</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">public</span><span class="hl-2">/                      # </span><span class="hl-5">Arquivos</span><span class="hl-2"> </span><span class="hl-5">estáticos</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">apple</span><span class="hl-2">-</span><span class="hl-5">icon</span><span class="hl-2">.</span><span class="hl-5">png</span><span class="hl-2">           # </span><span class="hl-5">Ícone</span><span class="hl-2"> </span><span class="hl-5">Apple</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">favicon</span><span class="hl-2">.</span><span class="hl-5">ico</span><span class="hl-2">              # </span><span class="hl-5">Favicon</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">icon0</span><span class="hl-2">.</span><span class="hl-5">svg</span><span class="hl-2">                # </span><span class="hl-5">Ícone</span><span class="hl-2"> </span><span class="hl-7">SVG</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">icon1</span><span class="hl-2">.</span><span class="hl-5">png</span><span class="hl-2">                # </span><span class="hl-5">Ícone</span><span class="hl-2"> </span><span class="hl-7">PNG</span><br/><span class="hl-2">│   ├── </span><span class="hl-5">manifest</span><span class="hl-2">.</span><span class="hl-5">json</span><span class="hl-2">            # </span><span class="hl-5">Manifest</span><span class="hl-2"> </span><span class="hl-7">PWA</span><br/><span class="hl-2">│   └── </span><span class="hl-5">sw</span><span class="hl-2">.</span><span class="hl-5">js</span><span class="hl-2">                    # </span><span class="hl-5">Service</span><span class="hl-2"> </span><span class="hl-5">Worker</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── </span><span class="hl-5">docs</span><span class="hl-2">/                        # </span><span class="hl-5">Documentação</span><br/><span class="hl-2">├── </span><span class="hl-5">screenshots</span><span class="hl-2">/                 # </span><span class="hl-5">Screenshots</span><br/><span class="hl-2">├── </span><span class="hl-5">src</span><span class="hl-2">-</span><span class="hl-5">tauri</span><span class="hl-2">/                   # </span><span class="hl-5">Código</span><span class="hl-2"> </span><span class="hl-1">Tauri</span><span class="hl-2"> (</span><span class="hl-5">versão</span><span class="hl-2"> </span><span class="hl-5">desktop</span><span class="hl-2">)</span><br/><span class="hl-2">│</span><br/><span class="hl-2">├── .</span><span class="hl-5">gitignore</span><br/><span class="hl-2">├── </span><span class="hl-7">AGENTS</span><span class="hl-2">.</span><span class="hl-5">md</span><br/><span class="hl-2">├── </span><span class="hl-7">CLAUDE</span><span class="hl-2">.</span><span class="hl-5">md</span><br/><span class="hl-2">├── </span><span class="hl-7">README</span><span class="hl-2">.</span><span class="hl-5">md</span><br/><span class="hl-2">├── </span><span class="hl-5">components</span><span class="hl-2">.</span><span class="hl-5">json</span><span class="hl-2">              # </span><span class="hl-5">Config</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">componente</span><span class="hl-2"> </span><span class="hl-7">UI</span><span class="hl-2"> </span><span class="hl-5">library</span><br/><span class="hl-2">├── </span><span class="hl-5">eslint</span><span class="hl-2">.</span><span class="hl-5">config</span><span class="hl-2">.</span><span class="hl-5">mjs</span><span class="hl-2">            # </span><span class="hl-5">ESLint</span><span class="hl-2"> </span><span class="hl-5">config</span><br/><span class="hl-2">├── </span><span class="hl-5">next</span><span class="hl-2">.</span><span class="hl-5">config</span><span class="hl-2">.</span><span class="hl-5">ts</span><span class="hl-2">               # </span><span class="hl-5">Next</span><span class="hl-2">.</span><span class="hl-5">js</span><span class="hl-2"> </span><span class="hl-5">config</span><br/><span class="hl-2">├── </span><span class="hl-5">package</span><span class="hl-2">.</span><span class="hl-5">json</span><span class="hl-2">                 # </span><span class="hl-5">Dependências</span><span class="hl-2"> </span><span class="hl-6">do</span><span class="hl-2"> </span><span class="hl-5">projeto</span><br/><span class="hl-2">├── </span><span class="hl-6">package</span><span class="hl-2">-</span><span class="hl-5">lock</span><span class="hl-2">.</span><span class="hl-5">json</span><br/><span class="hl-2">├── </span><span class="hl-5">postcss</span><span class="hl-2">.</span><span class="hl-5">config</span><span class="hl-2">.</span><span class="hl-5">mjs</span><span class="hl-2">           # </span><span class="hl-5">PostCSS</span><span class="hl-2"> </span><span class="hl-5">config</span><br/><span class="hl-2">├── </span><span class="hl-5">tsconfig</span><span class="hl-2">.</span><span class="hl-5">json</span><span class="hl-2">                # </span><span class="hl-5">TypeScript</span><span class="hl-2"> </span><span class="hl-5">config</span><br/><span class="hl-2">└── </span><span class="hl-5">typedoc</span><span class="hl-2">.</span><span class="hl-5">json</span><span class="hl-2">                 # </span><span class="hl-5">TypeDoc</span><span class="hl-2"> </span><span class="hl-5">config</span>
 </code><button>Copy</button></pre>
 
 <hr>
 <h2 id="💾-persistência" class="tsd-anchor-link">💾 Persistência<a href="#💾-persistência" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Os dados são armazenados no navegador:</p>
-<ul>
-<li><code>chatgpu-sessions</code> → histórico de chats</li>
-<li><code>chatgpu-model</code> → modelo selecionado</li>
-<li><code>chatgpu-theme</code> → tema</li>
-</ul>
+<p>Tudo fica salvo localmente, no seu próprio navegador:</p>
+<table>
+<thead>
+<tr>
+<th>Chave</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>chatgpu-sessions</code></td>
+<td>Histórico de conversas</td>
+</tr>
+<tr>
+<td><code>chatgpu-model</code></td>
+<td>Modelo selecionado</td>
+</tr>
+<tr>
+<td><code>chatgpu-theme</code></td>
+<td>Tema (claro/escuro)</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="⚠️-limitações" class="tsd-anchor-link">⚠️ Limitações<a href="#⚠️-limitações" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>
-<li>Depende de <strong>WebGPU</strong> (nem todos navegadores suportam)</li>
-<li>Pode consumir bastante memória</li>
-<li>Tempo de carregamento do modelo pode ser alto</li>
-<li>Performance varia muito por hardware</li>
+<li>Depende de suporte a <strong>WebGPU</strong> (nem todos os navegadores suportam ainda)</li>
+<li>Pode consumir bastante memória, dependendo do modelo</li>
+<li>O carregamento inicial do modelo pode demorar</li>
+<li>A performance varia bastante conforme o hardware do usuário</li>
 </ul>
 <hr>
-<h2 id="🧪-melhorias-futuras" class="tsd-anchor-link">🧪 Melhorias futuras<a href="#🧪-melhorias-futuras" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h2 id="🗺️-roadmap" class="tsd-anchor-link">🗺️ Roadmap<a href="#🗺️-roadmap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ul>
 <li>[ ] Exportar/importar conversas</li>
 <li>[ ] Suporte a mais modelos</li>
@@ -143,23 +397,33 @@
 </ul>
 <hr>
 <h2 id="🤝-contribuição" class="tsd-anchor-link">🤝 Contribuição<a href="#🤝-contribuição" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Pull requests são bem-vindos.</p>
+<p>Pull requests são muito bem-vindos — desde ajustes de UI até suporte a novos modelos.</p>
 <ol>
-<li>Fork o projeto</li>
+<li>Faça um fork do projeto</li>
 <li>Crie uma branch (<code>feature/minha-feature</code>)</li>
 <li>Commit suas mudanças</li>
 <li>Abra um PR</li>
 </ol>
 <hr>
+<h2 id="❓-faq" class="tsd-anchor-link">❓ FAQ<a href="#❓-faq" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p><strong>Preciso estar online para usar?</strong>
+Só na primeira vez, para baixar o modelo escolhido. Depois disso, o modelo fica em cache no navegador.</p>
+<p><strong>Minhas conversas são enviadas para algum servidor?</strong>
+Não. Toda a inferência acontece localmente, no seu próprio navegador.</p>
+<p><strong>Funciona em qualquer computador?</strong>
+Depende do suporte a WebGPU do navegador e do hardware disponível — dispositivos sem GPU dedicada tendem a ser mais lentos, especialmente com modelos maiores.</p>
+<p><strong>Posso usar no celular?</strong>
+Em tese sim, desde que o navegador do dispositivo suporte WebGPU, mas a experiência varia bastante.</p>
+<p><strong>Preciso instalar o app desktop ou dá pra usar direto no navegador?</strong>
+Os dois funcionam igual por baixo dos panos (mesmo motor WebLLM). O app desktop é só uma conveniência — ícone na área de trabalho, sem depender de manter uma aba aberta. Use o <a href="https://chatgpu-nu.vercel.app/">link do site</a> se quiser testar sem instalar nada.</p>
+<hr>
 <h2 id="📄-licença" class="tsd-anchor-link">📄 Licença<a href="#📄-licença" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>MIT</p>
+<p>Distribuído sob a licença <strong>MIT</strong>.</p>
 <hr>
+<div align="center">
 <h2 id="👨💻-autor" class="tsd-anchor-link">👨‍💻 Autor<a href="#👨💻-autor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Feito por <strong>Victor Gabriel Barbosa</strong></p>
-<ul>
-<li>GitHub: <a href="https://github.com/Victor-Gabriel-Barbosa">https://github.com/Victor-Gabriel-Barbosa</a></li>
-</ul>
-<hr>
-<h2 id="⭐-se-curtir-o-projeto" class="tsd-anchor-link">⭐ Se curtir o projeto<a href="#⭐-se-curtir-o-projeto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Deixa uma estrela no repositório — ajuda bastante 🚀</p>
-</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#🤖-chatgpu"><span>🤖 <wbr/>Chat<wbr/>GPU</span></a><ul><li><a href="#🚀-demo"><span>🚀 <wbr/>Demo</span></a></li><li><a href="#✨-features"><span>✨ <wbr/>Features</span></a></li><li><a href="#📷-capturas-de-tela"><span>📷 <wbr/>Capturas de <wbr/>Tela</span></a></li><li><a href="#🛠️-tecnologias"><span>🛠️ <wbr/>Tecnologias</span></a></li><li><a href="#📦-instalação"><span>📦 <wbr/>Instalação</span></a></li><li><a href="#⚙️-como-funciona"><span>⚙️ <wbr/>Como funciona</span></a></li><li><a href="#🧠-modelos-suportados"><span>🧠 <wbr/>Modelos suportados</span></a></li><li><a href="#📁-estrutura-do-projeto"><span>📁 <wbr/>Estrutura do projeto</span></a></li><li><a href="#💾-persistência"><span>💾 <wbr/>Persistência</span></a></li><li><a href="#⚠️-limitações"><span>⚠️ <wbr/>Limitações</span></a></li><li><a href="#🧪-melhorias-futuras"><span>🧪 <wbr/>Melhorias futuras</span></a></li><li><a href="#🤝-contribuição"><span>🤝 <wbr/>Contribuição</span></a></li><li><a href="#📄-licença"><span>📄 <wbr/>Licença</span></a></li><li><a href="#👨💻-autor"><span>👨‍💻 <wbr/>Autor</span></a></li><li><a href="#⭐-se-curtir-o-projeto"><span>⭐ <wbr/>Se curtir o projeto</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">chatgpu</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
+<p>Feito com 🧠 e ☕ por <strong>Victor Gabriel Barbosa</strong></p>
+<p><a href="https://github.com/Victor-Gabriel-Barbosa"><img src="https://img.shields.io/badge/GitHub-Victor--Gabriel--Barbosa-181717?logo=github&amp;logoColor=white" alt="GitHub"></a></p>
+<h3 id="⭐-curtiu-o-projeto" class="tsd-anchor-link">⭐ Curtiu o projeto?<a href="#⭐-curtiu-o-projeto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Deixa uma estrela no repositório — ajuda bastante a dar visibilidade pro projeto! 🚀</p>
+</div></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#🤖-chatgpu"><span>🤖 <wbr/>Chat<wbr/>GPU</span></a><ul><li><ul><li><a href="#seu-próprio-chatgpt-rodando-100-dentro-do-navegador"><span>Seu próprio <wbr/>Chat<wbr/>GPT, rodando 100% dentro do navegador</span></a></li></ul></li><li><a href="#📑-sumário"><span>📑 <wbr/>Sumário</span></a></li><li><a href="#🎯-por-que-chatgpu"><span>🎯 <wbr/>Por que <wbr/>Chat<wbr/>GPU?</span></a></li><li><a href="#🚀-demo"><span>🚀 <wbr/>Demo</span></a></li><li><a href="#📥-download-do-app-desktop"><span>📥 <wbr/>Download do app desktop</span></a></li><li><a href="#✨-funcionalidades"><span>✨ <wbr/>Funcionalidades</span></a></li><li><a href="#📷-capturas-de-tela"><span>📷 <wbr/>Capturas de tela</span></a></li><li><a href="#🧠-como-funciona"><span>🧠 <wbr/>Como funciona</span></a></li><li><a href="#🛠️-stack-tecnológica"><span>🛠️ <wbr/>Stack tecnológica</span></a></li><li><a href="#🧩-modelos-suportados"><span>🧩 <wbr/>Modelos suportados</span></a></li><li><a href="#📦-instalação"><span>📦 <wbr/>Instalação</span></a></li><li><a href="#📁-estrutura-do-projeto"><span>📁 <wbr/>Estrutura do projeto</span></a></li><li><a href="#💾-persistência"><span>💾 <wbr/>Persistência</span></a></li><li><a href="#⚠️-limitações"><span>⚠️ <wbr/>Limitações</span></a></li><li><a href="#🗺️-roadmap"><span>🗺️ <wbr/>Roadmap</span></a></li><li><a href="#🤝-contribuição"><span>🤝 <wbr/>Contribuição</span></a></li><li><a href="#❓-faq"><span>❓ <wbr/>FAQ</span></a></li><li><a href="#📄-licença"><span>📄 <wbr/>Licença</span></a></li><li><a href="#👨💻-autor"><span>👨‍💻 <wbr/>Autor</span></a></li><li><ul><li><a href="#⭐-curtiu-o-projeto"><span>⭐ <wbr/>Curtiu o projeto?</span></a></li></ul></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">chatgpu</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
