@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/icon0.svg" alt="Promogram Logo" width="140">
+
 # ChatGPU
 
 **Seu próprio ChatGPT, rodando inteiramente no navegador**
