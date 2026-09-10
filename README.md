@@ -246,21 +246,21 @@ http://localhost:3000
 
 ```
 chatgpu/
-├── app/                              Next.js App Router
-│   ├── layout.tsx                    Layout raiz da aplicação
-│   ├── page.tsx                      Página principal
-│   └── globals.css                   Estilos globais
+├── app/                                Next.js App Router
+│   ├── layout.tsx                      Layout raiz da aplicação
+│   ├── page.tsx                        Página principal
+│   └── globals.css                     Estilos globais
 │
-├── components/                       Componentes React
-│   ├── chat/                         Componentes específicos do chat
-│   │   ├── app-sidebar.tsx           Sidebar da aplicação
-│   │   ├── chat-message.tsx          Componente de mensagem do chat
-│   │   ├── code-block.tsx            Bloco de código
-│   │   ├── model-manager-modal.tsx   Modal de gerenciamento de modelos
-│   │   ├── service-worker-register.tsx   Registro do service worker
-│   │   └── settings-modal.tsx        Modal de configurações
+├── components/                         Componentes React
+│   ├── chat/                           Componentes específicos do chat
+│   │   ├── app-sidebar.tsx             Sidebar da aplicação
+│   │   ├── chat-message.tsx            Componente de mensagem do chat
+│   │   ├── code-block.tsx              Bloco de código
+│   │   ├── model-manager-modal.tsx     Modal de gerenciamento de modelos
+│   │   ├── service-worker-register.tsx Registro do service worker
+│   │   └── settings-modal.tsx          Modal de configurações
 │   │
-│   └── ui/                           Componentes de UI genéricos (design system)
+│   └── ui/                             Componentes de UI genéricos (design system)
 │       ├── avatar.tsx
 │       ├── bubble.tsx
 │       ├── button.tsx
