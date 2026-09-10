@@ -134,9 +134,7 @@ Para verificar a integridade do download, utilize `sha256sum <arquivo>` (Linux/m
 | Início | Chat |
 | :---: | :---: |
 | ![Início](./screenshots/chatgpu_home.jpg) | ![Chat](./screenshots/chatgpu_chat.jpg) |
-
 | Modelos | Configurações |
-| :---: | :---: |
 | ![Modelos](./screenshots/chatgpu_models.jpg) | ![Configurações](./screenshots/chatgpu_settings.jpg) |
 
 ---
