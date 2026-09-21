@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
-import { defaultModelId } from "@/config/models.json";
 
 const LOADING_TOAST_ID = "loading-model";
 const STORAGE_KEY = "chatgpu-model";
@@ -29,15 +28,17 @@ function getEngineSingleton(): WebWorkerMLCEngine {
 }
 
 /**
- * Lê o modelo salvo no localStorage, se houver, ou o modelo padrão. Usado
- * como inicializador preguiçoso do estado para evitar uma segunda renderização
+ * Lê o modelo salvo no localStorage, se houver. Sem um modelo salvo, a seleção
+ * permanece vazia para que o usuário escolha o primeiro modelo manualmente.
+ * Usado como inicializador preguiçoso do estado para evitar uma segunda
+ * renderização
  * (e um segundo carregamento) logo após montar o componente.
  *
  * @returns ID do modelo a ser usado inicialmente.
  */
 function getInitialModel(): string {
-  if (typeof window === "undefined") return defaultModelId;
-  return localStorage.getItem(STORAGE_KEY) || defaultModelId;
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem(STORAGE_KEY) || "";
 }
 
 /**
@@ -65,9 +66,8 @@ export function useEngine() {
    * Exibe um toast de carregamento com progresso, atualizando o texto e a porcentagem conforme o progresso é reportado.
    *
    * @param percent Porcentagem de conclusão do carregamento.
-   * @param text Texto descritivo do estado atual do carregamento.
    */
-  const showLoadingToast = (percent: number, text: string) => {
+  const showLoadingToast = (percent: number) => {
     const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
 
     toast.loading(`Carregando modelo (${clampedPercent}%)`, {
@@ -76,20 +76,23 @@ export function useEngine() {
     });
   };
 
-  // Inicializa (ou reaproveita) o motor WebGPU singleton e carrega o modelo selecionado
+  // Inicializa (ou reaproveita) o motor WebGPU singleton e carrega o modelo selecionado.
+  // No primeiro acesso, nenhum modelo é escolhido ou baixado automaticamente.
   useEffect(() => {
     const currentLoadId = ++loadIdRef.current;
 
+    if (!selectedModel) return;
+
     const initEngine = async () => {
       setIsReady(false);
-      showLoadingToast(0, "Inicializando motor WebGPU...");
+      showLoadingToast(0);
 
       // Reaproveita o worker/engine já existente em vez de criar um novo
       const sharedEngine = getEngineSingleton();
 
       sharedEngine.setInitProgressCallback((report: InitProgressReport) => {
         if (currentLoadId !== loadIdRef.current) return;
-        showLoadingToast((report.progress ?? 0) * 100, report.text);
+        showLoadingToast((report.progress ?? 0) * 100);
       });
 
       // Serializa a chamada a reload() para evitar concorrência

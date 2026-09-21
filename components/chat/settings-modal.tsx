@@ -73,7 +73,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               onClick={() => setIsModelManagerOpen(true)}
               aria-label="Gerenciar modelos"
             >
-              <HardDrive /> {modelName}
+              <HardDrive /> {modelName ?? "Selecionar modelo"}
             </Button>
           </TooltipTrigger>
           <TooltipContent side={"right"}>

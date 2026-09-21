@@ -130,6 +130,5 @@
         }
       ]
     }
-  ],
-  "defaultModelId": "Qwen3-1.7B-q4f16_1-MLC"
+  ]
 }

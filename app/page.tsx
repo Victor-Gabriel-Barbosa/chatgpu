@@ -224,7 +224,13 @@ export default function ChatInterface() {
                       setAttachedFiles([]);
                     }
                   }}
-                  placeholder={isReady ? "Envie uma mensagem..." : "Carregando modelo..."}
+                  placeholder={
+                    isReady
+                      ? "Envie uma mensagem..."
+                      : selectedModel
+                        ? "Carregando modelo..."
+                        : "Selecione um modelo..."
+                  }
                   disabled={!isReady || isGenerating}
                   className="flex-1 m-4 field-sizing-content leading-6 outline-none resize-none overflow-y-auto max-h-35 placeholder-muted-foreground disabled:placeholder-muted-foreground"
                   rows={1}
@@ -268,7 +274,7 @@ export default function ChatInterface() {
                         onClick={() => setIsModelManagerOpen(true)}
                         aria-label="Gerenciar modelos"
                       >
-                        <HardDrive /> {modelName}
+                        <HardDrive /> {modelName ?? "Selecionar modelo"}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side={"bottom"}>
