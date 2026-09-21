@@ -28,20 +28,6 @@ function getEngineSingleton(): WebWorkerMLCEngine {
 }
 
 /**
- * Lê o modelo salvo no localStorage, se houver. Sem um modelo salvo, a seleção
- * permanece vazia para que o usuário escolha o primeiro modelo manualmente.
- * Usado como inicializador preguiçoso do estado para evitar uma segunda
- * renderização
- * (e um segundo carregamento) logo após montar o componente.
- *
- * @returns ID do modelo a ser usado inicialmente.
- */
-function getInitialModel(): string {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem(STORAGE_KEY) || "";
-}
-
-/**
  * Gerencia o estado e a lógica do motor de IA, incluindo a inicialização, seleção de modelo e feedback de carregamento.
  *
  * O motor (worker + engine) é um singleton reaproveitado entre trocas de modelo
@@ -53,9 +39,19 @@ function getInitialModel(): string {
  */
 export function useEngine() {
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string>(getInitialModel);
+  const [selectedModel, setSelectedModel] = useState<string>("");
   const [isReady, setIsReady] = useState(false);
   const loadIdRef = useRef(0);
+
+  /**
+   * Carrega o modelo selecionado do localStorage ao montar o componente.
+   * Se não houver modelo salvo, o estado inicial será vazio e nenhum modelo será carregado automaticamente.
+   * O usuário precisará selecionar manualmente um modelo para iniciar o carregamento.
+   */
+  useEffect(() => {
+    const savedModel = localStorage.getItem(STORAGE_KEY);
+    if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
+  }, []);
 
   // Salva o modelo selecionado no localStorage sempre que ele mudar
   useEffect(() => {
@@ -96,7 +92,7 @@ export function useEngine() {
       });
 
       // Serializa a chamada a reload() para evitar concorrência
-      const runReload: Promise<void> = reloadChain.catch(() => {}).then(() => {
+      const runReload: Promise<void> = reloadChain.catch(() => { }).then(() => {
         if (currentLoadId !== loadIdRef.current) return;
         return sharedEngine.reload(selectedModel);
       });

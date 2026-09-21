@@ -77,16 +77,60 @@ async function extractPdfText(file: File): Promise<string> {
   const pdfjsLib = await getPdfjs();
   const buffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
   const pageTexts: string[] = [];
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page = await pdf.getPage(pageNum);
     const content = await page.getTextContent();
-    const pageText = content.items
-      .filter((item) => "str" in item)
-      .map((item) => item.str)
-      .join(" ");
-    pageTexts.push(`--- Página ${pageNum} ---\n${pageText}`);
+
+    const items = content.items
+      .filter((item) => "str" in item && item.str.trim())
+      .map((item) => {
+        if (!("str" in item)) return null;
+
+        return {
+          text: item.str,
+          x: item.transform[4],
+          y: item.transform[5],
+        };
+      })
+      .filter(Boolean) as {
+        text: string;
+        x: number;
+        y: number;
+      }[];
+
+    const lines: string[] = [];
+    let currentLine: typeof items = [];
+    let previousY: number | null = null;
+
+    for (const item of items) {
+      if (previousY !== null && Math.abs(item.y - previousY) > 5) {
+        lines.push(
+          currentLine
+            .toSorted((a, b) => a.x - b.x)
+            .map((item) => item.text)
+            .join(" ")
+        );
+
+        currentLine = [];
+      }
+
+      currentLine.push(item);
+      previousY = item.y;
+    }
+
+    if (currentLine.length > 0) {
+      lines.push(
+        currentLine
+          .toSorted((a, b) => a.x - b.x)
+          .map((item) => item.text)
+          .join(" ")
+      );
+    }
+
+    pageTexts.push(`--- Página ${pageNum} ---\n${lines.join("\n")}`);
   }
 
   return pageTexts.join("\n\n");
