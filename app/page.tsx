@@ -8,7 +8,7 @@ import { AppSidebar } from "@/components/chat/app-sidebar";
 import { SettingsModal } from "@/components/chat/settings-modal";
 import { ModelManagerModal } from "@/components/chat/model-manager-modal";
 import { StartupVideo } from "@/components/chat/startup-video";
-import { models as Models } from "@/config/models.json";
+import { models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -16,15 +16,6 @@ import { useTheme } from "next-themes";
 import { useEngine } from "@/hooks/use-engine";
 import { useSession } from "@/hooks/use-session";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectLabel
-} from "@/components/ui/select"
 import {
   Tooltip,
   TooltipContent,
@@ -73,6 +64,11 @@ export default function ChatInterface() {
   // Índice da última mensagem do assistente para controle de UI
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const hasMessages = messages.length > 0;
+
+  // Nome do modelo atualmente selecionado
+  const modelName = models
+    .flatMap(group => group.options)
+    .find(model => model.id === selectedModel)?.name;
 
   // Copia o conteúdo de uma mensagem para a área de transferência
   const handleCopyMessage = (content: string, index: number) => {
@@ -268,45 +264,17 @@ export default function ChatInterface() {
                   <Tooltip key="model-manager-tooltip">
                     <TooltipTrigger asChild>
                       <Button
-                        variant="secondary"
+                        variant="outline"
                         onClick={() => setIsModelManagerOpen(true)}
                         aria-label="Gerenciar modelos"
-                        size="icon"
                       >
-                        <HardDrive />
+                        <HardDrive /> {modelName}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side={"bottom"}>
-                      <p>Gerenciar modelos baixados</p>
+                      <p>Gerenciar modelos</p>
                     </TooltipContent>
                   </Tooltip>
-
-                  {/* Seletor de modelos */}
-                  <Select
-                    name="model-select"
-                    value={selectedModel}
-                    onValueChange={handleModelChange}
-                  >
-                    <SelectTrigger
-                      title="Selecionar modelo"
-                      className="min-w-0 max-w-20 flex-1 truncate rounded-xl border-none p-3 text-sm sm:max-w-40"
-                      disabled={isGenerating}
-                    >
-                      <SelectValue placeholder="Selecionar modelo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Models.map((group) => (
-                        <SelectGroup key={group.label}>
-                          <SelectLabel>{group.label}</SelectLabel>
-                          {group.options.map((model) => (
-                            <SelectItem key={model.id} value={model.id}>
-                              {model.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 {/* Botão de enviar/parar resposta do modelo */}
@@ -355,10 +323,10 @@ export default function ChatInterface() {
       {/* Modal de Configurações */}
       {isSettingsOpen && (
         <SettingsModal
-          selectedModel={selectedModel}
-          setSelectedModel={handleModelChange}
+          modelName={modelName}
           onClose={() => setIsSettingsOpen(false)}
           onWatchIntroVideo={() => setIsStartupVideoOpen(true)}
+          setIsModelManagerOpen={setIsModelManagerOpen}
         />
       )}
 

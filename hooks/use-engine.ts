@@ -72,7 +72,6 @@ export function useEngine() {
 
     toast.loading(`Carregando modelo (${clampedPercent}%)`, {
       id: LOADING_TOAST_ID,
-      description: text,
       duration: Infinity,
     });
   };
@@ -106,6 +105,9 @@ export function useEngine() {
 
         setEngine(sharedEngine);
         setIsReady(true);
+
+        window.dispatchEvent(new CustomEvent("model-cache-updated"));
+
         toast.success("Modelo carregado e pronto para uso!", {
           id: LOADING_TOAST_ID,
           duration: 1000,

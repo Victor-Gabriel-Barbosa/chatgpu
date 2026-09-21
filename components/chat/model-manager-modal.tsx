@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Download, HardDrive, Loader, RefreshCw, Trash2, X } from "lucide-react";
 import { useModelCache, type ManagedModel } from "@/hooks/use-model-cache";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface ModelManagerModalProps {
   selectedModel: string;
@@ -24,7 +26,7 @@ interface ModelManagerModalProps {
 /**
  * Modal de gerenciamento de modelos baixados.
  * 
- * Permite visualizar os modelos baixados, desinstalar modelos do cache e baixar novos modelos.
+ * Permite visualizar os modelos baixados, desinstalar modelos do cache e selecionar/baixar novos modelos.
  */
 export function ModelManagerModal({
   selectedModel,
@@ -32,8 +34,7 @@ export function ModelManagerModal({
   onSelectModel,
   onClose,
 }: Readonly<ModelManagerModalProps>) {
-  const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } =
-    useModelCache();
+  const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useModelCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
 
   // Agrupa os modelos pelo mesmo rótulo usado no seletor principal
@@ -46,7 +47,6 @@ export function ModelManagerModal({
   // Seleciona um modelo para download e fecha o modal
   const handleDownload = (modelId: string) => {
     onSelectModel(modelId);
-    onClose();
   };
 
   // Inicia a exclusão de um modelo. Se o modelo estiver em uso, solicita confirmação.
@@ -66,9 +66,7 @@ export function ModelManagerModal({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent
-        className="max-w-lg max-h-[80vh] flex flex-col gap-0 p-0 rounded-2xl [&>button]:hidden"
-      >
+      <DialogContent className="max-w-lg max-h-[80vh] flex flex-col gap-0 p-0 rounded-2xl [&>button]:hidden">
         {/* Cabeçalho */}
         <DialogHeader className="flex-row items-center justify-between gap-2 p-4 space-y-0">
           <div className="flex items-center gap-2">
@@ -113,84 +111,113 @@ export function ModelManagerModal({
               Verificando modelos baixados...
             </div>
           ) : (
-            Object.entries(groups).map(([groupLabel, groupModels]) => (
-              <div key={groupLabel}>
-                <h3 className="text-xs text-muted-foreground font-semibold uppercase tracking-wide mb-2">
-                  {groupLabel}
-                </h3>
-                <div className="space-y-1.5">
-                  {groupModels.map((model) => {
-                    const isActive = model.id === selectedModel;
-                    const isDeleting = deletingModelId === model.id;
-                    const isConfirming = confirmingDeleteId === model.id;
+            <RadioGroup
+              value={selectedModel}
+              onValueChange={onSelectModel}
+              className="space-y-6"
+            >
+              {Object.entries(groups).map(([groupLabel, groupModels]) => (
+                <div key={groupLabel}>
+                  <h3 className="text-xs text-muted-foreground font-semibold uppercase tracking-wide mb-2">
+                    {groupLabel}
+                  </h3>
+                  <div className="space-y-1.5">
+                    {groupModels.map((model) => {
+                      const isActive = model.id === selectedModel;
+                      const isDeleting = deletingModelId === model.id;
+                      const isConfirming = confirmingDeleteId === model.id;
 
-                    return (
-                      <div
-                        key={model.id}
-                        className="flex items-center justify-between gap-3 rounded-xl border bg-card px-3 py-2.5"
-                      >
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {model.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {isActive
-                              ? "Baixado · em uso"
-                              : model.isCached
-                                ? "Baixado"
-                                : "Não baixado"}
-                          </p>
-                        </div>
-
-                        {isConfirming ? (
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <Button
-                              variant="destructive"
-                              onClick={() => handleConfirmDelete(model.id)}
-                            >
-                              Remover
-                            </Button>
-                            <Button
-                              variant="secondary"
-                              onClick={() => setConfirmingDeleteId(null)}
-                            >
-                              Cancelar
-                            </Button>
-                          </div>
-                        ) : model.isCached ? (
-                          <Button
-                            variant="destructive"
-                            onClick={() => handleDeleteClick(model)}
-                            disabled={isDeleting || isGenerating}
-                            title="Desinstalar modelo"
-                            aria-label={`Desinstalar ${model.name}`}
-                          >
-                            {isDeleting ? (
-                              <Loader className="animate-spin" />
-                            ) : (
-                              <>
-                                <Trash2 />
-                                Excluir
-                              </>
+                      return (
+                        <div
+                          key={model.id}
+                          className={cn(
+                            "flex items-center justify-between gap-3 rounded-xl border bg-card p-3 transition-colors",
+                            isActive && "border-primary bg-accent/40"
+                          )}
+                        >
+                          {/* Label clicável agrupando o RadioGroupItem e os detalhes do modelo */}
+                          <label
+                            htmlFor={`model-${model.id}`}
+                            className={cn(
+                              "flex items-center gap-3 min-w-0 flex-1",
+                              model.isCached && !isGenerating
+                                ? "cursor-pointer"
+                                : "cursor-not-allowed opacity-70"
                             )}
-                          </Button>
-                        ) : (
-                          <Button
-                            onClick={() => handleDownload(model.id)}
-                            disabled={isGenerating}
-                            title="Baixar modelo"
-                            aria-label={`Baixar ${model.name}`}
                           >
-                            <Download />
-                            Baixar
-                          </Button>
-                        )}
-                      </div>
-                    );
-                  })}
+                            <RadioGroupItem
+                              value={model.id}
+                              id={`model-${model.id}`}
+                              disabled={!model.isCached || isGenerating}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium truncate leading-none">
+                                {model.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {model.isCached ? "Baixado " : "Não baixado "}
+                                (~{model.size} GB)
+                              </p>
+                            </div>
+                          </label>
+
+                          {/* Ações adicionais (Excluir/Baixar) */}
+                          <div className="flex items-center justify-between gap-3 shrink-0">
+                            {isConfirming ? (
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleConfirmDelete(model.id)}
+                                >
+                                  Remover
+                                </Button>
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={() => setConfirmingDeleteId(null)}
+                                >
+                                  Cancelar
+                                </Button>
+                              </div>
+                            ) : model.isCached ? (
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteClick(model)}
+                                disabled={isDeleting || isGenerating}
+                                title="Desinstalar modelo"
+                                aria-label={`Desinstalar ${model.name}`}
+                              >
+                                {isDeleting ? (
+                                  <Loader className="animate-spin" />
+                                ) : (
+                                  <>
+                                    <Trash2 className="w-4 h-4 mr-1" />
+                                    Excluir
+                                  </>
+                                )}
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                onClick={() => handleDownload(model.id)}
+                                disabled={isGenerating}
+                                title="Baixar modelo"
+                                aria-label={`Baixar ${model.name}`}
+                              >
+                                <Download className="w-4 h-4 mr-1" />
+                                Baixar
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </RadioGroup>
           )}
         </div>
 

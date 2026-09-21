@@ -8,6 +8,7 @@ export interface ManagedModel {
   name: string;
   groupLabel: string;
   isCached: boolean;
+  size: number;
 }
 
 export interface StorageEstimateInfo {
@@ -36,6 +37,7 @@ export function useModelCache() {
           id: option.id,
           name: option.name,
           groupLabel: group.label,
+          size: option.size
         }))
       ),
     []
@@ -44,8 +46,7 @@ export function useModelCache() {
   const [cacheStatus, setCacheStatus] = useState<Record<string, boolean>>({});
   const [isChecking, setIsChecking] = useState(true);
   const [deletingModelId, setDeletingModelId] = useState<string | null>(null);
-  const [storageEstimate, setStorageEstimate] =
-    useState<StorageEstimateInfo | null>(null);
+  const [storageEstimate, setStorageEstimate] = useState<StorageEstimateInfo | null>(null);
 
   // Atualiza a estimativa de uso de armazenamento do navegador (quando suportado)
   const refreshStorageEstimate = useCallback(async () => {
@@ -113,6 +114,17 @@ export function useModelCache() {
     },
     [refreshStorageEstimate]
   );
+
+  useEffect(() => {
+    const handleCacheUpdate = () => {
+      refreshCacheStatus();
+    };
+
+    window.addEventListener("model-cache-updated", handleCacheUpdate);
+    return () => {
+      window.removeEventListener("model-cache-updated", handleCacheUpdate);
+    };
+  }, [refreshCacheStatus]);
 
   // Combina os dados dos modelos suportados com o status de cache para fornecer uma lista completa
   const models: ManagedModel[] = useMemo(

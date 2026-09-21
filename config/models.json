@@ -5,35 +5,43 @@
       "options": [
         {
           "id": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 1.5B"
+          "name": "Qwen 2.5 1.5B",
+          "size": 1.1
         },
         {
           "id": "Qwen2.5-3B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 3B"
+          "name": "Qwen 2.5 3B",
+          "size": 1.9
         },
         {
           "id": "Qwen3-0.6B-q4f16_1-MLC",
-          "name": "Qwen 3 0.6B"
+          "name": "Qwen 3 0.6B",
+          "size": 0.45
         },
         {
           "id": "Qwen3-1.7B-q4f16_1-MLC",
-          "name": "Qwen 3 1.7B"
+          "name": "Qwen 3 1.7B",
+          "size": 1.2
         },
         {
           "id": "gemma-2-2b-it-q4f16_1-MLC",
-          "name": "Gemma 2 2B"
+          "name": "Gemma 2 2B",
+          "size": 1.6
         },
         {
           "id": "Llama-3.2-1B-Instruct-q4f16_1-MLC",
-          "name": "Llama 3.2 1B"
+          "name": "Llama 3.2 1B",
+          "size": 0.75
         },
         {
           "id": "Llama-3.2-3B-Instruct-q4f16_1-MLC",
-          "name": "Llama 3.2 3B"
+          "name": "Llama 3.2 3B",
+          "size": 2.0
         },
         {
           "id": "SmolLM2-1.7B-Instruct-q4f16_1-MLC",
-          "name": "SmolLM2 1.7B"
+          "name": "SmolLM2 1.7B",
+          "size": 1.0
         }
       ]
     },
@@ -42,31 +50,38 @@
       "options": [
         {
           "id": "Llama-3.1-8B-Instruct-q4f16_1-MLC",
-          "name": "Llama 3.1 8B"
+          "name": "Llama 3.1 8B",
+          "size": 4.9
         },
         {
           "id": "Mistral-7B-Instruct-v0.3-q4f16_1-MLC",
-          "name": "Mistral 7B v0.3"
+          "name": "Mistral 7B v0.3",
+          "size": 4.3
         },
         {
           "id": "Qwen2.5-7B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 7B"
+          "name": "Qwen 2.5 7B",
+          "size": 4.5
         },
         {
           "id": "Qwen3-8B-q4f16_1-MLC",
-          "name": "Qwen 3 8B"
+          "name": "Qwen 3 8B",
+          "size": 5.0
         },
         {
           "id": "Hermes-3-Llama-3.1-8B-q4f16_1-MLC",
-          "name": "Hermes 3 Llama 3.1 8B"
+          "name": "Hermes 3 Llama 3.1 8B",
+          "size": 4.9
         },
         {
           "id": "gemma-2-9b-it-q4f16_1-MLC",
-          "name": "Gemma 2 9B"
+          "name": "Gemma 2 9B",
+          "size": 5.6
         },
         {
           "id": "Phi-4-mini-instruct-q4f16_1-MLC",
-          "name": "Phi-4 Mini"
+          "name": "Phi-4 Mini",
+          "size": 2.4
         }
       ]
     },
@@ -75,15 +90,18 @@
       "options": [
         {
           "id": "DeepSeek-R1-Distill-Qwen-7B-q4f16_1-MLC",
-          "name": "DeepSeek R1 Qwen 7B"
+          "name": "DeepSeek R1 Qwen 7B",
+          "size": 4.5
         },
         {
           "id": "DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC",
-          "name": "DeepSeek R1 Llama 8B"
+          "name": "DeepSeek R1 Llama 8B",
+          "size": 4.9
         },
         {
           "id": "Qwen3-4B-q4f16_1-MLC",
-          "name": "Qwen 3 4B (Thinking)"
+          "name": "Qwen 3 4B (Thinking)",
+          "size": 2.6
         }
       ]
     },
@@ -92,19 +110,23 @@
       "options": [
         {
           "id": "Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 Coder 0.5B"
+          "name": "Qwen 2.5 Coder 0.5B",
+          "size": 0.39
         },
         {
           "id": "Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 Coder 1.5B"
+          "name": "Qwen 2.5 Coder 1.5B",
+          "size": 1.1
         },
         {
           "id": "Qwen2.5-Coder-3B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 Coder 3B"
+          "name": "Qwen 2.5 Coder 3B",
+          "size": 1.9
         },
         {
           "id": "Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC",
-          "name": "Qwen 2.5 Coder 7B"
+          "name": "Qwen 2.5 Coder 7B",
+          "size": 4.5
         }
       ]
     }
