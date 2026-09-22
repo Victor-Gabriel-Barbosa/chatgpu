@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
-import { ChatSession, Message } from "@/types/chat";
+import { ChatSession, Message, MessageMetrics } from "@/types/chat";
 import { toast } from "sonner";
 import { fileToPlainText } from "@/lib/fileToText";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
@@ -16,12 +16,13 @@ export interface UseSessionProps {
 }
 
 /**
- * Processa a resposta do assistente de forma iterativa, atualizando o estado das mensagens em tempo real.
+ * Processa a resposta do assistente de forma iterativa, atualizando o estado das mensagens e métricas em tempo real.
  * @param engine Instância do motor de inferência.
  * @param chatHistory Histórico de mensagens do chat.
  * @param chatId Identificador da sessão de chat atual.
  * @param setMessages Função para atualizar o estado das mensagens.
  * @param updateChatMessages Função para atualizar as mensagens de uma sessão específica.
+ * @param onSpeedUpdate Callback opcional para notificar a velocidade atual em tokens/s.
  * @returns Promise que resolve quando a resposta do assistente é completamente processada.
  */
 async function streamAssistantReply(
@@ -30,26 +31,111 @@ async function streamAssistantReply(
   chatId: string,
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   updateChatMessages: (id: string, msgs: Message[]) => void,
+  onSpeedUpdate?: (speed: number | null) => void,
 ) {
   setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+  const cleanMessages = chatHistory.map(({ role, content }) => ({ role, content }));
+
   const completion = await engine.chat.completions.create({
     stream: true,
-    messages: chatHistory,
+    messages: cleanMessages,
+    stream_options: { include_usage: true },
   });
+
   let resp = "";
+  const startTime = performance.now();
+  let firstTokenTime: number | null = null;
+  let tokenCount = 0;
+  let latestTokensPerSec: number | undefined;
+  let finalMetrics: MessageMetrics | undefined;
+
   for await (const chunk of completion) {
     const delta = chunk.choices[0]?.delta?.content;
-    if (!delta) continue;
-    resp += delta;
-    setMessages((prev) => {
-      const next = [...prev];
-      next[next.length - 1] = { ...next[next.length - 1], content: resp };
-      return next;
-    });
+    if (delta) {
+      resp += delta;
+      tokenCount++;
+
+      const now = performance.now();
+      if (!firstTokenTime) {
+        firstTokenTime = now;
+      } else {
+        const elapsedSec = (now - firstTokenTime) / 1000;
+        if (elapsedSec > 0.05 && tokenCount > 1) {
+          latestTokensPerSec = Number((tokenCount / elapsedSec).toFixed(1));
+          onSpeedUpdate?.(latestTokensPerSec);
+        }
+      }
+
+      setMessages((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = {
+          ...next[next.length - 1],
+          content: resp,
+          metrics: {
+            tokensPerSecond: latestTokensPerSec,
+            completionTokens: tokenCount,
+            timeToFirstToken: firstTokenTime ? Number(((firstTokenTime - startTime) / 1000).toFixed(2)) : undefined,
+          },
+        };
+        return next;
+      });
+    }
+
+    if (chunk.usage) {
+      const {extra} = chunk.usage;
+      const speed = extra?.decode_tokens_per_s
+        ? Number(extra.decode_tokens_per_s.toFixed(1))
+        : latestTokensPerSec;
+
+      const ttft = extra?.time_to_first_token_s !== undefined
+        ? Number(extra.time_to_first_token_s.toFixed(2))
+        : (firstTokenTime ? Number(((firstTokenTime - startTime) / 1000).toFixed(2)) : undefined);
+
+      finalMetrics = {
+        tokensPerSecond: speed,
+        completionTokens: chunk.usage.completion_tokens ?? tokenCount,
+        promptTokens: chunk.usage.prompt_tokens,
+        totalTokens: chunk.usage.total_tokens,
+        elapsedTime: extra?.e2e_latency_s ? Number(extra.e2e_latency_s.toFixed(2)) : undefined,
+        prefillTokensPerSecond: extra?.prefill_tokens_per_s
+          ? Number(extra.prefill_tokens_per_s.toFixed(1))
+          : undefined,
+        timeToFirstToken: ttft,
+      };
+
+      if (speed !== undefined) {
+        onSpeedUpdate?.(speed);
+      }
+    }
   }
+
+  // Se a geração for finalizada ou interrompida antes do chunk.usage, computa as métricas calculadas
+  if (!finalMetrics && tokenCount > 0) {
+    const now = performance.now();
+    const duration = firstTokenTime ? (now - firstTokenTime) / 1000 : (now - startTime) / 1000;
+    const speed = duration > 0 ? Number((tokenCount / duration).toFixed(1)) : latestTokensPerSec;
+    const ttft = firstTokenTime ? Number(((firstTokenTime - startTime) / 1000).toFixed(2)) : undefined;
+
+    finalMetrics = {
+      tokensPerSecond: speed,
+      completionTokens: tokenCount,
+      elapsedTime: Number(((now - startTime) / 1000).toFixed(2)),
+      timeToFirstToken: ttft,
+    };
+  }
+
   setMessages((current) => {
-    updateChatMessages(chatId, current);
-    return current;
+    const updated = [...current];
+    if (updated.length > 0 && finalMetrics) {
+      updated[updated.length - 1] = {
+        ...updated[updated.length - 1],
+        content: resp,
+        metrics: finalMetrics,
+      };
+    }
+    updateChatMessages(chatId, updated);
+    return updated;
   });
 }
 
@@ -65,6 +151,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentSpeed, setCurrentSpeed] = useState<number | null>(null);
   const [chats, setChats] = useState<ChatSession[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
@@ -318,18 +405,21 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chatHistory = [...newMessages];
 
     try {
+      setCurrentSpeed(null);
       await streamAssistantReply(
         engine,
         chatHistory,
         activeChatId,
         setMessages,
         updateChatMessages,
+        setCurrentSpeed,
       );
     } catch (error) {
       console.error("Erro na inferência:", error);
       toast.error(`Erro na inferência: ${error}`);
     } finally {
       setIsGenerating(false);
+      setCurrentSpeed(null);
     }
   };
 
@@ -353,18 +443,21 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chatHistory = [...updatedMessages];
 
     try {
+      setCurrentSpeed(null);
       await streamAssistantReply(
         engine,
         chatHistory,
         currentChatId!,
         setMessages,
         updateChatMessages,
+        setCurrentSpeed,
       );
     } catch (error) {
       console.error("Erro na inferência (edição):", error);
       toast.error(`Erro na inferência (edição): ${error}`);
     } finally {
       setIsGenerating(false);
+      setCurrentSpeed(null);
     }
   };
 
@@ -372,6 +465,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const handleStop = () => {
     if (engine && isGenerating) {
       engine.interruptGenerate();
+      setCurrentSpeed(null);
       if (currentChatId) updateChatMessages(currentChatId, messages);
     }
   };
@@ -381,6 +475,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     input,
     setInput,
     isGenerating,
+    currentSpeed,
     chats,
     currentChatId,
     handleNewChat,

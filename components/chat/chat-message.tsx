@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip } from 'lucide-react';
+import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip, Zap } from 'lucide-react';
 import { CodeBlock } from './code-block';
 import { Message as MessageType } from '@/types/chat';
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,11 @@ import 'katex/dist/katex.min.css';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Message, MessageAvatar, MessageContent, MessageFooter } from "@/components/ui/message";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { cn } from "@/lib/utils";
 
@@ -181,7 +186,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       <MessageContent className="min-h-16">
         {/* Bloco de Raciocínio */}
         {displayReasoning && !isUser && (
-          <div className="mb-3 pb-3">
+          <div key="reasoning">
             <Button
               variant="link"
               onClick={() => setShowReasoning(!showReasoning)}
@@ -194,7 +199,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </Button>
             {showReasoning && (
-              <div className="mt-2 p-3 border border-primary/20 bg-primary/5 text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="mt-2 p-3 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
                   {preprocessLaTeX(displayReasoning)}
                 </ReactMarkdown>
@@ -258,29 +263,102 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           </BubbleContent>
         </Bubble>
 
-        {/* Rodapé da mensagem para ações extras */}
+        {/* Rodapé da mensagem para ações extras e métricas de desempenho */}
         {!isEditing && (
-          <MessageFooter className="m-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-muted-foreground"
-              onClick={() => handleCopyMessage(msg.content, index)}
-              title="Copiar mensagem"
-            >
-              {copiedMessageIndex === index ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            </Button>
-
-            {isUser && handleSubmitEdit && (
+          <MessageFooter className="m-1 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-muted-foreground"
-                onClick={() => setIsEditing(true)}
-                title="Editar mensagem"
+                onClick={() => handleCopyMessage(mainContent, index)}
+                title="Copiar mensagem"
               >
-                <Pencil className="w-4 h-4" />
+                {copiedMessageIndex === index ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </Button>
+
+              {isUser && handleSubmitEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground"
+                  onClick={() => setIsEditing(true)}
+                  title="Editar mensagem"
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+
+            {!isUser && (msg.metrics?.tokensPerSecond !== undefined || (isGenerating && isLastAssistant)) && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 font-mono text-muted-foreground py-0.5 px-2 rounded-md hover:bg-muted transition-colors cursor-default select-none">
+                    <Zap
+                      className={cn(
+                        "w-3 h-3 shrink-0",
+                        isGenerating && isLastAssistant
+                          ? "text-primary fill-primary animate-pulse"
+                          : "text-muted-foreground"
+                      )}
+                    />
+                    <span>
+                      {msg.metrics?.tokensPerSecond !== undefined
+                        ? `${msg.metrics.tokensPerSecond} tokens/s`
+                        : isGenerating && isLastAssistant
+                          ? "Calculando..."
+                          : ""}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">
+                  <div className="flex flex-col gap-1 font-mono text-xs">
+                    <p className="font-semibold text-center pb-1 border-b border-background">Desempenho da Geração</p>
+                    {msg.metrics?.tokensPerSecond !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">Velocidade:</span>
+                        <span className="font-medium">{msg.metrics.tokensPerSecond} tokens/s</span>
+                      </div>
+                    )}
+                    {msg.metrics?.completionTokens !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">Tokens gerados:</span>
+                        <span className="font-medium">{msg.metrics.completionTokens}</span>
+                      </div>
+                    )}
+                    {msg.metrics?.promptTokens !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">Tokens do prompt:</span>
+                        <span className="font-medium">{msg.metrics.promptTokens}</span>
+                      </div>
+                    )}
+                    {msg.metrics?.totalTokens !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">Total de tokens:</span>
+                        <span className="font-medium">{msg.metrics.totalTokens}</span>
+                      </div>
+                    )}
+                    {msg.metrics?.prefillTokensPerSecond !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">Velocidade prefill:</span>
+                        <span className="font-medium">{msg.metrics.prefillTokensPerSecond} tokens/s</span>
+                      </div>
+                    )}
+                    {msg.metrics?.timeToFirstToken !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">TTFT:</span>
+                        <span className="font-medium">{msg.metrics.timeToFirstToken}s</span>
+                      </div>
+                    )}
+                    {msg.metrics?.elapsedTime !== undefined && (
+                      <div className="flex justify-between gap-4">
+                        <span className="text-muted-foreground">Tempo total:</span>
+                        <span className="font-medium">{msg.metrics.elapsedTime}s</span>
+                      </div>
+                    )}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             )}
           </MessageFooter>
         )}

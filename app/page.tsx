@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, type ChangeEvent } from "react";
-import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive } from "lucide-react";
+import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive, Zap } from "lucide-react";
 import Image from "next/image";
 import { ChatMessage } from "@/components/chat/chat-message";
 import { AppSidebar } from "@/components/chat/app-sidebar";
@@ -41,6 +41,7 @@ export default function ChatInterface() {
     input,
     setInput,
     isGenerating,
+    currentSpeed,
     chats,
     currentChatId,
     handleNewChat,
@@ -285,19 +286,27 @@ export default function ChatInterface() {
 
                 {/* Botão de enviar/parar resposta do modelo */}
                 {isGenerating ? (
-                  <Tooltip key="stop-generating">
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={handleStop}
-                        size="icon"
-                      >
-                        <Square fill="currentColor" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side={"bottom"}>
-                      <p>Parar resposta</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <div className="flex items-center gap-2">
+                    {currentSpeed !== null && currentSpeed !== undefined && (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-muted-foreground">
+                        <Zap className="w-3.5 h-3.5 text-primary fill-primary animate-pulse" />
+                        <span>{currentSpeed} tokens/s</span>
+                      </div>
+                    )}
+                    <Tooltip key="stop-generating">
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={handleStop}
+                          size="icon"
+                        >
+                          <Square fill="currentColor" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side={"bottom"}>
+                        <p>Parar resposta</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 ) : (
                   <Tooltip key="send-message">
                     <TooltipTrigger asChild>
