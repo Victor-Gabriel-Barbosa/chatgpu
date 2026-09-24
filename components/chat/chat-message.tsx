@@ -313,46 +313,46 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                 </TooltipTrigger>
                 <TooltipContent side="top" className="text-xs">
                   <div className="flex flex-col gap-1 font-mono text-xs">
-                    <p className="font-semibold text-center pb-1 border-b border-background">Desempenho da Geração</p>
+                    <p className="font-semibold text-center pb-1 border-b border-secondary text-secondary">Desempenho da Geração</p>
                     {msg.metrics?.tokensPerSecond !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Velocidade:</span>
+                        <span className="text-secondary">Velocidade:</span>
                         <span className="font-medium">{msg.metrics.tokensPerSecond} tokens/s</span>
                       </div>
                     )}
                     {msg.metrics?.completionTokens !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Tokens gerados:</span>
+                        <span className="text-secondary">Tokens gerados:</span>
                         <span className="font-medium">{msg.metrics.completionTokens}</span>
                       </div>
                     )}
                     {msg.metrics?.promptTokens !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Tokens do prompt:</span>
+                        <span className="text-secondary">Tokens do prompt:</span>
                         <span className="font-medium">{msg.metrics.promptTokens}</span>
                       </div>
                     )}
                     {msg.metrics?.totalTokens !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Total de tokens:</span>
+                        <span className="text-secondary">Total de tokens:</span>
                         <span className="font-medium">{msg.metrics.totalTokens}</span>
                       </div>
                     )}
                     {msg.metrics?.prefillTokensPerSecond !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Velocidade prefill:</span>
+                        <span className="text-secondary">Velocidade prefill:</span>
                         <span className="font-medium">{msg.metrics.prefillTokensPerSecond} tokens/s</span>
                       </div>
                     )}
                     {msg.metrics?.timeToFirstToken !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">TTFT:</span>
+                        <span className="text-secondary">TTFT:</span>
                         <span className="font-medium">{msg.metrics.timeToFirstToken}s</span>
                       </div>
                     )}
                     {msg.metrics?.elapsedTime !== undefined && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-muted-foreground">Tempo total:</span>
+                        <span className="text-secondary">Tempo total:</span>
                         <span className="font-medium">{msg.metrics.elapsedTime}s</span>
                       </div>
                     )}

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Download, HardDrive, Loader, RefreshCw, Trash2, X } from "lucide-react";
-import { useModelCache, type ManagedModel } from "@/hooks/use-model-cache";
+import { useModelCache } from "@/hooks/use-model-cache";
+import type { ManagedModel } from "@/types/model";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -16,10 +17,17 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+/**
+ * Propriedades do modal de gerenciamento de modelos.
+ */
 interface ModelManagerModalProps {
+  /** ID do modelo atualmente selecionado. */
   selectedModel: string;
+  /** Indica se uma geração de texto está em andamento. */
   isGenerating: boolean;
+  /** Callback executado quando um modelo é selecionado. */
   onSelectModel: (modelId: string) => void;
+  /** Callback executado quando o modal é fechado. */
   onClose: () => void;
 }
 

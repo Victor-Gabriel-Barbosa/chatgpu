@@ -2,20 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { hasModelInCache, deleteModelAllInfoInCache } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 import { models as Models } from "@/config/models.json";
-
-export interface ManagedModel {
-  id: string;
-  name: string;
-  groupLabel: string;
-  isCached: boolean;
-  size: number;
-}
-
-export interface StorageEstimateInfo {
-  usedGB: string;
-  quotaGB: string;
-  percent: number;
-}
+import type { ManagedModel, StorageEstimateInfo } from "@/types/model";
 
 /**
  * Gerencia o estado de download dos modelos suportados: verifica quais já estão

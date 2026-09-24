@@ -83,7 +83,7 @@ async function streamAssistantReply(
     }
 
     if (chunk.usage) {
-      const {extra} = chunk.usage;
+      const { extra } = chunk.usage;
       const speed = extra?.decode_tokens_per_s
         ? Number(extra.decode_tokens_per_s.toFixed(1))
         : latestTokensPerSec;
@@ -355,7 +355,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    */
   const handleSend = async (files: File[] = []) => {
     if (engine == null || (!input.trim() && files.length === 0)) return;
-    
+
     let prompt = input;
     if (files.length > 0) {
       prompt += "\n\n";
