@@ -1,11 +1,15 @@
 "use client";
+
 import { useEffect } from "react";
 
 /**
- * Componente responsável por registrar o Service Worker da aplicação, permitindo funcionalidades como cache e notificações push.
- * O registro é feito apenas em ambiente de produção e se o navegador suportar Service Workers.
+ * Registra o Service Worker da aplicação no navegador.
  *
- * @returns null, pois não renderiza nenhum elemento visual.
+ * @remarks
+ * Atua como um componente utilitário de ciclo de vida (headless) que não renderiza
+ * nenhum elemento visual na interface.
+ *
+ * @returns `null`, pois o componente atua apenas executando efeitos colaterais de inicialização.
  */
 export function ServiceWorkerRegister() {
   useEffect(() => {

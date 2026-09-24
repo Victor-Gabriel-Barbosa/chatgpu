@@ -18,23 +18,36 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Propriedades do modal de gerenciamento de modelos.
+ * Propriedades do componente {@link ModelManagerModal}.
  */
 interface ModelManagerModalProps {
-  /** ID do modelo atualmente selecionado. */
+  /** Identificador do modelo atualmente selecionado. */
   selectedModel: string;
-  /** Indica se uma geração de texto está em andamento. */
+
+  /** Indica se há uma geração de resposta em andamento. */
   isGenerating: boolean;
-  /** Callback executado quando um modelo é selecionado. */
+
+  /**
+   * Disparado quando um modelo é selecionado para uso ou para início de download.
+   *
+   * @param modelId - Identificador do modelo selecionado.
+   */
   onSelectModel: (modelId: string) => void;
-  /** Callback executado quando o modal é fechado. */
+
+  /** Função de retorno para fechar o diálogo modal. */
   onClose: () => void;
 }
 
 /**
- * Modal de gerenciamento de modelos baixados.
- * 
- * Permite visualizar os modelos baixados, desinstalar modelos do cache e selecionar/baixar novos modelos.
+ * Exibe o diálogo modal para gerenciamento de modelos de IA e do cache de armazenamento local.
+ *
+ * @remarks
+ * Permite visualizar o status dos modelos baixados, selecionar o modelo ativo,
+ * iniciar o download de novos modelos, remover modelos do cache e consultar
+ * a estimativa de uso do armazenamento do navegador.
+ *
+ * @param props - Propriedades utilizadas para configurar o componente.
+ * @returns Elemento JSX contendo a estrutura do modal de gerenciamento de modelos.
  */
 export function ModelManagerModal({
   selectedModel,
@@ -143,7 +156,7 @@ export function ModelManagerModal({
                             isActive && "border-primary bg-accent/40"
                           )}
                         >
-                          {/* Label clicável agrupando o RadioGroupItem e os detalhes do modelo */}
+                          {/* Seletor de Modelo */}
                           <label
                             htmlFor={`model-${model.id}`}
                             className={cn(

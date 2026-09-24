@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { Settings, Cpu, Film, HardDrive, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from "@/components/ui/button"
@@ -20,30 +22,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
+
 import { cn } from "@/lib/utils"
 
 /**
- * Propriedades para o componente SettingsModal.
+ * Propriedades do componente {@link SettingsModal}.
  */
 export interface SettingsModalProps {
-  /** Nome do modelo de IA atualmente selecionado. */
+  /** Nome do modelo atualmente selecionado ou indefinido se nenhum estiver ativo. */
   modelName: string | undefined;
-  /** Função acionada ao tentar fechar o modal. */
+
+  /** Função de callback acionada para fechar o modal. */
   onClose: () => void;
-  /** Função para abrir e assistir ao vídeo de introdução novamente. */
+
+  /** Função de callback opcional para exibir o vídeo de introdução. */
   onWatchIntroVideo?: () => void;
-  /** Função para abrir ou fechar o modal de gerenciamento de modelos. */
+
+  /**
+   * Função acionada para controlar a visibilidade do modal de gerenciamento de modelos.
+   * 
+   * @param isOpen - Valor booleano indicando se o modal de gerenciamento de modelos deve ser aberto.
+   */
   setIsModelManagerOpen: (isOpen: boolean) => void;
 }
 
 /**
- * Componente de modal para configurações, permitindo ao usuário selecionar o modelo de IA a ser utilizado.
+ * Exibe o modal de configurações da aplicação.
  *
- * @param props Propriedades do componente.
- * @param props.selectedModel Modelo atualmente selecionado.
- * @param props.setSelectedModel Função para atualizar o modelo ativo.
- * @param props.onClose Função para fechar o modal.
- * @returns Elemento React contendo o modal de configurações.
+ * @remarks
+ * O modal permite gerenciar modelos WebGPU locais, alterar o tema visual
+ * (claro, escuro ou sistema), acessar o vídeo introdutório e exibe informações
+ * sobre o uso de hardware e cache do navegador.
+ *
+ * @param props - Propriedades utilizadas para configurar o componente.
+ * @returns Elemento JSX representando o modal de configurações.
  */
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   modelName, onClose, onWatchIntroVideo, setIsModelManagerOpen

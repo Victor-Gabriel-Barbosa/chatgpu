@@ -4,12 +4,16 @@
 export interface ManagedModel {
   /** Identificador único do modelo. */
   id: string;
+  
   /** Nome de exibição do modelo. */
   name: string;
+  
   /** Nome do grupo ao qual o modelo pertence. */
   groupLabel: string;
+  
   /** Indica se o modelo já está armazenado no cache local. */
   isCached: boolean;
+  
   /** Tamanho do modelo, em bytes. */
   size: number;
 }

@@ -2,18 +2,20 @@ import Dexie, { type Table } from "dexie";
 import { ChatSession } from "@/types/chat";
 
 /**
- * Registro simples de configuração, armazenado como par chave/valor
- * (usado, por exemplo, para guardar o ID do chat atualmente selecionado).
+ * Representa uma configuração da aplicação armazenada como par chave/valor
  */
 export interface AppSetting {
+  /** Chave única da configuração. */
   key: string;
+
+  /** Valor da configuração. */
   value: string;
 }
 
 /**
- * Banco de dados IndexedDB da aplicação, gerenciado via Dexie.js.
- *
- * Tabelas:
+ * Banco de dados da aplicação, gerenciado via Dexie.js.
+ * 
+ * Contém as seguintes tabelas:
  * - 'chats': sessões de chat completas (id, título, mensagens, updatedAt).
  * - 'settings': configurações avulsas em formato chave/valor.
  */

@@ -1,18 +1,19 @@
 "use client";
 
+import Image from "next/image";
+import { useTheme } from "next-themes";
 import { useState, useRef, type ChangeEvent } from "react";
 import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive, Zap } from "lucide-react";
-import Image from "next/image";
-import { ChatMessage } from "@/components/chat/chat-message";
-import { AppSidebar } from "@/components/chat/app-sidebar";
-import { SettingsModal } from "@/components/chat/settings-modal";
-import { ModelManagerModal } from "@/components/chat/model-manager-modal";
-import { StartupVideo } from "@/components/chat/startup-video";
+import { ChatMessage } from "@/components/chat-message";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SettingsModal } from "@/components/settings-modal";
+import { ModelManagerModal } from "@/components/model-manager-modal";
+import { StartupVideo } from "@/components/startup-video";
 import { models } from "@/config/models.json";
+import { ACCEPTED_FILE_TYPES } from "@/config/file-types"
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { useTheme } from "next-themes";
 import { useEngine } from "@/hooks/use-engine";
 import { useSession } from "@/hooks/use-session";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
@@ -32,8 +33,17 @@ import {
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Exibe a interface principal de conversação do ChatGPU.
+ *
+ * @remarks
+ * Gerencia a exibição das mensagens, entrada de texto, anexos,
+ * seleção de modelos, geração de respostas e gerenciamento de chats.
+ * 
+ * Também controla a abertura dos modais de configurações,
+ * gerenciamento de modelos e vídeo de introdução.
+ */
 export default function ChatInterface() {
-  // Estados do chat, modelo, UI e controle de execução
   const { theme } = useTheme();
   const { engine, isReady, selectedModel, handleModelChange } = useEngine();
   const {
@@ -58,16 +68,10 @@ export default function ChatInterface() {
   const [isStartupVideoOpen, setIsStartupVideoOpen] = useState(true);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-
-  // Ref para o input de arquivos
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Índice da última mensagem do assistente para controle de UI
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const hasMessages = messages.length > 0;
-
-  // Nome do modelo atualmente selecionado
-  const modelName = models
+  const selectedModelName = models
     .flatMap(group => group.options)
     .find(model => model.id === selectedModel)?.name;
 
@@ -133,7 +137,6 @@ export default function ChatInterface() {
           </Button>
         </div>
 
-        {/* Container central */}
         <div
           className={cn(
             "flex-1 min-h-0 flex flex-col",
@@ -239,7 +242,6 @@ export default function ChatInterface() {
               </div>
               <div className="flex flex-wrap items-center justify-between m-2 p-2">
                 <div className="flex flex-wrap min-w-0 items-center gap-2">
-                  {/* Botão de anexo de arquivos */}
                   <div className="relative">
                     <Tooltip key="attach-file">
                       <TooltipTrigger asChild>
@@ -261,13 +263,12 @@ export default function ChatInterface() {
                       id="file-input"
                       ref={fileInputRef}
                       type="file"
-                      accept=".txt,.md,.pdf,.csv,.json,.xml,.html,.css,.js,.jsx,.ts,.tsx,.java,.py,.c,.cpp,.h,.hpp,.kt,.rs,.go,.sql,.yml,.yaml,.ini,.toml,.log,.conf,.bat,.sh,.ps1,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff,.tif"
+                      accept={ACCEPTED_FILE_TYPES.join(',')}
                       multiple
                       onChange={handleFileChange}
                       className="hidden"
                     />
                   </div>
-                  {/* Botão de gerenciamento de modelos */}
                   <Tooltip key="model-manager-tooltip">
                     <TooltipTrigger asChild>
                       <Button
@@ -275,7 +276,7 @@ export default function ChatInterface() {
                         onClick={() => setIsModelManagerOpen(true)}
                         aria-label="Gerenciar modelos"
                       >
-                        <HardDrive /> {modelName ?? "Selecionar modelo"}
+                        <HardDrive /> {selectedModelName ?? "Selecionar modelo"}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side={"bottom"}>
@@ -284,7 +285,6 @@ export default function ChatInterface() {
                   </Tooltip>
                 </div>
 
-                {/* Botão de enviar/parar resposta do modelo */}
                 {isGenerating ? (
                   <div className="flex items-center gap-2">
                     {currentSpeed !== null && currentSpeed !== undefined && (
@@ -338,7 +338,7 @@ export default function ChatInterface() {
       {/* Modal de Configurações */}
       {isSettingsOpen && (
         <SettingsModal
-          modelName={modelName}
+          modelName={selectedModelName}
           onClose={() => setIsSettingsOpen(false)}
           onWatchIntroVideo={() => setIsStartupVideoOpen(true)}
           setIsModelManagerOpen={setIsModelManagerOpen}
@@ -361,7 +361,7 @@ export default function ChatInterface() {
         onClose={() => setIsStartupVideoOpen(false)}
       />
 
-      {/* Toaster para notificações*/}
+      {/* Toaster para Notificações*/}
       <Toaster
         position="bottom-right"
         theme={theme as "light" | "dark" | "system"}

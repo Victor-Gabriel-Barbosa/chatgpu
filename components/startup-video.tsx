@@ -3,18 +3,29 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Propriedades do componente {@link StartupVideo}.
+ */
 export interface StartupVideoProps {
-  /** Indica se o vídeo deve ser exibido. */
+  /** Determina se a sobreposição com o vídeo de inicialização está ativa e visível. */
   isOpen: boolean;
-  /** Função chamada quando o vídeo termina ou é fechado pelo usuário. */
+
+  /** Callback acionado para fechar a exibição do vídeo. */
   onClose: () => void;
-  /** Caminho do arquivo de vídeo. Padrão: "/chatgpu-video.mp4". */
+
+  /** Caminho ou URL do arquivo de vídeo a ser exibido. */
   src?: string;
 }
 
 /**
- * Componente de introdução em vídeo em tela cheia sem distrações, controles ou logotipos.
- * Reproduz o vídeo de inicialização e fecha automaticamente ao finalizar.
+ * Exibe um vídeo em tela cheia durante a inicialização da aplicação.
+ *
+ * @remarks
+ * O vídeo é reproduzido automaticamente e pode ser dispensado por clique, término da reprodução,
+ * ou pelas teclas `Escape`, `Enter` e `Espaço`. Inclui uma transição suave de fade-out antes de disparar o fechamento.
+ *
+ * @param props - Propriedades utilizadas para configurar o componente.
+ * @returns Elemento JSX do modal de vídeo ou `null` caso `isOpen` seja falso.
  */
 export const StartupVideo: React.FC<StartupVideoProps> = ({
   isOpen,
@@ -24,7 +35,9 @@ export const StartupVideo: React.FC<StartupVideoProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isClosing, setIsClosing] = useState(false);
 
-  // Executa o fechamento com animação suave de fade-out
+  /**
+   * Inicia o encerramento da exibição pausando o vídeo e disparando a animação de fade-out.
+   */
   const handleDismiss = useCallback(() => {
     setIsClosing(true);
     if (videoRef.current) {

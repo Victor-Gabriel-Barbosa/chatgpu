@@ -19,23 +19,75 @@ import {
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Representa um arquivo embutido no corpo da mensagem.
+ */
+export interface EmbeddedFile {
+  /** Nome ou caminho do arquivo extraído. */
+  name: string;
+
+  /** Conteúdo textual interno do arquivo. */
+  content: string;
+}
+
+/**
+ * Estrutura resultante da separação do conteúdo bruto de uma mensagem.
+ */
+export interface ParsedMessageContent {
+  /** Bloco de raciocínio da IA contido nas tags `<think>`, se presente. */
+  think: string | null;
+  /** Conteúdo textual principal da mensagem limpo de tags especiais. */
+  mainContent: string;
+  /** Lista de arquivos anexados ou embutidos no corpo da mensagem. */
+  files: EmbeddedFile[];
+}
+
+/**
+ * Propriedades do componente {@link ChatMessage}.
+ */
 export interface ChatMessageProps {
+  /** Dados completos da mensagem, incluindo papel (role), texto e métricas. */
   msg: MessageType;
+
+  /** Posição/índice da mensagem no histórico da conversa. */
   index: number;
+
+  /** Índice da mensagem cujo conteúdo foi copiado para a área de transferência, ou `null`. */
   copiedMessageIndex: number | null;
+
+  /**
+   * Função disparada para copiar o texto principal da mensagem.
+   *
+   * @param content - Conteúdo textual a ser copiado.
+   * @param index - Índice da mensagem copiada.
+   */
   handleCopyMessage: (content: string, index: number) => void;
+
+  /**
+   * Função opcional disparada ao salvar a edição do conteúdo de uma mensagem.
+   *
+   * @param newContent - Novo conteúdo textual da mensagem.
+   * @param index - Índice da mensagem que foi editada.
+   */
   handleSubmitEdit?: (newContent: string, index: number) => void;
+
+  /** Define se a mensagem é a última resposta gerada pelo assistente no histórico. */
   isLastAssistant?: boolean;
+
+  /** Define se há uma resposta em streaming sendo gerada no momento. */
   isGenerating?: boolean;
 }
 
 /**
- * Preprocessa o conteúdo substituindo delimitadores LaTeX para o formato compatível com o renderizador.
+ * Pré-processa o conteúdo textual substituindo delimitadores LaTeX para o formato compatível com KaTeX.
  *
- * @param content Conteúdo original da mensagem.
+ * @remarks
+ * Converte blocos `\[ ... \]` em `$$ ... $$` e expressões inline `\( ... \)` em `$ ... $`.
+ *
+ * @param content - Conteúdo original da mensagem com notação matemática.
  * @returns Conteúdo formatado para renderização de fórmulas matemáticas.
  */
-const preprocessLaTeX = (content: string) => {
+const preprocessLaTeX = (content: string): string => {
   if (!content) return '';
   return content
     .replaceAll(String.raw`\[`, '$$$$')
@@ -45,15 +97,19 @@ const preprocessLaTeX = (content: string) => {
 };
 
 /**
- * Separa o bloco de raciocínio e os arquivos do conteúdo principal da mensagem.
+ * Separa o bloco de raciocínio e os arquivos embutidos do conteúdo principal da mensagem.
  *
- * @param content Conteúdo completo da mensagem.
- * @returns Um objeto contendo o raciocínio, o conteúdo principal e a lista de arquivos.
+ * @remarks
+ * Extrai dados das tags `<file name="...">...</file>` e blocos `<think>...</think>`,
+ * tratando inclusive tags incompletas durante streaming.
+ *
+ * @param content - Conteúdo completo e bruto da mensagem.
+ * @returns Objeto contendo o raciocínio extraído, o conteúdo principal e a lista de arquivos.
  */
-const parseMessageContent = (content: string) => {
+const parseMessageContent = (content: string): ParsedMessageContent => {
   if (!content) return { think: null, mainContent: '', files: [] };
 
-  const files: { name: string, content: string }[] = [];
+  const files: EmbeddedFile[] = [];
   let processedContent = content;
 
   const fileRegex = /<file name="([^"]+)">([\s\S]*?)<\/file>/g;
@@ -88,6 +144,9 @@ const parseMessageContent = (content: string) => {
   return { think: null, mainContent: processedContent, files };
 };
 
+/**
+ * Mapeamento de componentes customizados para renderização de Markdown no bloco de raciocínio.
+ */
 const reasoningComponents: Components = {
   pre: ({ children }) => <div className="w-full max-w-full min-w-0 overflow-x-auto">{children}</div>,
   code(props) {
@@ -106,6 +165,9 @@ const reasoningComponents: Components = {
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>
 };
 
+/**
+ * Mapeamento de componentes customizados para renderização de Markdown no corpo da mensagem.
+ */
 const messageComponents: Components = {
   pre: ({ children }) => <div className="w-full max-w-full min-w-0 overflow-x-auto">{children}</div>,
   code(props) {
@@ -131,16 +193,15 @@ const messageComponents: Components = {
 };
 
 /**
- * Componente para exibir mensagens de chat, com suporte a edição, cópia e renderização de Markdown com LaTeX e tags <think>.
+ * Exibe uma mensagem individual na interface de chat.
  *
- * @param props Propriedades do componente.
- * @param props.msg Objeto representando os dados da mensagem.
- * @param props.index Índice da mensagem atual na lista.
- * @param props.copiedMessageIndex Índice da mensagem copiada, se houver.
- * @param props.handleCopyMessage Função para lidar com a cópia da mensagem.
- * @param props.handleSubmitEdit Função para submeter edições feitas pelo usuário.
- * @param props.isLastAssistant Flag que identifica se é a última mensagem do assistente.
- * @returns Elemento React contendo a mensagem renderizada.
+ * @remarks
+ * Suporta renderização de Markdown com fórmulas LaTeX (KaTeX), realce de sintaxe de código com {@link CodeBlock},
+ * bloco colapsável de raciocínio (`<think>`), expansão de arquivos embutidos (`<file>`), edição de mensagens
+ * do usuário e exibição de métricas de desempenho de geração de tokens do assistente.
+ *
+ * @param props - Propriedades utilizadas para configurar o componente {@link ChatMessage}.
+ * @returns Elemento JSX que representa a mensagem no chat.
  */
 export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant, isGenerating }) => {
   const [showReasoning, setShowReasoning] = useState(false);

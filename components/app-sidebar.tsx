@@ -1,7 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useState, useEffect, useRef } from "react";
+import { Chat } from "@/types/chat";
+import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
   Plus,
@@ -16,10 +20,6 @@ import {
   Monitor,
   Upload,
 } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { Chat } from "@/types/chat";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -47,45 +47,66 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+import { cn } from "@/lib/utils"
+
 /**
- * Propriedades para o componente Sidebar.
- *
- * O estado de abertura/colapso não é mais controlado por fora: ele é
- * gerenciado internamente pelo `SidebarProvider` (ver app/layout.tsx) e
- * acessado aqui via o hook `useSidebar`.
+ * Propriedades do componente {@link AppSidebar}.
  */
 export interface AppSidebarProps {
   /** Lista das conversas (chats) existentes. */
   chats: Chat[];
+
   /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
   currentChatId: string | null;
+
   /** Função para selecionar uma conversa a partir do seu ID. */
   setCurrentChatId: (id: string) => void;
+
   /** Função para iniciar uma nova conversa. */
   createNewChat: () => void;
-  /** Função para excluir uma conversa selecionada. */
+
+  /**
+   * Função acionada para excluir uma conversa selecionada.
+   * 
+   * @param id - Identificador da conversa a ser excluída.
+   */
   deleteChat: (id: string) => void;
-  /** Função para exportar uma conversa selecionada. */
+
+  /**
+   * Função acionada para exportar uma conversa selecionada.
+   * 
+   * @param id - Identificador da conversa a ser exportada.
+   */
   exportChat: (id: string) => void;
-  /** Função para alterar o título de uma conversa. */
+
+  /**
+   * Função acionada para alterar o título de uma conversa.
+   * 
+   * @param id - Identificador da conversa a ser renomeada.
+   * @param newTitle - Novo título da conversa.
+   */
   renameChat: (id: string, newTitle: string) => void;
-  /** Função para exibir o modal de configurações. */
+
+  /**
+   * Função acionada para exibir o modal de configurações.
+   * 
+   * @param isOpen - Valor booleano indicando se o modal de configurações deve ser aberto.
+   */
   setSettingsOpen: (isOpen: boolean) => void;
 }
 
 /**
- * Componente de barra lateral para navegação entre chats, criação de novos chats e acesso às configurações.
- *
- * @param props Propriedades do componente.
- * @param props.chats Lista de chats disponíveis.
- * @param props.currentChatId ID do chat atualmente ativo.
- * @param props.setCurrentChatId Função para alterar o chat ativo.
- * @param props.createNewChat Função para criar um novo chat.
- * @param props.deleteChat Função para excluir um chat.
- * @param props.exportChat Função para exportar um chat.
- * @param props.renameChat Função para renomear um chat.
- * @returns Elemento React contendo o layout da barra lateral de navegação.
- */
+ * Exibe a barra lateral principal da aplicação.
+ * 
+ * @remarks
+ * Permite navegar entre as conversas, criar novos chats,
+ * renomear, exportar e excluir conversas.
+ * 
+ * Também disponibiliza os controles de tema, configurações
+ * da aplicação e expansão ou recolhimento da barra lateral.
+ * 
+ * @param props - Propriedades utilizadas para configurar a barra lateral.
+*/
 export const AppSidebar: React.FC<AppSidebarProps> = ({
   chats,
   currentChatId,
@@ -185,7 +206,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Botão Novo Chat */}
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -294,19 +314,19 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent side={isMobile ? "bottom" : isExpanded ? "top" : "right"} align="end">
                 <DropdownMenuItem
-                  className={theme === "light" ? "bg-accent" : ""}
+                  className={cn(theme === "light" && "bg-accent")}
                   onClick={() => setTheme("light")}
                 >
                   <Sun /> Claro
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className={theme === "dark" ? "bg-accent" : ""}
+                  className={cn(theme === "dark" && "bg-accent")}
                   onClick={() => setTheme("dark")}
                 >
                   <Moon /> Escuro
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className={theme === "system" ? "bg-accent" : ""}
+                  className={cn(theme === "system" && "bg-accent")}
                   onClick={() => setTheme("system")}
                 >
                   <Monitor /> Sistema
