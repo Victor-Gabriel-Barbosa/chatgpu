@@ -98,10 +98,9 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 }) => {
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
-  const isExpanded = state === "expanded";
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-
+  const isExpanded = state === "expanded";
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Foca no input de renomear quando o modo de edição é ativado
