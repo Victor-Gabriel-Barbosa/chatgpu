@@ -56,6 +56,7 @@ export function useEngine() {
   // Salva o modelo selecionado no localStorage sempre que ele mudar
   useEffect(() => {
     if (selectedModel) localStorage.setItem(STORAGE_KEY, selectedModel);
+    else localStorage.removeItem(STORAGE_KEY);
   }, [selectedModel]);
 
   /**

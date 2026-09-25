@@ -70,7 +70,7 @@ export function ModelManagerModal({
     onSelectModel(modelId);
   };
 
-  // Inicia a exclusão de um modelo. Se o modelo estiver em uso, solicita confirmação.
+  // Inicia a exclusão de um modelo. Se o modelo estiver em uso, solicita confirmação
   const handleDeleteClick = (model: ManagedModel) => {
     if (model.id === selectedModel) {
       setConfirmingDeleteId(model.id);
@@ -83,6 +83,7 @@ export function ModelManagerModal({
   const handleConfirmDelete = (modelId: string) => {
     setConfirmingDeleteId(null);
     deleteModel(modelId);
+    onSelectModel("");
   };
 
   return (
