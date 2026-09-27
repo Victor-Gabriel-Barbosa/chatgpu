@@ -1,9 +1,7 @@
 import Dexie, { type Table } from "dexie";
 import { ChatSession } from "@/types/chat";
 
-/**
- * Representa uma configuração da aplicação armazenada como par chave/valor
- */
+/** Representa uma configuração da aplicação armazenada como par chave/valor. */
 export interface AppSetting {
   /** Chave única da configuração. */
   key: string;
@@ -33,7 +31,8 @@ class ChatDatabase extends Dexie {
   }
 }
 
+/** Instância singleton do banco de dados da aplicação. */
 export const db = new ChatDatabase();
 
-// Chave usada na tabela 'settings' para guardar o ID do chat atualmente selecionado
+/** Chave usada na tabela `settings` para persistir o ID do chat atualmente selecionado. */
 export const CURRENT_CHAT_SETTING_KEY = "chatgpu-current-session";

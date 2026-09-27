@@ -4,18 +4,6 @@ import { toast } from "sonner";
 import { models as Models } from "@/config/models.json";
 import type { ManagedModel, StorageEstimateInfo } from "@/types/model";
 
-/**
- * Gerencia o estado de download dos modelos suportados: verifica quais já estão
- * presentes no cache do navegador (Cache Storage/IndexedDB) e permite desinstalar
- * (remover do cache) um modelo específico.
- *
- * O download em si reaproveita o fluxo já existente em useEngine (trocar o modelo
- * selecionado aciona o carregamento/cache automaticamente); este hook cuida apenas
- * de consultar e limpar o que já foi baixado.
- *
- * @returns Lista de modelos com status de cache, estimativa de uso de armazenamento,
- * estados de carregamento/exclusão e funções para atualizar e desinstalar um modelo.
- */
 export function useModelCache() {
   const flatModels = useMemo(
     () =>
@@ -35,7 +23,6 @@ export function useModelCache() {
   const [deletingModelId, setDeletingModelId] = useState<string | null>(null);
   const [storageEstimate, setStorageEstimate] = useState<StorageEstimateInfo | null>(null);
 
-  // Atualiza a estimativa de uso de armazenamento do navegador (quando suportado)
   const refreshStorageEstimate = useCallback(async () => {
     if (!navigator.storage?.estimate) return;
     try {
@@ -50,11 +37,6 @@ export function useModelCache() {
     }
   }, []);
 
-  /**
-   * Verifica, para cada modelo suportado, se ele já está presente no cache do navegador.
-   * 
-   * @returns Um objeto mapeando o ID do modelo para um booleano indicando se ele está em cache.
-   */
   const refreshCacheStatus = useCallback(async () => {
     setIsChecking(true);
     try {
@@ -74,16 +56,10 @@ export function useModelCache() {
     refreshStorageEstimate();
   }, [flatModels, refreshStorageEstimate]);
 
-  // Inicializa o estado de cache e estimativa de armazenamento ao montar o hook
   useEffect(() => {
     Promise.resolve().then(() => refreshCacheStatus());
   }, [refreshCacheStatus]);
 
-  /**
-   * Remove um modelo baixado do cache do navegador (pesos, biblioteca wasm e configuração).
-   *
-   * @param modelId Identificador do modelo a ser desinstalado.
-   */
   const deleteModel = useCallback(
     async (modelId: string) => {
       setDeletingModelId(modelId);
@@ -113,7 +89,6 @@ export function useModelCache() {
     };
   }, [refreshCacheStatus]);
 
-  // Combina os dados dos modelos suportados com o status de cache para fornecer uma lista completa
   const models: ManagedModel[] = useMemo(
     () =>
       flatModels.map((model) => ({

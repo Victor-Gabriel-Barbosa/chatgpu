@@ -1,21 +1,28 @@
 import mammoth from "mammoth";
 import { createWorker, type Worker } from "tesseract.js";
+import { IMAGE_EXTENSIONS } from "@/config/file-types";
 
-// Variável para armazenar a promessa de carregamento da biblioteca pdfjs-dist
+/**
+ * Promessa de carregamento da biblioteca `pdfjs-dist`.
+ *
+ * Inicializada sob demanda pela função {@link getPdfjs}.
+ */
 let pdfjsLibPromise: ReturnType<typeof loadPdfjs> | null = null;
 
-// Idiomas usados pelo Tesseract para reconhecimento de texto em imagens
+/** Idiomas usados pelo Tesseract para reconhecimento de texto em imagens. */
 const OCR_LANGUAGES = "por+eng";
 
-// Extensões de imagem suportadas para extração de texto via OCR
-const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff", "tif"]);
-
-// Variável para armazenar a promessa de criação do worker do Tesseract.
+/**
+ * Promessa de criação do worker do Tesseract.
+ *
+ * Inicializada sob demanda pela função {@link getTesseractWorker}.
+ */
 let tesseractWorkerPromise: Promise<Worker> | null = null;
 
-/** 
- * Carrega a biblioteca pdfjs-dist.
- * @returns Promise que resolve para a instância do pdfjsLib.
+/**
+ * Carrega a biblioteca `pdfjs-dist` e configura o caminho do worker.
+ *
+ * @returns Promise que resolve para a instância do `pdfjsLib`.
  */
 function loadPdfjs() {
   return import("pdfjs-dist").then((pdfjsLib) => {
@@ -27,10 +34,13 @@ function loadPdfjs() {
   });
 }
 
-/** 
- * Retorna a instância do pdfjsLib, carregando-a se ainda não estiver disponível.
- * @throws {TypeError} Se chamado no lado do servidor (server-side).
- * @returns Instância do pdfjsLib.
+/**
+ * Retorna a instância do `pdfjsLib`, carregando-a se ainda não estiver disponível.
+ *
+ * @returns Instância do `pdfjsLib`.
+ *
+ * @throws {@link TypeError}
+ * Quando chamado no lado do servidor (server-side).
  */
 function getPdfjs() {
   if (typeof window === "undefined") throw new TypeError("A extração de PDF só funciona no navegador (client-side).");
@@ -40,8 +50,11 @@ function getPdfjs() {
 
 /**
  * Retorna o worker do Tesseract, criando-o se ainda não estiver disponível.
- * @throws {TypeError} Se chamado no lado do servidor (server-side).
+ *
  * @returns Instância do worker do Tesseract.
+ *
+ * @throws {@link TypeError}
+ * Quando chamado no lado do servidor (server-side).
  */
 function getTesseractWorker(): Promise<Worker> {
   if (typeof window === "undefined") throw new TypeError("A extração de texto de imagens só funciona no navegador (client-side).");
@@ -49,7 +62,12 @@ function getTesseractWorker(): Promise<Worker> {
   return tesseractWorkerPromise;
 }
 
-// Encerra o worker do Tesseract, liberando os recursos alocados
+/**
+ * Encerra o worker do Tesseract, liberando os recursos alocados.
+ *
+ * @remarks
+ * Após a chamada, um novo worker será criado automaticamente na próxima operação de OCR.
+ */
 export async function terminateOcrWorker(): Promise<void> {
   if (!tesseractWorkerPromise) return;
   const worker = await tesseractWorkerPromise;
@@ -60,18 +78,18 @@ export async function terminateOcrWorker(): Promise<void> {
 /**
  * Obtém a extensão de um nome de arquivo.
  *
- * @param fileName Nome do arquivo.
- * @returns Extensão do arquivo.
+ * @param fileName - Nome do arquivo.
+ * @returns Extensão do arquivo em letras minúsculas, ou string vazia se não houver extensão.
  */
 function getExtension(fileName: string): string {
   return fileName.split(".").pop()?.toLowerCase() ?? "";
 }
 
 /**
- * Extrai o texto de um arquivo PDF.
+ * Extrai o texto de um arquivo PDF página por página.
  *
- * @param file Arquivo PDF a ser extraído.
- * @returns Conteúdo textual extraído do arquivo.
+ * @param file - Arquivo PDF a ser extraído.
+ * @returns Conteúdo textual extraído do arquivo, separado por página.
  */
 async function extractPdfText(file: File): Promise<string> {
   const pdfjsLib = await getPdfjs();
@@ -139,7 +157,7 @@ async function extractPdfText(file: File): Promise<string> {
 /**
  * Extrai o texto de um arquivo DOCX (Word).
  *
- * @param file Arquivo DOCX a ser extraído.
+ * @param file - Arquivo DOCX a ser extraído.
  * @returns Conteúdo textual extraído do arquivo.
  */
 async function extractDocxText(file: File): Promise<string> {
@@ -151,7 +169,7 @@ async function extractDocxText(file: File): Promise<string> {
 /**
  * Extrai o texto de uma imagem via OCR (reconhecimento óptico de caracteres).
  *
- * @param file Arquivo de imagem a ser extraído.
+ * @param file - Arquivo de imagem a ser extraído.
  * @returns Conteúdo textual reconhecido na imagem.
  */
 async function extractImageText(file: File): Promise<string> {
@@ -164,7 +182,11 @@ async function extractImageText(file: File): Promise<string> {
  * Converte um arquivo enviado pelo usuário em texto puro, escolhendo a
  * estratégia de extração adequada de acordo com o tipo do arquivo.
  *
- * @param file Arquivo a ser convertido.
+ * @remarks
+ * Suporta PDF (via `pdfjs-dist`), DOCX (via `mammoth`), imagens (via Tesseract OCR)
+ * e arquivos de texto puro. Para tipos desconhecidos, lê o arquivo diretamente como texto.
+ *
+ * @param file - Arquivo a ser convertido.
  * @returns Conteúdo textual extraído do arquivo.
  */
 export async function fileToPlainText(file: File): Promise<string> {

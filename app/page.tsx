@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils"
  */
 export default function ChatInterface() {
   const { theme } = useTheme();
-  const { engine, isReady, selectedModel, handleModelChange } = useEngine();
+  const { engine, isReady, selectedModel, setSelectedModel } = useEngine();
   const {
     messages,
     input,
@@ -75,7 +75,12 @@ export default function ChatInterface() {
     .flatMap(group => group.options)
     .find(model => model.id === selectedModel)?.name;
 
-  // Copia o conteúdo de uma mensagem para a área de transferência
+  /**
+   * Copia o conteúdo de uma mensagem para a área de transferência.
+   *
+   * @param content - Conteúdo textual a ser copiado.
+   * @param index - Índice da mensagem copiada.
+   */
   const handleCopyMessage = (content: string, index: number) => {
     navigator.clipboard
       .writeText(content)
@@ -90,14 +95,14 @@ export default function ChatInterface() {
       });
   };
 
-  // Adiciona os arquivos escolhidos (input genérico ou de imagem) à lista de anexos
+  /** Adiciona os arquivos escolhidos pelo usuário à lista de anexos. */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files ?? []);
     if (selected.length > 0) setAttachedFiles((prev) => [...prev, ...selected]);
     e.target.value = "";
   };
 
-  // Remove um anexo da lista pelo índice
+  /** Remove um anexo da lista pelo índice. */
   const removeAttachedFile = (index: number) => {
     setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
@@ -350,7 +355,7 @@ export default function ChatInterface() {
         <ModelManagerModal
           selectedModel={selectedModel}
           isGenerating={isGenerating}
-          onSelectModel={handleModelChange}
+          setSelectModel={setSelectedModel}
           onClose={() => setIsModelManagerOpen(false)}
         />
       )}

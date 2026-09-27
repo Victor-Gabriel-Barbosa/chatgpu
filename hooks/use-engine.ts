@@ -1,21 +1,23 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 
+/** Identificador fixo do toast de progresso de carregamento do modelo. */
 const LOADING_TOAST_ID = "loading-model";
+
+/** Chave do `localStorage` usada para persistir o modelo selecionado entre sessões. */
 const STORAGE_KEY = "chatgpu-model";
 
-// Singleton do motor WebGPU (worker + engine) para reaproveitamento entre trocas de modelo e remontagens do componente
+/** Instância singleton do motor WebLLM compartilhada entre invocações do hook. */
 let engineSingleton: WebWorkerMLCEngine | null = null;
+
+/** Instância singleton do Web Worker que executa o motor de IA em segundo plano. */
 let workerSingleton: Worker | null = null;
 
-// Fila de promessas para serializar chamadas a reload() e evitar concorrência entre múltiplas trocas de modelo
-let reloadChain: Promise<void> = Promise.resolve();
-
 /**
- * Retorna a instância singleton do motor WebGPU, criando se ainda não existir.
+ * Retorna a instância singleton do motor WebLLM, criando o Web Worker e o motor na primeira chamada.
  *
- * @returns Instância do motor WebGPU.
+ * @returns Instância compartilhada do {@link WebWorkerMLCEngine}.
  */
 function getEngineSingleton(): WebWorkerMLCEngine {
   if (!engineSingleton) {
@@ -28,116 +30,106 @@ function getEngineSingleton(): WebWorkerMLCEngine {
 }
 
 /**
- * Gerencia o estado e a lógica do motor de IA, incluindo a inicialização, seleção de modelo e feedback de carregamento.
+ * Exibe ou atualiza o toast de progresso de carregamento do modelo.
  *
- * O motor (worker + engine) é um singleton reaproveitado entre trocas de modelo
- * e remontagens do componente; apenas reload() é chamado ao trocar de modelo.
- * As chamadas a reload() são serializadas numa fila para garantir que nunca
- * haja duas em andamento ao mesmo tempo.
+ * @param percent - Percentual de progresso (0–100).
+ */
+function showLoadingToast(percent: number) {
+  const clamped = Math.min(100, Math.max(0, Math.round(percent)));
+  toast.loading(`Carregando modelo (${clamped}%)`, {
+    id: LOADING_TOAST_ID,
+    duration: Infinity,
+  });
+}
+
+/**
+ * Cria um executor que serializa tarefas assíncronas, garantindo que apenas uma execute por vez.
  *
- * @returns Objeto contendo a instância do motor, estado de prontidão, ID do modelo selecionado e função para troca de modelo.
+ * @remarks
+ * Cada tarefa submetida via `run` é encadeada à anterior por meio de uma cadeia de Promises.
+ * Isso evita condições de corrida ao recarregar o modelo durante carregamentos simultâneos.
+ *
+ * @returns Função `run` que aceita uma tarefa e retorna sua Promise serializada.
+ */
+function createExclusiveRunner() {
+  let chain = Promise.resolve();
+  return function run<T>(task: () => Promise<T> | T): Promise<T> {
+    const res = chain.then(task, task);
+    chain = res.then(() => undefined, () => undefined);
+    return res;
+  };
+}
+
+const runExclusive = createExclusiveRunner();
+
+/**
+ * Gerencia a inicialização, seleção e carregamento do motor de IA WebLLM via Web Worker.
+ *
+ * @remarks
+ * - Restaura automaticamente o último modelo selecionado a partir do `localStorage`.
+ * - Serializa recarregamentos de modelo para evitar condições de corrida.
+ * - Exibe toasts de progresso/sucesso/erro durante o carregamento.
+ * - Emite o evento global `model-cache-updated` ao concluir o download de um modelo.
+ *
+ * @returns Objeto contendo a instância do motor, estado de prontidão,
+ * modelo selecionado e função para alterar o modelo.
  */
 export function useEngine() {
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState("");
   const [isReady, setIsReady] = useState(false);
   const loadIdRef = useRef(0);
 
-  /**
-   * Carrega o modelo selecionado do localStorage ao montar o componente.
-   * Se não houver modelo salvo, o estado inicial será vazio e nenhum modelo será carregado automaticamente.
-   * O usuário precisará selecionar manualmente um modelo para iniciar o carregamento.
-   */
   useEffect(() => {
     const savedModel = localStorage.getItem(STORAGE_KEY);
     if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
   }, []);
 
-  // Salva o modelo selecionado no localStorage sempre que ele mudar
   useEffect(() => {
     if (selectedModel) localStorage.setItem(STORAGE_KEY, selectedModel);
     else localStorage.removeItem(STORAGE_KEY);
   }, [selectedModel]);
 
-  /**
-   * Exibe um toast de carregamento com progresso, atualizando o texto e a porcentagem conforme o progresso é reportado.
-   *
-   * @param percent Porcentagem de conclusão do carregamento.
-   */
-  const showLoadingToast = (percent: number) => {
-    const clampedPercent = Math.min(100, Math.max(0, Math.round(percent)));
-
-    toast.loading(`Carregando modelo (${clampedPercent}%)`, {
-      id: LOADING_TOAST_ID,
-      duration: Infinity,
-    });
-  };
-
-  // Inicializa (ou reaproveita) o motor WebGPU singleton e carrega o modelo selecionado.
-  // No primeiro acesso, nenhum modelo é escolhido ou baixado automaticamente.
   useEffect(() => {
-    const currentLoadId = ++loadIdRef.current;
-
     if (!selectedModel) return;
+    const currentLoadId = ++loadIdRef.current;
+    const sharedEngine = getEngineSingleton();
 
-    const initEngine = async () => {
-      setIsReady(false);
-      showLoadingToast(0);
+    Promise.resolve().then(() => setIsReady(false));
+    showLoadingToast(0);
 
-      // Reaproveita o worker/engine já existente em vez de criar um novo
-      const sharedEngine = getEngineSingleton();
+    sharedEngine.setInitProgressCallback((report: InitProgressReport) => {
+      if (currentLoadId !== loadIdRef.current) return;
+      showLoadingToast((report.progress ?? 0) * 100);
+    });
 
-      sharedEngine.setInitProgressCallback((report: InitProgressReport) => {
+    runExclusive(() => {
+      if (currentLoadId !== loadIdRef.current) return;
+      return sharedEngine.reload(selectedModel);
+    })
+      .then(() => {
         if (currentLoadId !== loadIdRef.current) return;
-        showLoadingToast((report.progress ?? 0) * 100);
-      });
-
-      // Serializa a chamada a reload() para evitar concorrência
-      const runReload: Promise<void> = reloadChain.catch(() => { }).then(() => {
-        if (currentLoadId !== loadIdRef.current) return;
-        return sharedEngine.reload(selectedModel);
-      });
-      reloadChain = runReload;
-
-      try {
-        await runReload;
-        if (currentLoadId !== loadIdRef.current) return;
-
         setEngine(sharedEngine);
         setIsReady(true);
-
         window.dispatchEvent(new CustomEvent("model-cache-updated"));
-
         toast.success("Modelo carregado e pronto para uso!", {
           id: LOADING_TOAST_ID,
           duration: 1000,
         });
-      } catch (error) {
+      })
+      .catch((error) => {
         if (currentLoadId !== loadIdRef.current) return;
         console.error("Erro ao carregar o modelo:", error);
         toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador", {
           id: LOADING_TOAST_ID,
           duration: 5000,
         });
-      }
-    };
-
-    initEngine();
+      });
 
     return () => {
       toast.dismiss(LOADING_TOAST_ID);
     };
   }, [selectedModel]);
 
-  /**
-   * Troca o modelo atualmente ativo.
-   *
-   * @param model Identificador do novo modelo a ser carregado.
-   */
-  const handleModelChange = (model: string) => {
-    setSelectedModel(model);
-    setIsReady(false);
-  };
-
-  return { engine, isReady, selectedModel, handleModelChange };
+  return { engine, isReady, selectedModel, setSelectedModel };
 }

@@ -1,6 +1,4 @@
-/**
- * Extensões de arquivos aceitas para anexos no chat.
- */
+/** Extensões de arquivos aceitas para anexos no chat. */
 export const ACCEPTED_FILE_TYPES = [
   ".txt",
   ".md",
@@ -42,3 +40,15 @@ export const ACCEPTED_FILE_TYPES = [
   ".tiff",
   ".tif",
 ] as const;
+
+/** Extensões de imagem suportadas para extração de texto via OCR. */
+export const IMAGE_EXTENSIONS = new Set([
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "bmp",
+  "webp",
+  "tiff",
+  "tif",
+]);

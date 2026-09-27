@@ -32,7 +32,7 @@ interface ModelManagerModalProps {
    *
    * @param modelId - Identificador do modelo selecionado.
    */
-  onSelectModel: (modelId: string) => void;
+  setSelectModel: (modelId: string) => void;
 
   /** Função de retorno para fechar o diálogo modal. */
   onClose: () => void;
@@ -52,7 +52,7 @@ interface ModelManagerModalProps {
 export function ModelManagerModal({
   selectedModel,
   isGenerating,
-  onSelectModel,
+  setSelectModel,
   onClose,
 }: Readonly<ModelManagerModalProps>) {
   const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useModelCache();
@@ -67,7 +67,7 @@ export function ModelManagerModal({
 
   // Seleciona um modelo para download e fecha o modal
   const handleDownload = (modelId: string) => {
-    onSelectModel(modelId);
+    setSelectModel(modelId);
   };
 
   // Inicia a exclusão de um modelo. Se o modelo estiver em uso, solicita confirmação
@@ -83,7 +83,7 @@ export function ModelManagerModal({
   const handleConfirmDelete = (modelId: string) => {
     setConfirmingDeleteId(null);
     deleteModel(modelId);
-    onSelectModel("");
+    setSelectModel("");
   };
 
   return (
@@ -135,7 +135,7 @@ export function ModelManagerModal({
           ) : (
             <RadioGroup
               value={selectedModel}
-              onValueChange={onSelectModel}
+              onValueChange={setSelectModel}
               className="space-y-6"
             >
               {Object.entries(groups).map(([groupLabel, groupModels]) => (

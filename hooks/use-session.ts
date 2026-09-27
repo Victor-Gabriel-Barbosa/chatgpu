@@ -6,9 +6,7 @@ import { fileToPlainText } from "@/lib/fileToText";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
 import { round } from "@/lib/utils"
 
-/**
- * Propriedades para inicialização do hook {@link useSession}.
- */
+/** Propriedades para inicialização do hook {@link useSession}. */
 export interface UseSessionProps {
   /** Instância do motor WebLLM em Web Worker, ou `null` se ainda não inicializado. */
   engine: WebWorkerMLCEngine | null;
@@ -184,9 +182,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     persistCurrentChatId();
   }, [currentChatId, isSessionLoaded]);
 
-  /**
-   * Inicia uma nova conversa, limpando as mensagens exibidas e desmarcando o chat ativo.
-   */
+  /** Inicia uma nova conversa, limpando as mensagens exibidas e desmarcando o chat ativo. */
   const handleNewChat = () => {
     if (isGenerating) return;
     setMessages([]);
@@ -424,9 +420,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
   };
 
-  /**
-   * Interrompe imediatamente a geração de texto em andamento pelo modelo e salva o estado atual.
-   */
+  /** Interrompe imediatamente a geração de texto em andamento pelo modelo e salva o estado atual. */
   const handleStop = () => {
     if (engine && isGenerating) {
       engine.interruptGenerate();

@@ -5,12 +5,6 @@ import { Tooltip as TooltipPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Provedor de contexto global para os tooltips da aplicação.
- *
- * @param props Propriedades do provedor, incluindo o tempo de atraso (delay).
- * @returns Elemento React encapsulando o contexto de tooltips.
- */
 function TooltipProvider({
   delayDuration = 0,
   ...props
@@ -24,37 +18,18 @@ function TooltipProvider({
   )
 }
 
-/**
- * Componente raiz que agrupa o gatilho e o conteúdo de um tooltip.
- *
- * @param props Propriedades raiz de estado e comportamento do tooltip.
- * @returns Elemento React base do tooltip.
- */
 function Tooltip({
   ...props
 }: Readonly<React.ComponentProps<typeof TooltipPrimitive.Root>>) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
 }
 
-/**
- * Elemento interativo que dispara a exibição do tooltip ao ser focado ou sobreposto pelo mouse.
- *
- * @param props Propriedades do elemento de gatilho.
- * @returns Elemento React atuando como gatilho do tooltip.
- */
 function TooltipTrigger({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
-/**
- * Conteúdo visual do tooltip exibido ao interagir com o gatilho.
- * Aplica estilos, animações de entrada/saída e exibe uma seta indicativa direcional.
- *
- * @param props Propriedades do conteúdo, incluindo classes adicionais e distância de deslocamento.
- * @returns Elemento React contendo o balão de informação do tooltip.
- */
 function TooltipContent({
   className,
   sideOffset = 0,
