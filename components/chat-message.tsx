@@ -42,9 +42,7 @@ export interface ParsedMessageContent {
   files: EmbeddedFile[];
 }
 
-/**
- * Propriedades do componente {@link ChatMessage}.
- */
+/** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
   /** Dados completos da mensagem, incluindo papel (role), texto e métricas. */
   msg: MessageType;
@@ -144,9 +142,7 @@ const parseMessageContent = (content: string): ParsedMessageContent => {
   return { think: null, mainContent: processedContent, files };
 };
 
-/**
- * Mapeamento de componentes customizados para renderização de Markdown no bloco de raciocínio.
- */
+/** Mapeamento de componentes customizados para renderização de Markdown no bloco de raciocínio. */
 const reasoningComponents: Components = {
   pre: ({ children }) => <div className="w-full max-w-full min-w-0 overflow-x-auto">{children}</div>,
   code(props) {
@@ -165,9 +161,7 @@ const reasoningComponents: Components = {
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>
 };
 
-/**
- * Mapeamento de componentes customizados para renderização de Markdown no corpo da mensagem.
- */
+/** Mapeamento de componentes customizados para renderização de Markdown no corpo da mensagem. */
 const messageComponents: Components = {
   pre: ({ children }) => <div className="w-full max-w-full min-w-0 overflow-x-auto">{children}</div>,
   code(props) {
@@ -219,9 +213,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
 
   const onSaveEdit = () => {
     const trimmedValue = editValue.trim();
-    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) {
-      handleSubmitEdit(trimmedValue, index);
-    }
+    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index);
     setIsEditing(false);
   };
 
@@ -351,6 +343,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               )}
             </div>
 
+            {/* Métricas de desempenho */}
             {!isUser && (msg.metrics?.tokensPerSecond !== undefined || (isGenerating && isLastAssistant)) && (
               <Tooltip>
                 <TooltipTrigger asChild>

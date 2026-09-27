@@ -58,28 +58,16 @@ export function ModelManagerModal({
   const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useModelCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
 
-  // Agrupa os modelos pelo mesmo rótulo usado no seletor principal
   const groups: Record<string, ManagedModel[]> = {};
   for (const model of models) {
     if (!groups[model.groupLabel]) groups[model.groupLabel] = [];
     groups[model.groupLabel].push(model);
   }
 
-  // Seleciona um modelo para download e fecha o modal
   const handleDownload = (modelId: string) => {
     setSelectModel(modelId);
   };
 
-  // Inicia a exclusão de um modelo. Se o modelo estiver em uso, solicita confirmação
-  const handleDeleteClick = (model: ManagedModel) => {
-    if (model.id === selectedModel) {
-      setConfirmingDeleteId(model.id);
-      return;
-    }
-    deleteModel(model.id);
-  };
-
-  // Confirma a exclusão de um modelo que estava em uso
   const handleConfirmDelete = (modelId: string) => {
     setConfirmingDeleteId(null);
     deleteModel(modelId);
@@ -206,7 +194,7 @@ export function ModelManagerModal({
                               <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => handleDeleteClick(model)}
+                                onClick={() => setConfirmingDeleteId(model.id)}
                                 disabled={isDeleting || isGenerating}
                                 title="Desinstalar modelo"
                                 aria-label={`Desinstalar ${model.name}`}

@@ -35,9 +35,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
-  /**
-   * Copia o snippet de código para a área de transferência do usuário e exibe uma notificação de feedback.
-   */
+  /** Copia o snippet de código para a área de transferência do usuário e exibe uma notificação de feedback. */
   const handleCopy = () => {
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true);
@@ -49,9 +47,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
     });
   };
 
-  /**
-   * Gera e dispara o download do código em um arquivo de texto com a extensão correspondente à linguagem.
-   */
+  /** Gera e dispara o download do código em um arquivo de texto com a extensão correspondente à linguagem. */
   const handleDownload = () => {
     const filename = `snippet.${ext}`;
 

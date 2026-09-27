@@ -1,6 +1,4 @@
-/**
- * Representa um modelo de IA gerenciado pela aplicação.
- */
+/** Representa um modelo de IA gerenciado pela aplicação. */
 export interface ManagedModel {
   /** Identificador único do modelo. */
   id: string;
@@ -18,14 +16,14 @@ export interface ManagedModel {
   size: number;
 }
 
-/**
- * Representa informações sobre o espaço de armazenamento utilizado pela aplicação.
- */
+/** Representa informações sobre o espaço de armazenamento utilizado pela aplicação. */
 export interface StorageEstimateInfo {
   /** Espaço de armazenamento utilizado, em gigabytes. */
   usedGB: string;
+
   /** Espaço total disponível para armazenamento, em gigabytes. */
   quotaGB: string;
+  
   /** Percentual do espaço de armazenamento utilizado. */
   percent: number;
 }

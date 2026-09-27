@@ -25,9 +25,7 @@ import { useTheme } from "next-themes";
 
 import { cn } from "@/lib/utils"
 
-/**
- * Propriedades do componente {@link SettingsModal}.
- */
+/** Propriedades do componente {@link SettingsModal}. */
 export interface SettingsModalProps {
   /** Nome do modelo atualmente selecionado ou indefinido se nenhum estiver ativo. */
   modelName: string | undefined;

@@ -1,6 +1,4 @@
-/**
- * Representa as informações básicas de uma conversa.
- */
+/** Representa as informações básicas de uma conversa. */
 export interface Chat {
   /** Identificador único do chat. */
   id: string;
@@ -9,9 +7,7 @@ export interface Chat {
   title: string;
 }
 
-/**
- * Representa uma sessão completa de chat, incluindo seu histórico de mensagens.
- */
+/** Representa uma sessão completa de chat, incluindo seu histórico de mensagens. */
 export interface ChatSession {
   /** Identificador único da sessão de chat. */
   id: string;
@@ -26,9 +22,7 @@ export interface ChatSession {
   updatedAt: number;
 }
 
-/**
- * Métricas de desempenho e velocidade de geração de uma mensagem.
- */
+/** Métricas de desempenho e velocidade de geração de uma mensagem. */
 export interface MessageMetrics {
   /** Velocidade de decodificação/geração em tokens por segundo. */
   tokensPerSecond?: number;
@@ -52,9 +46,7 @@ export interface MessageMetrics {
   timeToFirstToken?: number;
 }
 
-/**
- * Representa uma mensagem individual dentro de um chat.
- */
+/** Representa uma mensagem individual dentro de um chat. */
 export interface Message {
   /** Papel do autor da mensagem. */
   role: 'user' | 'assistant' | 'system';
