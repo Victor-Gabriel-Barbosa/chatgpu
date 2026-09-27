@@ -3,9 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * Propriedades do componente {@link StartupVideo}.
- */
+/** Propriedades do componente {@link StartupVideo}. */
 export interface StartupVideoProps {
   /** Determina se a sobreposição com o vídeo de inicialização está ativa e visível. */
   isOpen: boolean;
@@ -35,14 +33,11 @@ export const StartupVideo: React.FC<StartupVideoProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isClosing, setIsClosing] = useState(false);
 
-  /**
-   * Inicia o encerramento da exibição pausando o vídeo e disparando a animação de fade-out.
-   */
+  /** Inicia o encerramento da exibição pausando o vídeo e disparando a animação de fade-out. */
   const handleDismiss = useCallback(() => {
     setIsClosing(true);
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+    if (videoRef.current) videoRef.current.pause();
+    
     setTimeout(() => {
       onClose();
       setIsClosing(false);
@@ -68,24 +63,30 @@ export const StartupVideo: React.FC<StartupVideoProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
+    <dialog
       aria-modal="true"
       aria-label="Vídeo de Apresentação ChatGPU"
-      onClick={handleDismiss}
+      open
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center bg-black w-screen h-screen overflow-hidden cursor-pointer select-none transition-opacity duration-700 ease-in-out",
+        "fixed inset-0 z-50 flex items-center justify-center bg-black w-screen h-screen max-w-none max-h-none overflow-hidden border-0 p-0 cursor-pointer select-none transition-opacity duration-700 ease-in-out",
         isClosing ? "opacity-0 pointer-events-none" : "opacity-100"
       )}
     >
-      <video
-        src={src}
-        playsInline
-        autoPlay
-        muted
-        onEnded={handleDismiss}
-        className="w-full h-full object-cover"
-      />
-    </div>
+      <button
+        type="button"
+        aria-label="Fechar vídeo de apresentação"
+        onClick={handleDismiss}
+        className="w-full h-full cursor-pointer border-0 bg-transparent p-0"
+      >
+        <video
+          src={src}
+          playsInline
+          autoPlay
+          muted
+          onEnded={handleDismiss}
+          className="w-full h-full object-cover"
+        />
+      </button>
+    </dialog>
   );
 };
