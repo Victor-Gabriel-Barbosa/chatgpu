@@ -4,26 +4,33 @@ import { ChatSession, Message, MessageMetrics } from "@/types/chat";
 import { toast } from "sonner";
 import { fileToPlainText } from "@/lib/fileToText";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
+import { round } from "@/lib/utils"
 
 /**
- * Propriedades para inicialização do hook useSession.
+ * Propriedades para inicialização do hook {@link useSession}.
  */
 export interface UseSessionProps {
-  /** Instância do motor WebGPU responsável pela inferência. */
+  /** Instância do motor WebLLM em Web Worker, ou `null` se ainda não inicializado. */
   engine: WebWorkerMLCEngine | null;
-  /** Indica se o motor de IA está carregado e pronto para uso. */
+
+  /** Indica se o modelo foi carregado e está pronto para inferência. */
   isReady: boolean;
 }
 
 /**
- * Processa a resposta do assistente de forma iterativa, atualizando o estado das mensagens e métricas em tempo real.
- * @param engine Instância do motor de inferência.
- * @param chatHistory Histórico de mensagens do chat.
- * @param chatId Identificador da sessão de chat atual.
- * @param setMessages Função para atualizar o estado das mensagens.
- * @param updateChatMessages Função para atualizar as mensagens de uma sessão específica.
- * @param onSpeedUpdate Callback opcional para notificar a velocidade atual em tokens/s.
- * @returns Promise que resolve quando a resposta do assistente é completamente processada.
+ * Executa o streaming da resposta do assistente via WebLLM e atualiza as mensagens e métricas progressivamente.
+ *
+ * @remarks
+ * Adiciona uma mensagem vazia com papel `assistant` ao histórico, consome o stream retornado
+ * pelo motor MLC, calcula métricas de geração (como tokens por segundo e tempo até o primeiro token)
+ * e persiste o resultado final no banco de dados local.
+ *
+ * @param engine - Instância ativa do motor Web Worker MLC.
+ * @param chatHistory - Histórico de mensagens a ser enviado como contexto para o modelo.
+ * @param chatId - Identificador do chat atual para persistência das mensagens.
+ * @param setMessages - Função de atualização do estado local de mensagens.
+ * @param updateChatMessages - Função responsável por atualizar as mensagens na lista de chats e no IndexedDB.
+ * @param onSpeedUpdate - Callback opcional para notificar a velocidade atual de geração em tokens por segundo.
  */
 async function streamAssistantReply(
   engine: WebWorkerMLCEngine,
@@ -35,117 +42,77 @@ async function streamAssistantReply(
 ) {
   setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
-  const cleanMessages = chatHistory.map(({ role, content }) => ({ role, content }));
-
   const completion = await engine.chat.completions.create({
     stream: true,
-    messages: cleanMessages,
+    messages: chatHistory.map(({ role, content }) => ({ role, content })),
     stream_options: { include_usage: true },
   });
 
-  let resp = "";
   const startTime = performance.now();
-  let firstTokenTime: number | null = null;
+  let resp = "";
   let tokenCount = 0;
-  let latestTokensPerSec: number | undefined;
-  let finalMetrics: MessageMetrics | undefined;
+  let firstTokenTime: number | null = null;
+  let metrics: MessageMetrics = {};
+
+  const commit = (persist = false) => {
+    setMessages((prev) => {
+      const next = [...prev];
+      next[next.length - 1] = { ...next[next.length - 1], content: resp, metrics };
+      if (persist) updateChatMessages(chatId, next);
+      return next;
+    });
+  };
 
   for await (const chunk of completion) {
     const delta = chunk.choices[0]?.delta?.content;
     if (delta) {
       resp += delta;
       tokenCount++;
+      firstTokenTime ??= performance.now();
 
-      const now = performance.now();
-      if (!firstTokenTime) {
-        firstTokenTime = now;
-      } else {
-        const elapsedSec = (now - firstTokenTime) / 1000;
-        if (elapsedSec > 0.05 && tokenCount > 1) {
-          latestTokensPerSec = Number((tokenCount / elapsedSec).toFixed(1));
-          onSpeedUpdate?.(latestTokensPerSec);
-        }
-      }
+      const elapsed = (performance.now() - firstTokenTime) / 1000;
+      const liveSpeed = elapsed > 0.05 ? tokenCount / elapsed : undefined;
 
-      setMessages((prev) => {
-        const next = [...prev];
-        next[next.length - 1] = {
-          ...next[next.length - 1],
-          content: resp,
-          metrics: {
-            tokensPerSecond: latestTokensPerSec,
-            completionTokens: tokenCount,
-            timeToFirstToken: firstTokenTime ? Number(((firstTokenTime - startTime) / 1000).toFixed(2)) : undefined,
-          },
-        };
-        return next;
-      });
+      metrics = {
+        ...metrics,
+        tokensPerSecond: round(liveSpeed),
+        completionTokens: tokenCount,
+        timeToFirstToken: round((firstTokenTime - startTime) / 1000, 2),
+      };
+      onSpeedUpdate?.(metrics.tokensPerSecond ?? null);
+      commit();
     }
 
     if (chunk.usage) {
-      const { extra } = chunk.usage;
-      const speed = extra?.decode_tokens_per_s
-        ? Number(extra.decode_tokens_per_s.toFixed(1))
-        : latestTokensPerSec;
-
-      const ttft = extra?.time_to_first_token_s !== undefined
-        ? Number(extra.time_to_first_token_s.toFixed(2))
-        : (firstTokenTime ? Number(((firstTokenTime - startTime) / 1000).toFixed(2)) : undefined);
-
-      finalMetrics = {
-        tokensPerSecond: speed,
+      const extra = chunk.usage.extra ?? {};
+      metrics = {
+        ...metrics,
+        tokensPerSecond: round(extra.decode_tokens_per_s) ?? metrics.tokensPerSecond,
+        prefillTokensPerSecond: round(extra.prefill_tokens_per_s),
         completionTokens: chunk.usage.completion_tokens ?? tokenCount,
         promptTokens: chunk.usage.prompt_tokens,
         totalTokens: chunk.usage.total_tokens,
-        elapsedTime: extra?.e2e_latency_s ? Number(extra.e2e_latency_s.toFixed(2)) : undefined,
-        prefillTokensPerSecond: extra?.prefill_tokens_per_s
-          ? Number(extra.prefill_tokens_per_s.toFixed(1))
-          : undefined,
-        timeToFirstToken: ttft,
       };
-
-      if (speed !== undefined) {
-        onSpeedUpdate?.(speed);
-      }
+      onSpeedUpdate?.(metrics.tokensPerSecond ?? null);
     }
   }
 
-  // Se a geração for finalizada ou interrompida antes do chunk.usage, computa as métricas calculadas
-  if (!finalMetrics && tokenCount > 0) {
-    const now = performance.now();
-    const duration = firstTokenTime ? (now - firstTokenTime) / 1000 : (now - startTime) / 1000;
-    const speed = duration > 0 ? Number((tokenCount / duration).toFixed(1)) : latestTokensPerSec;
-    const ttft = firstTokenTime ? Number(((firstTokenTime - startTime) / 1000).toFixed(2)) : undefined;
-
-    finalMetrics = {
-      tokensPerSecond: speed,
-      completionTokens: tokenCount,
-      elapsedTime: Number(((now - startTime) / 1000).toFixed(2)),
-      timeToFirstToken: ttft,
-    };
-  }
-
-  setMessages((current) => {
-    const updated = [...current];
-    if (updated.length > 0 && finalMetrics) {
-      updated[updated.length - 1] = {
-        ...updated[updated.length - 1],
-        content: resp,
-        metrics: finalMetrics,
-      };
-    }
-    updateChatMessages(chatId, updated);
-    return updated;
-  });
+  metrics.elapsedTime ??= round((performance.now() - startTime) / 1000, 2);
+  commit(true);
 }
 
 /**
- * Gerencia o estado e a lógica de uma sessão de chat.
+ * Gerencia o ciclo de vida, persistência e interações de sessões de chat com o modelo de IA.
  *
- * @param props Propriedades do hook.
- * @param props.engine Instância do motor de IA.
- * @param props.isReady Estado que indica se o motor está carregado.
- * @returns Objeto contendo as mensagens, estado do chat e funções de manipulação.
+ * @remarks
+ * O hook lida com:
+ * - Carregamento e sincronização com o banco de dados IndexedDB via Dexie.
+ * - Envio e edição de mensagens, incluindo leitura e formatação de arquivos anexados.
+ * - Controle de inferência com streaming em tempo real, interrupção e cálculo de métricas.
+ * - Gerenciamento de histórico de conversas (criação, seleção, renomeação, exclusão e exportação).
+ *
+ * @param props - Propriedades de inicialização do hook {@link UseSessionProps}.
+ * @returns Objeto contendo os estados reativos e manipuladores de sessão de chat.
  */
 export function useSession({ engine, isReady }: UseSessionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -156,7 +123,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
-  // Carrega as sessões de chat salvas e o chat atual do IndexedDB (via Dexie) ao montar o componente
   useEffect(() => {
     let isMounted = true;
 
@@ -174,7 +140,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
         setChats(savedChats);
 
-        // Se houver um ID de chat salvo, sincroniza restaurando as mensagens e o ID atual
         const savedCurrentChatId = savedCurrentChatSetting?.value ?? null;
         if (savedCurrentChatId) {
           const activeChat = savedChats.find(
@@ -200,7 +165,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     };
   }, []);
 
-  // Salva o ID do chat atual no IndexedDB sempre que ele mudar
   useEffect(() => {
     if (!isSessionLoaded) return;
 
@@ -211,9 +175,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
             key: CURRENT_CHAT_SETTING_KEY,
             value: currentChatId,
           });
-        } else {
-          await db.settings.delete(CURRENT_CHAT_SETTING_KEY);
-        }
+        } else await db.settings.delete(CURRENT_CHAT_SETTING_KEY);
       } catch (error) {
         console.error("Erro ao salvar sessão atual:", error);
       }
@@ -222,7 +184,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     persistCurrentChatId();
   }, [currentChatId, isSessionLoaded]);
 
-  // Cria uma nova sessão de chat, limpando as mensagens e resetando o estado atual.
+  /**
+   * Inicia uma nova conversa, limpando as mensagens exibidas e desmarcando o chat ativo.
+   */
   const handleNewChat = () => {
     if (isGenerating) return;
     setMessages([]);
@@ -230,16 +194,14 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Renomeia uma sessão de chat específica, atualizando o título do chat correspondente.
+   * Altera o título de um chat e persiste a modificação no banco de dados.
    *
-   * @param chatId Identificador do chat a ser renomeado.
-   * @param newTitle Novo título para o chat.
+   * @param chatId - Identificador do chat a ser renomeado.
+   * @param newTitle - Novo título a ser atribuído à conversa.
    */
   const handleRenameChat = (chatId: string, newTitle: string) => {
     setChats((prev) =>
-      prev.map((chat) =>
-        chat.id === chatId ? { ...chat, title: newTitle } : chat,
-      ),
+      prev.map((chat) => chat.id === chatId ? { ...chat, title: newTitle } : chat),
     );
 
     db.chats.update(chatId, { title: newTitle }).catch((error: unknown) => {
@@ -249,9 +211,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Carrega uma sessão de chat específica, definindo as mensagens e o chat atual com base no ID fornecido.
+   * Carrega as mensagens de uma conversa existente e a define como ativa.
    *
-   * @param chatId Identificador do chat a ser carregado.
+   * @param chatId - Identificador do chat a ser carregado.
    */
   const loadChat = (chatId: string) => {
     if (isGenerating) return;
@@ -263,10 +225,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Exclui uma sessão de chat específica, removendo-a da lista de chats e, se for a sessão atual, criando uma nova sessão vazia.
+   * Remove uma conversa do estado local e do banco de dados.
    *
-   * @param e Evento de clique do mouse.
-   * @param chatId Identificador do chat a ser excluído.
+   * @param chatId - Identificador do chat a ser excluído.
    */
   const deleteChat = (chatId: string) => {
     setChats((prev) => prev.filter((c) => c.id !== chatId));
@@ -279,9 +240,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Exporta uma sessão de chat específica como um arquivo JSON.
+   * Exporta os dados da conversa em arquivo JSON, suportando download no navegador ou escrita nativa via Tauri.
    *
-   * @param chatId Identificador do chat a ser exportado.
+   * @param chatId - Identificador do chat a ser exportado.
    */
   const exportChat = async (chatId: string) => {
     const chat = chats.find((c) => c.id === chatId);
@@ -328,17 +289,15 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Atualiza as mensagens de um chat específico reordenando com base na data de atualização.
+   * Atualiza a lista de mensagens de um chat no estado local e persiste a alteração no banco de dados.
    *
-   * @param chatId Identificador do chat a ser atualizado.
-   * @param newMessages Nova lista de mensagens do chat.
+   * @param chatId - Identificador do chat a ser atualizado.
+   * @param newMessages - Nova lista de mensagens a ser associada ao chat.
    */
   const updateChatMessages = (chatId: string, newMessages: Message[]) => {
     setChats((prev) =>
       prev
-        .map((chat) =>
-          chat.id === chatId ? { ...chat, messages: newMessages } : chat,
-        )
+        .map((chat) => chat.id === chatId ? { ...chat, messages: newMessages } : chat)
         .sort((a, b) => b.updatedAt - a.updatedAt),
     );
 
@@ -349,9 +308,13 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Envia a entrada atual do usuário para o motor de IA e processa a resposta gerada de forma iterativa.
-   * 
-   * @param files Lista de arquivos anexados que serão incluídos na entrada do usuário.
+   * Envia uma nova mensagem do usuário, processando eventuais arquivos anexados e iniciando a inferência do modelo.
+   *
+   * @remarks
+   * Converte arquivos anexados em texto plano delimitado por tags `<file>`, inicializa uma nova sessão
+   * caso não haja chat ativo e gerencia o streaming da resposta do assistente.
+   *
+   * @param files - Lista opcional de arquivos anexados cujo conteúdo textual será incluído no prompt.
    */
   const handleSend = async (files: File[] = []) => {
     if (engine == null || (!input.trim() && files.length === 0)) return;
@@ -424,10 +387,10 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Edita uma mensagem do usuário, descartando as respostas posteriores e gerando uma nova resposta da IA.
+   * Edita uma mensagem do histórico, descartando as interações posteriores e solicitando nova resposta ao modelo.
    *
-   * @param newContent Novo conteúdo da mensagem editada.
-   * @param index Índice da mensagem a ser editada no histórico.
+   * @param newContent - Novo texto da mensagem editada.
+   * @param index - Posição da mensagem no histórico a ser editada.
    */
   const handleSubmitEdit = async (newContent: string, index: number) => {
     if (isGenerating || !engine || !isReady) return;
@@ -461,7 +424,9 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     }
   };
 
-  // Interrompe a geração da resposta da IA e salva o estado atual da conversa.
+  /**
+   * Interrompe imediatamente a geração de texto em andamento pelo modelo e salva o estado atual.
+   */
   const handleStop = () => {
     if (engine && isGenerating) {
       engine.interruptGenerate();

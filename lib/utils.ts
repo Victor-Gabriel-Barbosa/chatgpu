@@ -10,3 +10,7 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+export function round(value?: number, digits = 1) {
+  return value !== undefined ? Number(value.toFixed(digits)) : undefined;
+}
