@@ -9,5 +9,7 @@ const handler = new WebWorkerMLCEngineHandler();
  * @param msg - Evento de mensagem recebido pelo contexto do Web Worker.
  */
 globalThis.onmessage = async (msg: MessageEvent) => {
+  if (msg.origin !== globalThis.location.origin) return;
+  
   handler.onmessage(msg)
 }
