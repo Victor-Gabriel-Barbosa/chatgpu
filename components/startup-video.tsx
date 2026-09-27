@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+
 import { cn } from "@/lib/utils";
 
 /** Propriedades do componente {@link StartupVideo}. */
@@ -30,8 +31,8 @@ export const StartupVideo: React.FC<StartupVideoProps> = ({
   onClose,
   src = "/chatgpu-video.mp4",
 }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   /** Inicia o encerramento da exibição pausando o vídeo e disparando a animação de fade-out. */
   const handleDismiss = useCallback(() => {
@@ -44,6 +45,7 @@ export const StartupVideo: React.FC<StartupVideoProps> = ({
     }, 600);
   }, [onClose]);
 
+  /** Gerencia eventos de teclado para permitir o fechamento do modal de vídeo. */
   useEffect(() => {
     if (!isOpen) return;
 

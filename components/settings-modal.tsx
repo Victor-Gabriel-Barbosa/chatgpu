@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { useTheme } from "next-themes";
 import { Settings, Cpu, Film, HardDrive, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
@@ -21,7 +22,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "next-themes";
 
 import { cn } from "@/lib/utils"
 
@@ -38,7 +38,6 @@ export interface SettingsModalProps {
 
   /**
    * Função acionada para controlar a visibilidade do modal de gerenciamento de modelos.
-   * 
    * @param isOpen - Valor booleano indicando se o modal de gerenciamento de modelos deve ser aberto.
    */
   setIsModelManagerOpen: (isOpen: boolean) => void;
@@ -75,7 +74,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Botão de gerenciamento de modelos */}
         <Tooltip key="settings-model-manager-tooltip">
           <TooltipTrigger asChild>
             <Button

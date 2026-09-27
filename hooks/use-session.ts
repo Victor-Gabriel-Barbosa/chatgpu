@@ -107,7 +107,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   /**
    * Altera o título de um chat e persiste a modificação no banco de dados.
-   *
    * @param chatId - Identificador do chat a ser renomeado.
    * @param newTitle - Novo título a ser atribuído à conversa.
    */
@@ -124,7 +123,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   /**
    * Carrega as mensagens de uma conversa existente e a define como ativa.
-   *
    * @param chatId - Identificador do chat a ser carregado.
    */
   const loadChat = (chatId: string) => {
@@ -138,7 +136,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   /**
    * Remove uma conversa do estado local e do banco de dados.
-   *
    * @param chatId - Identificador do chat a ser excluído.
    */
   const deleteChat = (chatId: string) => {
@@ -153,7 +150,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   /**
    * Exporta os dados da conversa em arquivo JSON, suportando download no navegador ou escrita nativa via Tauri.
-   *
    * @param chatId - Identificador do chat a ser exportado.
    */
   const exportChat = async (chatId: string) => {
@@ -165,6 +161,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     const chatData = JSON.stringify(chat, null, 2);
     const fileName = `${chat.title || "chat"}.json`;
+    
     try {
       if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
         const { save } = await import("@tauri-apps/plugin-dialog");
@@ -202,7 +199,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   /**
    * Atualiza a lista de mensagens de um chat no estado local e persiste a alteração no banco de dados.
-   *
    * @param chatId - Identificador do chat a ser atualizado.
    * @param newMessages - Nova lista de mensagens a ser associada ao chat.
    */
@@ -300,7 +296,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   /**
    * Edita uma mensagem do histórico, descartando as interações posteriores e solicitando nova resposta ao modelo.
-   *
    * @param newContent - Novo texto da mensagem editada.
    * @param index - Posição da mensagem no histórico a ser editada.
    */

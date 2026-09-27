@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -7,9 +7,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-/**
- * Propriedades do componente {@link CodeBlock}.
- */
+/** Propriedades do componente {@link CodeBlock}. */
 export interface CodeBlockProps {
   /** Linguagem de programação do snippet de código (ex: 'typescript', 'html', 'python'). */
   language: string;
@@ -34,7 +32,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-
   const ext = language ? language.toLowerCase() : 'txt';
   const isHtml = ext === 'html';
 
@@ -136,6 +133,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           />
         </div>
       ) : (
+        /* Visualização do código */
         <div className="text-sm font-mono max-w-full overflow-x-auto">
           <div className="block dark:hidden">
             <SyntaxHighlighter

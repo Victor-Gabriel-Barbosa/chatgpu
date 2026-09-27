@@ -17,9 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-/**
- * Propriedades do componente {@link ModelManagerModal}.
- */
+/** Propriedades do componente {@link ModelManagerModal}. */
 interface ModelManagerModalProps {
   /** Identificador do modelo atualmente selecionado. */
   selectedModel: string;
@@ -29,7 +27,6 @@ interface ModelManagerModalProps {
 
   /**
    * Disparado quando um modelo é selecionado para uso ou para início de download.
-   *
    * @param modelId - Identificador do modelo selecionado.
    */
   setSelectModel: (modelId: string) => void;
@@ -63,10 +60,6 @@ export function ModelManagerModal({
     if (!groups[model.groupLabel]) groups[model.groupLabel] = [];
     groups[model.groupLabel].push(model);
   }
-
-  const handleDownload = (modelId: string) => {
-    setSelectModel(modelId);
-  };
 
   const handleConfirmDelete = (modelId: string) => {
     setConfirmingDeleteId(null);
@@ -145,7 +138,7 @@ export function ModelManagerModal({
                             isActive && "border-primary bg-accent/40"
                           )}
                         >
-                          {/* Seletor de Modelo */}
+                          {/* Seletor de modelo */}
                           <label
                             htmlFor={`model-${model.id}`}
                             className={cn(
@@ -171,7 +164,7 @@ export function ModelManagerModal({
                             </div>
                           </label>
 
-                          {/* Ações adicionais (Excluir/Baixar) */}
+                          {/* Ações adicionais (excluir/baixar) */}
                           <div className="flex items-center justify-between gap-3 shrink-0">
                             {isConfirming ? (
                               <div className="flex items-center gap-1.5 shrink-0">
@@ -211,7 +204,7 @@ export function ModelManagerModal({
                             ) : (
                               <Button
                                 size="sm"
-                                onClick={() => handleDownload(model.id)}
+                                onClick={() => setSelectModel(model.id)}
                                 disabled={isGenerating}
                                 title="Baixar modelo"
                                 aria-label={`Baixar ${model.name}`}

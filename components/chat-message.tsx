@@ -52,16 +52,13 @@ export interface ChatMessageProps {
   copiedMessageIndex: number | null;
 
   /**
-   * Função disparada para copiar o texto principal da mensagem.
-   *
-   * @param content - Conteúdo textual a ser copiado.
+   * Função disparada para copiar o texto principal da mensagem.@param content - Conteúdo textual a ser copiado.
    * @param index - Índice da mensagem copiada.
    */
   handleCopyMessage: (content: string, index: number) => void;
 
   /**
    * Função opcional disparada ao salvar a edição do conteúdo de uma mensagem.
-   *
    * @param newContent - Novo conteúdo textual da mensagem.
    * @param index - Índice da mensagem que foi editada.
    */
@@ -238,7 +235,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
       )}
 
       <MessageContent className="min-h-16">
-        {/* Bloco de Raciocínio */}
+        {/* Bloco de raciocínio */}
         {displayReasoning && !isUser && (
           <div key="reasoning">
             <Button

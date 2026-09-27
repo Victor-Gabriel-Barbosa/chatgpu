@@ -65,21 +65,18 @@ export interface AppSidebarProps {
 
   /**
    * Função acionada para excluir uma conversa selecionada.
-   * 
    * @param id - Identificador da conversa a ser excluída.
    */
   deleteChat: (id: string) => void;
 
   /**
    * Função acionada para exportar uma conversa selecionada.
-   * 
    * @param id - Identificador da conversa a ser exportada.
    */
   exportChat: (id: string) => void;
 
   /**
    * Função acionada para alterar o título de uma conversa.
-   * 
    * @param id - Identificador da conversa a ser renomeada.
    * @param newTitle - Novo título da conversa.
    */
@@ -119,6 +116,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+
   const isExpanded = state === "expanded";
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -132,7 +130,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
   /**
    * Salva o novo nome do chat.
-   * 
    * @param chatId - Identificador da conversa a ser renomeada.
    */
   const handleSaveRename = (chatId: string) => {
@@ -149,7 +146,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
   /**
    * Lida com eventos de teclado no input de renomear.
-   * 
    * @param e - Evento de teclado.
    * @param chatId - Identificador da conversa a ser renomeada.
    */
@@ -160,7 +156,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
   /**
    * Seleciona um chat e fecha a sidebar automaticamente no mobile.
-   * 
    * @param id - Identificador da conversa a ser selecionada.
    */
   const handleSelectChat = (id: string) => {

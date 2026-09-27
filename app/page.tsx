@@ -68,6 +68,7 @@ export default function ChatInterface() {
   const [isStartupVideoOpen, setIsStartupVideoOpen] = useState(true);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const hasMessages = messages.length > 0;
@@ -77,7 +78,6 @@ export default function ChatInterface() {
 
   /**
    * Copia o conteúdo de uma mensagem para a área de transferência.
-   *
    * @param content - Conteúdo textual a ser copiado.
    * @param index - Índice da mensagem copiada.
    */
@@ -109,7 +109,7 @@ export default function ChatInterface() {
 
   return (
     <>
-      {/* Barra Lateral */}
+      {/* Barra lateral */}
       <AppSidebar
         chats={chats}
         currentChatId={currentChatId}
@@ -350,7 +350,7 @@ export default function ChatInterface() {
         />
       )}
 
-      {/* Modal de Gerenciamento de Modelos Baixados */}
+      {/* Modal de gerenciamento de modelos baixados */}
       {isModelManagerOpen && (
         <ModelManagerModal
           selectedModel={selectedModel}
@@ -360,13 +360,13 @@ export default function ChatInterface() {
         />
       )}
 
-      {/* Vídeo de Introdução na Inicialização */}
+      {/* Vídeo de introdução na inicialização */}
       <StartupVideo
         isOpen={isStartupVideoOpen}
         onClose={() => setIsStartupVideoOpen(false)}
       />
 
-      {/* Toaster para Notificações*/}
+      {/* Toaster para notificações */}
       <Toaster
         position="bottom-right"
         theme={theme as "light" | "dark" | "system"}
