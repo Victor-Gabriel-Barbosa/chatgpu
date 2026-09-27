@@ -19,9 +19,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
-/**
- * Representa um arquivo embutido no corpo da mensagem.
- */
+/** Representa um arquivo embutido no corpo da mensagem. */
 export interface EmbeddedFile {
   /** Nome ou caminho do arquivo extraído. */
   name: string;
@@ -30,14 +28,14 @@ export interface EmbeddedFile {
   content: string;
 }
 
-/**
- * Estrutura resultante da separação do conteúdo bruto de uma mensagem.
- */
+/** Estrutura resultante da separação do conteúdo bruto de uma mensagem. */
 export interface ParsedMessageContent {
   /** Bloco de raciocínio da IA contido nas tags `<think>`, se presente. */
   think: string | null;
+
   /** Conteúdo textual principal da mensagem limpo de tags especiais. */
   mainContent: string;
+  
   /** Lista de arquivos anexados ou embutidos no corpo da mensagem. */
   files: EmbeddedFile[];
 }
@@ -207,16 +205,19 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
   const displayReasoning = parsedThink || msg.reasoning;
   const isUser = msg.role === 'user';
 
+  /** Alterna o estado de expansão de um arquivo específico. */
   const toggleFile = (idx: number) => {
     setExpandedFiles(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
 
+  /** Salva a edição da mensagem. */
   const onSaveEdit = () => {
     const trimmedValue = editValue.trim();
     if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index);
     setIsEditing(false);
   };
 
+  /** Cancela a edição da mensagem. */
   const onCancelEdit = () => {
     setEditValue(msg.content);
     setIsEditing(false);
@@ -343,7 +344,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               )}
             </div>
 
-            {/* Métricas de desempenho */}
             {!isUser && (msg.metrics?.tokensPerSecond !== undefined || (isGenerating && isLastAssistant)) && (
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -49,9 +49,7 @@ import {
 
 import { cn } from "@/lib/utils"
 
-/**
- * Propriedades do componente {@link AppSidebar}.
- */
+/** Propriedades do componente {@link AppSidebar}. */
 export interface AppSidebarProps {
   /** Lista das conversas (chats) existentes. */
   chats: Chat[];
@@ -124,7 +122,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const isExpanded = state === "expanded";
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Foca no input de renomear quando o modo de edição é ativado
+  /** Foca no input de renomear quando o modo de edição é ativado. */
   useEffect(() => {
     if (editingChatId !== null && inputRef.current) {
       inputRef.current.focus();
@@ -132,26 +130,39 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
     }
   }, [editingChatId]);
 
-  // Salva o novo nome do chat
+  /**
+   * Salva o novo nome do chat.
+   * 
+   * @param chatId - Identificador da conversa a ser renomeada.
+   */
   const handleSaveRename = (chatId: string) => {
     if (editingName.trim()) renameChat(chatId, editingName.trim());
     setEditingChatId(null);
     setEditingName("");
   };
 
-  // Cancela a renomeação e restaura o nome original
+  /** Cancela a renomeação e restaura o nome original. */
   const handleCancelRename = () => {
     setEditingChatId(null);
     setEditingName("");
   };
 
-  // Lida com eventos de teclado no input de renomear
+  /**
+   * Lida com eventos de teclado no input de renomear.
+   * 
+   * @param e - Evento de teclado.
+   * @param chatId - Identificador da conversa a ser renomeada.
+   */
   const handleKeyDown = (e: React.KeyboardEvent, chatId: string) => {
     if (e.key === "Enter") handleSaveRename(chatId);
     else if (e.key === "Escape") handleCancelRename();
   };
 
-  // Seleciona um chat e fecha a sidebar automaticamente no mobile
+  /**
+   * Seleciona um chat e fecha a sidebar automaticamente no mobile.
+   * 
+   * @param id - Identificador da conversa a ser selecionada.
+   */
   const handleSelectChat = (id: string) => {
     if (editingChatId !== null) return;
     setCurrentChatId(id);
@@ -160,7 +171,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
   return (
     <Sidebar collapsible="icon">
-      {/* Cabeçalho (Logo e Toggle) */}
+      {/* Cabeçalho (logo e toggle) */}
       <SidebarHeader>
         <div className="flex items-center">
           <Link
@@ -219,7 +230,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Lista de Conversas */}
+        {/* Lista de conversas */}
         <SidebarGroup>
           <SidebarGroupLabel>Conversas</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -300,7 +311,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Rodapé (Tema e Configurações) */}
+      {/* Rodapé (tema e configurações) */}
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>

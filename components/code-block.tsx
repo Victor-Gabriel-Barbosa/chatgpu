@@ -35,6 +35,9 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
+  const ext = language ? language.toLowerCase() : 'txt';
+  const isHtml = ext === 'html';
+
   /** Copia o snippet de código para a área de transferência do usuário e exibe uma notificação de feedback. */
   const handleCopy = () => {
     navigator.clipboard.writeText(code).then(() => {
@@ -64,15 +67,6 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
 
     URL.revokeObjectURL(url);
   };
-
-  useEffect(() => {
-    if (isFullscreen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isFullscreen]);
-
-  const ext = language ? language.toLowerCase() : 'txt';
-  const isHtml = ext === 'html';
 
   return (
     <div className="my-4 bg-background border rounded-xl overflow-hidden shadow-sm w-full">
@@ -166,6 +160,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
         </div>
       )}
 
+      {/* Preview em tela cheia */}
       {isFullscreen && typeof document !== 'undefined' ? createPortal(
         <div className="absolute inset-0 z-10 bg-background flex flex-col animate-in fade-in duration-200">
           <div className="flex items-center justify-between px-4 py-3 bg-background">

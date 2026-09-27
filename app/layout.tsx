@@ -14,8 +14,7 @@ const geistMono = GeistMono;
 
 export const metadata: Metadata = {
   title: "ChatGPU",
-  description:
-    "ChatGPT rodando inteiramente no seu navegador usando WebGPU e MLC",
+  description: "ChatGPT rodando inteiramente no seu navegador usando WebGPU e MLC",
   manifest: "/manifest.json",
 };
 

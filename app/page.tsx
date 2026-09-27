@@ -121,7 +121,7 @@ export default function ChatInterface() {
         setSettingsOpen={setIsSettingsOpen}
       />
 
-      {/* Área Principal */}
+      {/* Área principal */}
       <SidebarInset
         id="main-chat-area"
         className="h-full min-h-0 overflow-hidden min-w-0 flex flex-col"
@@ -181,7 +181,7 @@ export default function ChatInterface() {
             </div>
           )}
 
-          {/* Entrada de Texto */}
+          {/* Entrada de texto */}
           <div className="max-w-3xl w-full mx-auto px-4 shrink-0">
             <div
               className={cn(
@@ -340,7 +340,7 @@ export default function ChatInterface() {
         </div>
       </SidebarInset>
 
-      {/* Modal de Configurações */}
+      {/* Modal de configurações */}
       {isSettingsOpen && (
         <SettingsModal
           modelName={selectedModelName}
