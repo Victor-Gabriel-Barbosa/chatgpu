@@ -113,6 +113,7 @@ export default function ChatInterface() {
       <AppSidebar
         chats={chats}
         currentChatId={currentChatId}
+        isGenerating={isGenerating}
         setCurrentChatId={loadChat}
         createNewChat={handleNewChat}
         deleteChat={deleteChat}

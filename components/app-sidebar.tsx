@@ -57,6 +57,9 @@ export interface AppSidebarProps {
   /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
   currentChatId: string | null;
 
+  /** Indica se uma resposta está sendo gerada atualmente. */
+  isGenerating: boolean;
+
   /** Função para selecionar uma conversa a partir do seu ID. */
   setCurrentChatId: (id: string) => void;
 
@@ -84,7 +87,6 @@ export interface AppSidebarProps {
 
   /**
    * Função acionada para exibir o modal de configurações.
-   * 
    * @param isOpen - Valor booleano indicando se o modal de configurações deve ser aberto.
    */
   setSettingsOpen: (isOpen: boolean) => void;
@@ -105,6 +107,7 @@ export interface AppSidebarProps {
 export const AppSidebar: React.FC<AppSidebarProps> = ({
   chats,
   currentChatId,
+  isGenerating,
   setCurrentChatId,
   createNewChat,
   deleteChat,
@@ -252,6 +255,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                         <SidebarMenuButton
                           isActive={currentChatId === chat.id}
                           onClick={() => handleSelectChat(chat.id)}
+                          disabled={isGenerating}
                         >
                           <MessageSquare />
                           <span>{chat.title}</span>
