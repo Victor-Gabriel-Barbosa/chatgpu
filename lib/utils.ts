@@ -3,7 +3,6 @@ import { twMerge } from "tailwind-merge"
 
 /**
  * Combina classes CSS de forma condicional e resolve conflitos de estilo do Tailwind CSS.
- *
  * @param inputs - Lista de classes CSS ou expressões condicionais a serem combinadas.
  * @returns String resultante com as classes finais unificadas.
  */
@@ -13,7 +12,6 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Arredonda um valor numérico para a quantidade de casas decimais especificada.
- *
  * @param value - Valor a ser arredondado. Retorna `undefined` quando omitido.
  * @param digits - Número de casas decimais desejadas.
  * @defaultValue 1

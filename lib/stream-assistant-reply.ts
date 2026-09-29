@@ -56,7 +56,7 @@ export async function streamAssistantReply(
       firstTokenTime ??= performance.now();
 
       const elapsed = (performance.now() - firstTokenTime) / 1000;
-      const liveSpeed = elapsed > 0.05 ? tokenCount / elapsed : undefined;
+      const liveSpeed = elapsed > 0.05 ? (tokenCount - 1) / elapsed : undefined;
 
       metrics = {
         ...metrics,
