@@ -588,8 +588,8 @@ Todos os dados são armazenados localmente, no próprio navegador do usuário:
 - [x] Exportação e importação de conversas
 - [x] Suporte a modelos adicionais
 - [x] Métricas de desempenho por resposta
-- [ ] Melhor gerenciamento de memória
-- [ ] Otimização de deploy (carregamento tardio de modelos)
+- [x] Melhor gerenciamento de memória
+- [x] Otimização de deploy (carregamento tardio de modelos)
 - [ ] Suporte a plugins e ferramentas externas
 
 ---
