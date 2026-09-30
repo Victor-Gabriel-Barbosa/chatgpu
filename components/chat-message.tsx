@@ -244,7 +244,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               className="max-w-full min-w-0 p-0 h-auto"
             >
               <Lightbulb className="w-4 h-4 shrink-0 mr-1" />
-              <span className={cn("min-w-0 truncate text-xs", isGenerating && isLastAssistant ? 'shimmer' : '')}>
+              <span className="min-w-0 truncate text-xs">
                 Raciocínio
               </span>
               <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
