@@ -296,6 +296,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                         <DropdownMenuItem
                           variant="destructive"
                           onClick={() => deleteChat(chat.id)}
+                          disabled={isGenerating}
                         >
                           <Trash2 />
                           Excluir
