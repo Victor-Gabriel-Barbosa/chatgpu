@@ -80,16 +80,19 @@ export function useEngine() {
   const [isReady, setIsReady] = useState(false);
   const loadIdRef = useRef(0);
 
+  /** Restaura o último modelo selecionado a partir do `localStorage`. */
   useEffect(() => {
     const savedModel = localStorage.getItem(STORAGE_KEY);
     if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
   }, []);
 
+  /** Atualiza o `localStorage` com o modelo selecionado. */
   useEffect(() => {
     if (selectedModel) localStorage.setItem(STORAGE_KEY, selectedModel);
     else localStorage.removeItem(STORAGE_KEY);
   }, [selectedModel]);
 
+  /** Carrega o modelo selecionado e atualiza o estado do hook. */
   useEffect(() => {
     if (!selectedModel) return;
     const currentLoadId = ++loadIdRef.current;

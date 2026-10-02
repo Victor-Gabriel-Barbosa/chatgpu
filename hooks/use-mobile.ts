@@ -1,7 +1,12 @@
 import * as React from "react"
 
+/** Ponto de interrupção para detecção de mobile. */
 const MOBILE_BREAKPOINT = 768
 
+/**
+ * Detecta se a largura da tela é menor que o ponto de interrupção mobile.
+ * @returns {boolean} True se a tela for mobile.
+ */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 

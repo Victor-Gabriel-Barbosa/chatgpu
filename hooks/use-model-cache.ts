@@ -4,6 +4,10 @@ import { toast } from "sonner";
 import { models as Models } from "@/config/models.json";
 import type { ManagedModel, StorageEstimateInfo } from "@/types/model";
 
+/**
+ * Gerencia o cache de modelos, incluindo verificação de existência, exclusão e estimativa de uso.
+ * @returns Estado do cache de modelos.
+ */
 export function useModelCache() {
   const flatModels = useMemo(
     () =>
@@ -23,6 +27,7 @@ export function useModelCache() {
   const [deletingModelId, setDeletingModelId] = useState<string | null>(null);
   const [storageEstimate, setStorageEstimate] = useState<StorageEstimateInfo | null>(null);
 
+  /** Atualiza a estimativa de uso do armazenamento. */
   const refreshStorageEstimate = useCallback(async () => {
     if (!navigator.storage?.estimate) return;
     try {
@@ -37,6 +42,7 @@ export function useModelCache() {
     }
   }, []);
 
+  /** Atualiza o estado do cache de modelos. */
   const refreshCacheStatus = useCallback(async () => {
     setIsChecking(true);
     try {
@@ -56,10 +62,12 @@ export function useModelCache() {
     refreshStorageEstimate();
   }, [flatModels, refreshStorageEstimate]);
 
+  /** Inicializa a verificação de cache quando o hook é montado. */
   useEffect(() => {
     Promise.resolve().then(() => refreshCacheStatus());
   }, [refreshCacheStatus]);
 
+  /** Deleta um modelo do cache. */
   const deleteModel = useCallback(
     async (modelId: string) => {
       setDeletingModelId(modelId);
@@ -78,6 +86,7 @@ export function useModelCache() {
     [refreshStorageEstimate]
   );
 
+  /** Atualiza o cache quando o evento global `model-cache-updated` é emitido. */
   useEffect(() => {
     const handleCacheUpdate = () => {
       refreshCacheStatus();
@@ -89,6 +98,7 @@ export function useModelCache() {
     };
   }, [refreshCacheStatus]);
 
+  /** Modelos gerenciados com estado de cache. */
   const models: ManagedModel[] = useMemo(
     () =>
       flatModels.map((model) => ({

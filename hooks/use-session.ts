@@ -37,6 +37,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
+  /** Carrega as sessões de chat salvas do banco de dados quando o hook é montado. */
   useEffect(() => {
     let isMounted = true;
 
@@ -79,6 +80,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     };
   }, []);
 
+  /** Persiste o chat ativo no banco de dados quando o hook é montado. */
   useEffect(() => {
     if (!isSessionLoaded) return;
 
