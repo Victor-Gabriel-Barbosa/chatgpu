@@ -257,13 +257,13 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
               className="max-w-full min-w-0 p-0 h-auto"
             >
               <Lightbulb className="w-4 h-4 shrink-0 mr-1" />
-              <span className="min-w-0 truncate text-xs">
+              <span className={cn("min-w-0 truncate text-xs", isGenerating && isLastAssistant && "shimmer")}>
                 Raciocínio
               </span>
               <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </Button>
             {showReasoning && (
-              <div className="mt-2 p-3 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="mt-2 p-3 bg-muted/30 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
                   {preprocessLaTeX(displayReasoning)}
                 </ReactMarkdown>

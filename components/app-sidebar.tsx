@@ -180,7 +180,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             className="flex flex-1 items-center mx-[6.5px] gap-2 overflow-hidden group-data-[collapsible=icon]:hidden"
           >
             <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
-            <span className="font-semibold text-primary shimmer truncate whitespace-nowrap">
+            <span className="font-semibold text-primary truncate whitespace-nowrap">
               ChatGPU
             </span>
           </Link>
