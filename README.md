@@ -106,16 +106,16 @@ Experimente sem necessidade de instalação:
 
 ```mermaid
 flowchart LR
-    U["<b>Usuário</b><br/>Navegador"]:::ext
-    UI["<b>Interface</b><br/>Next.js · React"]:::edge
-    W["<b>Web Worker</b><br/>WebLLM · MLC"]:::focal
-    GPU["<b>GPU</b><br/>WebGPU"]:::ext
-    HUB["<b>Hub de modelos</b><br/>apenas no 1º download"]:::cloud
+    U["<b>Usuário</b><br/>Navegador"]
+    UI["<b>Interface</b><br/>Next.js · React"]
+    W["<b>Web Worker</b><br/>WebLLM · MLC"]
+    GPU["<b>GPU</b><br/>WebGPU"]
+    HUB["<b>Hub de modelos</b><br/>apenas no 1º download"]
 
     subgraph LOCAL["ARMAZENAMENTO LOCAL"]
         direction TB
-        DB["<b>IndexedDB</b><br/>Dexie · conversas"]:::bundle
-        CACHE["<b>Cache do modelo</b><br/>pesos · WASM"]:::store
+        DB["<b>IndexedDB</b><br/>Dexie · conversas"]
+        CACHE["<b>Cache do modelo</b><br/>pesos · WASM"]
     end
 
     U -->|"mensagem"| UI
@@ -127,19 +127,6 @@ flowchart LR
     UI -->|"salva sessão"| DB
     W -->|"carrega modelo"| CACHE
     HUB -.->|"download 1x"| CACHE
-
-    classDef ext fill:#e5e7eb,stroke:#6b7280,stroke-width:1.5px,color:#1f2937
-    classDef edge fill:#f3f4f6,stroke:#9ca3af,stroke-width:1.5px,color:#1f2937
-    classDef focal fill:#ffedd5,stroke:#ea6a2a,stroke-width:2.5px,color:#1f2937
-    classDef bundle fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#1f2937
-    classDef store fill:#e5e7eb,stroke:#4b5563,stroke-width:1.5px,color:#1f2937
-    classDef cloud fill:#f3f4f6,stroke:#9ca3af,stroke-width:1.5px,stroke-dasharray:4 3,color:#1f2937
-
-    style LOCAL fill:#f9fafb,stroke:#d1d5db,color:#6b7280
-
-    linkStyle 0,6,7 stroke:#2f54a8,stroke-width:2px
-    linkStyle 1,2 stroke:#ea6a2a,stroke-width:3px
-    linkStyle 3,4,5,8 stroke:#4b5563,stroke-width:1.5px
 ```
 
 O projeto utiliza a biblioteca **`@mlc-ai/web-llm`**, responsável por executar modelos de linguagem diretamente no navegador a partir da combinação de três componentes:
