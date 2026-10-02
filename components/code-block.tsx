@@ -90,6 +90,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           )}
         </div>
 
+        {/* Botões de ação (maximizar preview, download e cópia) */}
         <div className="flex items-center gap-2">
           {isHtml && activeTab === 'preview' && (
             <Button

@@ -8,9 +8,21 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bubble, BubbleContent } from "@/components/ui/bubble";
-import { Message, MessageAvatar, MessageContent, MessageFooter } from "@/components/ui/message";
+import { 
+  Avatar, 
+  AvatarFallback, 
+  AvatarImage 
+} from "@/components/ui/avatar";
+import { 
+  Bubble, 
+  BubbleContent 
+} from "@/components/ui/bubble";
+import { 
+  Message, 
+  MessageAvatar, 
+  MessageContent, 
+  MessageFooter 
+} from "@/components/ui/message";
 import {
   Tooltip,
   TooltipContent,
@@ -52,7 +64,8 @@ export interface ChatMessageProps {
   copiedMessageIndex: number | null;
 
   /**
-   * Função disparada para copiar o texto principal da mensagem.@param content - Conteúdo textual a ser copiado.
+   * Função disparada para copiar o texto principal da mensagem.
+   * @param content - Conteúdo textual a ser copiado.
    * @param index - Índice da mensagem copiada.
    */
   handleCopyMessage: (content: string, index: number) => void;
@@ -259,6 +272,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           </div>
         )}
 
+        {/* Corpo da mensagem */}
         <Bubble variant={isUser && !isEditing ? "default" : "ghost"}>
           <BubbleContent className={cn("wrap-break-word", isEditing && "w-full p-0")}>
             {isEditing ? (
@@ -314,7 +328,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
           </BubbleContent>
         </Bubble>
 
-        {/* Rodapé da mensagem para ações extras e métricas de desempenho */}
+        {/* Rodapé da mensagem (ações e métricas) */}
         {!isEditing && (
           <MessageFooter className="m-1 flex items-center justify-between gap-2">
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">

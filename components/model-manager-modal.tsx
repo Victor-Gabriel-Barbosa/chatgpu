@@ -164,7 +164,7 @@ export function ModelManagerModal({
                             </div>
                           </label>
 
-                          {/* Ações adicionais (excluir/baixar) */}
+                          {/* Ações adicionais (excluir ou baixar) */}
                           <div className="flex items-center justify-between gap-3 shrink-0">
                             {isConfirming ? (
                               <div className="flex items-center gap-1.5 shrink-0">
@@ -224,7 +224,7 @@ export function ModelManagerModal({
           )}
         </div>
 
-        {/* Rodapé com uso de armazenamento */}
+        {/* Rodapé (uso de armazenamento) */}
         {storageEstimate && (
           <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
             <div className="flex items-center justify-between mb-1.5">

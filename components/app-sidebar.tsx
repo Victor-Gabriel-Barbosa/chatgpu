@@ -60,7 +60,10 @@ export interface AppSidebarProps {
   /** Indica se uma resposta está sendo gerada atualmente. */
   isGenerating: boolean;
 
-  /** Função para selecionar uma conversa a partir do seu ID. */
+  /**
+   * Seleciona uma conversa pelo seu identificador.
+   * @param id - Identificador da conversa a ser selecionada.
+   */
   setCurrentChatId: (id: string) => void;
 
   /** Função para iniciar uma nova conversa. */
@@ -269,6 +272,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                     </Tooltip>
                   )}
 
+                  {/* Menu de ações (exportar, renomear e excluir) */}
                   {editingChatId !== chat.id && (
                     <DropdownMenu modal={false}>
                       <DropdownMenuTrigger asChild>

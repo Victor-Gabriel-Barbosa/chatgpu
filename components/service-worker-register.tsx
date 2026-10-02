@@ -6,8 +6,8 @@ import { useEffect } from "react";
  * Registra o Service Worker da aplicação no navegador.
  *
  * @remarks
- * Atua como um componente utilitário de ciclo de vida (headless) que não renderiza
- * nenhum elemento visual na interface.
+ * Atua como um componente utilitário de ciclo de vida (headless)
+ * que não renderiza nenhum elemento visual na interface.
  *
  * @returns `null`, pois o componente atua apenas executando efeitos colaterais de inicialização.
  */
