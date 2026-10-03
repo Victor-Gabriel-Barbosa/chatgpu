@@ -268,7 +268,7 @@ http://localhost:3000
 
 ## Estrutura do projeto
 
-[![Dynamic File Tree](https://www.readmecodegen.com/api/file-tree-embed?repo=Victor-Gabriel-Barbosa%2Fchatgpu&branch=main&transparentBg=true&showHeader=true&showFileIcons=true&style=emoji)](https://github.com/Readmecodegen/dynamic-github-file-tree-embed)
+[![Dynamic File Tree](https://www.readmecodegen.com/api/file-tree-embed?repo=Victor-Gabriel-Barbosa%2Fchatgpu&branch=main&maxDepth=2&transparentBg=true&showHeader=true&showBorder=true&showFileIcons=true&style=emoji)](https://github.com/Readmecodegen/dynamic-github-file-tree-embed)
 
 ---
 
