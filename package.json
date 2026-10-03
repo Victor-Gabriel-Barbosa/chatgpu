@@ -14,7 +14,6 @@
     "postinstall": "npm run generate:models"
   },
   "dependencies": {
-    "@joplin/turndown-plugin-gfm": "^1.0.68",
     "@mlc-ai/web-llm": "^0.2.82",
     "@shadcn/react": "^0.3.0",
     "@tauri-apps/plugin-dialog": "^2.7.2",
