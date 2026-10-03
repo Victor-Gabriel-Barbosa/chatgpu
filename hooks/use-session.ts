@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { ChatSession, Message } from "@/types/chat";
 import { toast } from "sonner";
-import { fileToPlainText } from "@/lib/fileToText";
+import { fileToMarkdown } from "@/lib/fileToMarkdown";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
 import { streamAssistantReply } from "@/lib/stream-assistant-reply";
 
@@ -234,7 +234,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       prompt += "\n\n";
       for (const file of files) {
         try {
-          const textContent = await fileToPlainText(file);
+          const textContent = await fileToMarkdown(file);
           prompt += `<file name="${file.name}">\n${textContent}\n</file>\n`;
         } catch (error) {
           console.error(`Erro ao ler o arquivo ${file.name}`, error);

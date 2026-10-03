@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Check, Copy, Lightbulb, ChevronDown, Pencil, Paperclip, Zap } from 'lucide-react';
+import { Check, Copy, Lightbulb, ChevronDown, Pencil, File, Zap } from 'lucide-react';
 import { CodeBlock } from './code-block';
 import { Message as MessageType } from '@/types/chat';
 import { Button } from "@/components/ui/button";
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+import remarkBreaks from 'remark-breaks';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { 
@@ -264,7 +265,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
             </Button>
             {showReasoning && (
               <div className="mt-2 p-3 bg-muted/30 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
                   {preprocessLaTeX(displayReasoning)}
                 </ReactMarkdown>
               </div>
@@ -296,28 +297,29 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMess
                 </div>
               </div>
             ) : (
-              <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
                 {preprocessLaTeX(mainContent)}
               </ReactMarkdown>
             )}
 
             {/* Arquivos Anexados */}
             {files.length > 0 && !isEditing && (
-              <div className="mt-3 pt-3 border-t border-border/50 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {files.map((file, idx) => {
                   const isExpanded = expandedFiles[idx];
-                  const fileExtension = file.name.split('.').pop() || 'text';
 
                   return (
-                    <div key={idx} className="flex flex-col gap-2 w-full">
-                      <Button variant="ghost" size="sm" onClick={() => toggleFile(idx)} className="justify-start">
-                        <Paperclip className="w-4 h-4 mr-1" />
+                    <div key={idx} className="flex flex-col gap-2 w-full text-secondary-foreground">
+                      <Button variant="secondary" size="sm" onClick={() => toggleFile(idx)} className="justify-start">
+                        <File className="w-4 h-4 mr-1" />
                         <span className="font-medium truncate">{file.name}</span>
                         <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                       </Button>
                       {isExpanded && (
-                        <div className="w-full animate-in fade-in slide-in-from-top-1 duration-200">
-                          <CodeBlock language={fileExtension} code={file.content} />
+                        <div className="w-full animate-in fade-in slide-in-from-top-1 duration-200 bg-secondary rounded-xl p-3">
+                          <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
+                            {preprocessLaTeX(file.content)}
+                          </ReactMarkdown>
                         </div>
                       )}
                     </div>

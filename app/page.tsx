@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useState, useRef, type ChangeEvent } from "react";
-import { SendHorizontal, Plus, Square, Paperclip, X, HardDrive, Zap } from "lucide-react";
+import { SendHorizontal, Plus, Square, File, X, HardDrive, Zap } from "lucide-react";
 import { ChatMessage } from "@/components/chat-message";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SettingsModal } from "@/components/settings-modal";
@@ -72,9 +72,7 @@ export default function ChatInterface() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const hasMessages = messages.length > 0;
-  const selectedModelName = models
-    .flatMap(group => group.options)
-    .find(model => model.id === selectedModel)?.name;
+  const selectedModelName = models.flatMap(group => group.options).find(model => model.id === selectedModel)?.name;
 
   /**
    * Copia o conteúdo de uma mensagem para a área de transferência.
@@ -207,7 +205,7 @@ export default function ChatInterface() {
                       key={`${file.name}-${i}`}
                       className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
                     >
-                      <Paperclip className="shrink-0" size={20} />
+                      <File className="shrink-0" size={20} />
                       <span className="max-w-32 truncate">{file.name}</span>
                       <Button
                         variant="ghost"
