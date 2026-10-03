@@ -163,7 +163,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     const chatData = JSON.stringify(chat, null, 2);
     const fileName = `${chat.title || "chat"}.json`;
-    
+
     try {
       if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
         const { save } = await import("@tauri-apps/plugin-dialog");
@@ -259,10 +259,13 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       activeChatId = Date.now().toString();
       setCurrentChatId(activeChatId);
 
-      const newTitle = userMsg.slice(0, 30) + (userMsg.length > 30 ? "..." : "");
+      const fileRegex = /<file name="([^"]+)">/g;
+      const fileNames = Array.from(userMsg.matchAll(fileRegex), (match) => match[1]);
+      const title = fileNames.length > 0? fileNames.join(", ") : userMsg;
+
       const newChat: ChatSession = {
         id: activeChatId,
-        title: newTitle,
+        title: title.length > 30 ? title.slice(0, 27) + "..." : title,
         messages: newMessages,
         updatedAt: Date.now(),
       };

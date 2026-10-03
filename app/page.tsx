@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useState, useRef, type ChangeEvent } from "react";
+import { useState, useRef, type ChangeEvent, type ClipboardEvent } from "react";
 import { SendHorizontal, Plus, Square, File, X, HardDrive, Zap } from "lucide-react";
 import { ChatMessage } from "@/components/chat-message";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -68,7 +68,7 @@ export default function ChatInterface() {
   const [isStartupVideoOpen, setIsStartupVideoOpen] = useState(true);
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const hasMessages = messages.length > 0;
@@ -98,6 +98,22 @@ export default function ChatInterface() {
     const selected = Array.from(e.target.files ?? []);
     if (selected.length > 0) setAttachedFiles((prev) => [...prev, ...selected]);
     e.target.value = "";
+  };
+
+  /** Adiciona arquivos copiados para a área de transferência à lista de anexos. */
+  const handlePaste = (e: ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = Array.from(e.clipboardData.items);
+
+    const files = items
+      .filter((item) => item.kind === "file")
+      .map((item) => item.getAsFile())
+      .filter((file): file is File => file !== null);
+
+    if (files.length === 0) return;
+
+    e.preventDefault();
+
+    setAttachedFiles((prev) => [...prev, ...files]);
   };
 
   /** Remove um anexo da lista pelo índice. */
@@ -225,6 +241,7 @@ export default function ChatInterface() {
                   id="chat-input"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onPaste={handlePaste}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();

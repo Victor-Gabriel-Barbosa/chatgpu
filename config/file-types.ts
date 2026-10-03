@@ -3,6 +3,8 @@ export const ACCEPTED_FILE_TYPES = [
   ".txt",
   ".md",
   ".pdf",
+  ".doc",
+  ".docx",
   ".csv",
   ".json",
   ".xml",

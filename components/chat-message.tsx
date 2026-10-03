@@ -9,20 +9,21 @@ import remarkMath from 'remark-math';
 import remarkBreaks from 'remark-breaks';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
-import { 
-  Avatar, 
-  AvatarFallback, 
-  AvatarImage 
+import type { ParsedMessageContent, EmbeddedFile } from '@/types/chat';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage
 } from "@/components/ui/avatar";
-import { 
-  Bubble, 
-  BubbleContent 
+import {
+  Bubble,
+  BubbleContent
 } from "@/components/ui/bubble";
-import { 
-  Message, 
-  MessageAvatar, 
-  MessageContent, 
-  MessageFooter 
+import {
+  Message,
+  MessageAvatar,
+  MessageContent,
+  MessageFooter
 } from "@/components/ui/message";
 import {
   Tooltip,
@@ -31,27 +32,6 @@ import {
 } from "@/components/ui/tooltip";
 
 import { cn } from "@/lib/utils";
-
-/** Representa um arquivo embutido no corpo da mensagem. */
-export interface EmbeddedFile {
-  /** Nome ou caminho do arquivo extraído. */
-  name: string;
-
-  /** Conteúdo textual interno do arquivo. */
-  content: string;
-}
-
-/** Estrutura resultante da separação do conteúdo bruto de uma mensagem. */
-export interface ParsedMessageContent {
-  /** Bloco de raciocínio da IA contido nas tags `<think>`, se presente. */
-  think: string | null;
-
-  /** Conteúdo textual principal da mensagem limpo de tags especiais. */
-  mainContent: string;
-  
-  /** Lista de arquivos anexados ou embutidos no corpo da mensagem. */
-  files: EmbeddedFile[];
-}
 
 /** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
@@ -206,13 +186,22 @@ const messageComponents: Components = {
  * @param props - Propriedades utilizadas para configurar o componente {@link ChatMessage}.
  * @returns Elemento JSX que representa a mensagem no chat.
  */
-export const ChatMessage: React.FC<ChatMessageProps> = ({ msg, index, copiedMessageIndex, handleCopyMessage, handleSubmitEdit, isLastAssistant, isGenerating }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({
+  msg,
+  index,
+  copiedMessageIndex,
+  handleCopyMessage,
+  handleSubmitEdit,
+  isLastAssistant,
+  isGenerating,
+}) => {
+  const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
+
   const [showReasoning, setShowReasoning] = useState(false);
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
 
-  const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
   const displayReasoning = parsedThink || msg.reasoning;
   const isUser = msg.role === 'user';
 

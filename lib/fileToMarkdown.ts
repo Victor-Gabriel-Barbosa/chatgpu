@@ -1,4 +1,6 @@
 import mammoth from "mammoth";
+import TurndownService from 'turndown'
+import { gfm } from "@truto/turndown-plugin-gfm";
 import { createWorker, type Worker } from "tesseract.js";
 import { IMAGE_EXTENSIONS } from "@/config/file-types";
 
@@ -10,6 +12,9 @@ const OCR_LANGUAGES = "por+eng";
 
 /** Promessa de criação do worker do Tesseract. */
 let tesseractWorkerPromise: Promise<Worker> | null = null;
+
+/** Instância reutilizável do conversor Turndown. */
+let turndownService: TurndownService | null = null;
 
 /**
  * Carrega a biblioteca `pdfjs-dist` e configura o caminho do worker.
@@ -42,6 +47,29 @@ function getTesseractWorker(): Promise<Worker> {
   if (typeof window === "undefined") throw new TypeError("A extração de texto de imagens só funciona no navegador (client-side).");
   tesseractWorkerPromise ??= createWorker(OCR_LANGUAGES);
   return tesseractWorkerPromise;
+}
+
+/**
+ * Retorna o conversor de HTML para Markdown, criando-o se ainda não estiver disponível.
+ *
+ * @remarks
+ * Usa o plugin GFM para suportar tabelas, e remove imagens (o mammoth as incorporaria
+ * como `data:` URIs em base64, inflando o resultado).
+ *
+ * @returns Instância do `TurndownService`.
+ */
+function getTurndown(): TurndownService {
+  if (!turndownService) {
+    turndownService = new TurndownService({
+      headingStyle: "atx",
+      bulletListMarker: "-",
+      codeBlockStyle: "fenced",
+      emDelimiter: "*",
+    });
+    turndownService.use(gfm);
+    turndownService.remove("img");
+  }
+  return turndownService;
 }
 
 /**
@@ -115,21 +143,26 @@ async function extractPdfText(file: File): Promise<string> {
 
     if (currentLine.length > 0) lines.push(currentLine.toSorted((a, b) => a.x - b.x).map((item) => item.text).join(" "));
 
-    pageTexts.push(`## Página ${pageNum}\n\n${lines.join("\n")}`);
+    pageTexts.push(lines.join("\n"));
   }
 
   return pageTexts.join("\n\n---\n\n");
 }
 
 /**
- * Extrai o conteúdo de um arquivo DOCX (Word) e converte para Markdown.
+ * Extrai o conteúdo de um arquivo DOCX (Word) em Markdown.
+ *
+ * @remarks
+ * Converte o DOCX para HTML via `mammoth` (preservando títulos, listas, tabelas,
+ * negrito e itálico) e depois para Markdown via `turndown`. Imagens são descartadas.
+ *
  * @param file - Arquivo DOCX a ser extraído.
- * @returns Conteúdo do arquivo convertido em Markdown.
+ * @returns Conteúdo extraído do arquivo em Markdown.
  */
 async function extractDocxMarkdown(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
-  const result = await (mammoth as unknown as { convertToMarkdown: typeof mammoth.convertToHtml }).convertToMarkdown({ arrayBuffer: buffer });
-  return result.value;
+  const { value: html } = await mammoth.convertToHtml({ arrayBuffer: buffer });
+  return getTurndown().turndown(html).trim();
 }
 
 /**
