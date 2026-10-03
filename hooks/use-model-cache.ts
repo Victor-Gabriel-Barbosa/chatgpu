@@ -16,7 +16,8 @@ export function useModelCache() {
           id: option.id,
           name: option.name,
           groupLabel: group.label,
-          size: option.size
+          sizeGB: option.sizeGB,
+          vramGB: option.vramGB
         }))
       ),
     []
@@ -58,8 +59,8 @@ export function useModelCache() {
       setCacheStatus(Object.fromEntries(entries));
     } finally {
       setIsChecking(false);
+      refreshStorageEstimate();
     }
-    refreshStorageEstimate();
   }, [flatModels, refreshStorageEstimate]);
 
   /** Inicializa a verificação de cache quando o hook é montado. */
@@ -88,13 +89,9 @@ export function useModelCache() {
 
   /** Atualiza o cache quando o evento global `model-cache-updated` é emitido. */
   useEffect(() => {
-    const handleCacheUpdate = () => {
-      refreshCacheStatus();
-    };
-
-    window.addEventListener("model-cache-updated", handleCacheUpdate);
+    window.addEventListener("model-cache-updated", refreshCacheStatus);
     return () => {
-      window.removeEventListener("model-cache-updated", handleCacheUpdate);
+      window.removeEventListener("model-cache-updated", refreshCacheStatus);
     };
   }, [refreshCacheStatus]);
 

@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "docs": "typedoc",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "generate:models": "tsx scripts/generate-models.ts",
+    "prebuild": "npm run generate:models",
+    "postinstall": "npm run generate:models"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.82",
@@ -51,6 +54,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typedoc": "^0.28.19",
     "typescript": "^5"
   }

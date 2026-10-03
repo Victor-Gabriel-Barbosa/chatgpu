@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, HardDrive, Loader, RefreshCw, Trash2, X } from "lucide-react";
+import { Download, HardDrive, HardDriveDownload, Loader, RefreshCw, Trash2, X, Cpu } from "lucide-react";
 import { useModelCache } from "@/hooks/use-model-cache";
 import type { ManagedModel } from "@/types/model";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+
 import { cn } from "@/lib/utils";
 
 /** Propriedades do componente {@link ModelManagerModal}. */
@@ -154,12 +155,14 @@ export function ModelManagerModal({
                               disabled={!model.isCached || isGenerating}
                             />
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium truncate leading-none">
+                              <p className="text-sm font-medium leading-tight break-words">
                                 {model.name}
                               </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {model.isCached ? "Baixado " : "Não baixado "}
-                                (~{model.size} GB)
+                              <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                                <HardDriveDownload size={20} /> Disco: {model.sizeGB} GB
+                              </p>
+                              <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                                <Cpu size={20} /> VRAM: {model.vramGB} GB
                               </p>
                             </div>
                           </label>

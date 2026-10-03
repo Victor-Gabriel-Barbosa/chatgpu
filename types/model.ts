@@ -12,8 +12,11 @@ export interface ManagedModel {
   /** Indica se o modelo já está armazenado no cache local. */
   isCached: boolean;
   
-  /** Tamanho do modelo, em bytes. */
-  size: number;
+  /** Tamanho do modelo, em gigabytes. */
+  sizeGB: number;
+
+  /** Quantidade de memória VRAM necessária para rodar o modelo, em gigabytes, ou null se não informada. */
+  vramGB: number | null;
 }
 
 /** Representa informações sobre o espaço de armazenamento utilizado pela aplicação. */
