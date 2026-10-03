@@ -105,30 +105,28 @@ Experimente sem necessidade de instalação:
 ## Como funciona
 
 ```mermaid
-flowchart TB
- A[Usuário envia uma mensagem] --> B[Thread principal - UI React]
- B -->|postMessage| C[Web Worker]
+flowchart LR
+    U["<b>Usuário</b><br/>Navegador"]
+    UI["<b>Interface</b><br/>Next.js · React"]
+    W["<b>Web Worker</b><br/>WebLLM · MLC"]
+    GPU["<b>GPU</b><br/>WebGPU"]
+    HUB["<b>Hub de modelos</b><br/>apenas no 1º download"]
 
- subgraph WK[Web Worker - executa em segundo plano, mantém a UI responsiva]
- direction TB
- C --> D{Modelo já<br/>está em cache?}
- D -->|Não| E[Download do modelo<br/>WebLLM MLC]
- D -->|Sim| F[Carregamento direto do cache]
- E --> F
- F --> G[Engine WebLLM inicializada]
- G -->|WebGPU disponível| H[Inferência 100% local]
- end
+    subgraph LOCAL["ARMAZENAMENTO LOCAL"]
+        direction TB
+        DB["<b>IndexedDB</b><br/>Dexie · conversas"]
+        CACHE["<b>Cache do modelo</b><br/>pesos · WASM"]
+    end
 
- H -->|streaming de tokens| I[Interface atualizada em tempo real]
- I -.->|próxima mensagem| A
-
- classDef userStep fill:#4f46e5,stroke:#312e81,color:#fff,stroke-width:1px
- classDef workerStep fill:#0891b2,stroke:#164e63,color:#fff,stroke-width:1px
- classDef gpuStep fill:#ea580c,stroke:#9a3412,color:#fff,stroke-width:1px
-
- class A,B,I userStep
- class C,D,E,F,G workerStep
- class H gpuStep
+    U -->|"mensagem"| UI
+    UI ==>|"postMessage"| W
+    W ==>|"inferência"| GPU
+    GPU -.->|"tokens"| W
+    W -.->|"streaming"| UI
+    UI -.->|"resposta"| U
+    UI -->|"salva sessão"| DB
+    W -->|"carrega modelo"| CACHE
+    HUB -.->|"download 1x"| CACHE
 ```
 
 O projeto utiliza a biblioteca **`@mlc-ai/web-llm`**, responsável por executar modelos de linguagem diretamente no navegador a partir da combinação de três componentes:
@@ -314,211 +312,6 @@ http://localhost:3000
 ├── db/
 │   └── database.ts
 ├── docs/
-│   ├── assets/
-│   │   ├── hierarchy.js
-│   │   ├── highlight.css
-│   │   ├── icons.js
-│   │   ├── icons.svg
-│   │   ├── main.js
-│   │   ├── navigation.js
-│   │   ├── search.js
-│   │   └── style.css
-│   ├── functions/
-│   │   ├── components_chat_model-manager-modal.ModelManagerModal.html
-│   │   ├── components_chat_service-worker-register.ServiceWorkerRegister.html
-│   │   ├── components_ui_avatar.Avatar.html
-│   │   ├── components_ui_avatar.AvatarBadge.html
-│   │   ├── components_ui_avatar.AvatarFallback.html
-│   │   ├── components_ui_avatar.AvatarGroup.html
-│   │   ├── components_ui_avatar.AvatarGroupCount.html
-│   │   ├── components_ui_avatar.AvatarImage.html
-│   │   ├── components_ui_bubble.Bubble.html
-│   │   ├── components_ui_bubble.BubbleContent.html
-│   │   ├── components_ui_bubble.BubbleGroup.html
-│   │   ├── components_ui_bubble.BubbleReactions.html
-│   │   ├── components_ui_button.Button.html
-│   │   ├── components_ui_dialog.Dialog.html
-│   │   ├── components_ui_dialog.DialogClose.html
-│   │   ├── components_ui_dialog.DialogContent.html
-│   │   ├── components_ui_dialog.DialogDescription.html
-│   │   ├── components_ui_dialog.DialogFooter.html
-│   │   ├── components_ui_dialog.DialogHeader.html
-│   │   ├── components_ui_dialog.DialogOverlay.html
-│   │   ├── components_ui_dialog.DialogPortal.html
-│   │   ├── components_ui_dialog.DialogTitle.html
-│   │   ├── components_ui_dialog.DialogTrigger.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenu.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuCheckboxItem.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuContent.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuGroup.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuItem.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuLabel.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuPortal.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuRadioGroup.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuRadioItem.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuSeparator.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuShortcut.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuSub.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuSubContent.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuSubTrigger.html
-│   │   ├── components_ui_dropdown-menu.DropdownMenuTrigger.html
-│   │   ├── components_ui_field.Field.html
-│   │   ├── components_ui_field.FieldContent.html
-│   │   ├── components_ui_field.FieldDescription.html
-│   │   ├── components_ui_field.FieldError.html
-│   │   ├── components_ui_field.FieldGroup.html
-│   │   ├── components_ui_field.FieldLabel.html
-│   │   ├── components_ui_field.FieldLegend.html
-│   │   ├── components_ui_field.FieldSeparator.html
-│   │   ├── components_ui_field.FieldSet.html
-│   │   ├── components_ui_field.FieldTitle.html
-│   │   ├── components_ui_input.Input.html
-│   │   ├── components_ui_label.Label.html
-│   │   ├── components_ui_message-scroller.MessageScroller.html
-│   │   ├── components_ui_message-scroller.MessageScrollerButton.html
-│   │   ├── components_ui_message-scroller.MessageScrollerContent.html
-│   │   ├── components_ui_message-scroller.MessageScrollerItem.html
-│   │   ├── components_ui_message-scroller.MessageScrollerProvider.html
-│   │   ├── components_ui_message-scroller.MessageScrollerViewport.html
-│   │   ├── components_ui_message-scroller.useMessageScroller.html
-│   │   ├── components_ui_message-scroller.useMessageScrollerScrollable.html
-│   │   ├── components_ui_message-scroller.useMessageScrollerVisibility.html
-│   │   ├── components_ui_message.Message.html
-│   │   ├── components_ui_message.MessageAvatar.html
-│   │   ├── components_ui_message.MessageContent.html
-│   │   ├── components_ui_message.MessageFooter.html
-│   │   ├── components_ui_message.MessageGroup.html
-│   │   ├── components_ui_message.MessageHeader.html
-│   │   ├── components_ui_select.Select.html
-│   │   ├── components_ui_select.SelectContent.html
-│   │   ├── components_ui_select.SelectGroup.html
-│   │   ├── components_ui_select.SelectItem.html
-│   │   ├── components_ui_select.SelectLabel.html
-│   │   ├── components_ui_select.SelectScrollDownButton.html
-│   │   ├── components_ui_select.SelectScrollUpButton.html
-│   │   ├── components_ui_select.SelectSeparator.html
-│   │   ├── components_ui_select.SelectTrigger.html
-│   │   ├── components_ui_select.SelectValue.html
-│   │   ├── components_ui_separator.Separator.html
-│   │   ├── components_ui_sheet.Sheet.html
-│   │   ├── components_ui_sheet.SheetClose.html
-│   │   ├── components_ui_sheet.SheetContent.html
-│   │   ├── components_ui_sheet.SheetDescription.html
-│   │   ├── components_ui_sheet.SheetFooter.html
-│   │   ├── components_ui_sheet.SheetHeader.html
-│   │   ├── components_ui_sheet.SheetTitle.html
-│   │   ├── components_ui_sheet.SheetTrigger.html
-│   │   ├── components_ui_sidebar.Sidebar.html
-│   │   ├── components_ui_sidebar.SidebarContent.html
-│   │   ├── components_ui_sidebar.SidebarFooter.html
-│   │   ├── components_ui_sidebar.SidebarGroup.html
-│   │   ├── components_ui_sidebar.SidebarGroupAction.html
-│   │   ├── components_ui_sidebar.SidebarGroupContent.html
-│   │   ├── components_ui_sidebar.SidebarGroupLabel.html
-│   │   ├── components_ui_sidebar.SidebarHeader.html
-│   │   ├── components_ui_sidebar.SidebarInput.html
-│   │   ├── components_ui_sidebar.SidebarInset.html
-│   │   ├── components_ui_sidebar.SidebarMenu.html
-│   │   ├── components_ui_sidebar.SidebarMenuAction.html
-│   │   ├── components_ui_sidebar.SidebarMenuBadge.html
-│   │   ├── components_ui_sidebar.SidebarMenuButton.html
-│   │   ├── components_ui_sidebar.SidebarMenuItem.html
-│   │   ├── components_ui_sidebar.SidebarMenuSkeleton.html
-│   │   ├── components_ui_sidebar.SidebarMenuSub.html
-│   │   ├── components_ui_sidebar.SidebarMenuSubButton.html
-│   │   ├── components_ui_sidebar.SidebarMenuSubItem.html
-│   │   ├── components_ui_sidebar.SidebarProvider.html
-│   │   ├── components_ui_sidebar.SidebarRail.html
-│   │   ├── components_ui_sidebar.SidebarSeparator.html
-│   │   ├── components_ui_sidebar.SidebarTrigger.html
-│   │   ├── components_ui_sidebar.useSidebar.html
-│   │   ├── components_ui_skeleton.Skeleton.html
-│   │   ├── components_ui_sonner.Toaster.html
-│   │   ├── components_ui_tabs.Tabs.html
-│   │   ├── components_ui_tabs.TabsContent.html
-│   │   ├── components_ui_tabs.TabsList.html
-│   │   ├── components_ui_tabs.TabsTrigger.html
-│   │   ├── components_ui_textarea.Textarea.html
-│   │   ├── components_ui_theme-provider.ThemeProvider.html
-│   │   ├── components_ui_tooltip.Tooltip.html
-│   │   ├── components_ui_tooltip.TooltipContent.html
-│   │   ├── components_ui_tooltip.TooltipProvider.html
-│   │   ├── components_ui_tooltip.TooltipTrigger.html
-│   │   ├── hooks_use-engine.useEngine.html
-│   │   ├── hooks_use-mobile.useIsMobile.html
-│   │   ├── hooks_use-model-cache.useModelCache.html
-│   │   ├── hooks_use-session.useSession.html
-│   │   ├── lib_fileToText.fileToPlainText.html
-│   │   ├── lib_fileToText.terminateOcrWorker.html
-│   │   └── lib_utils.cn.html
-│   ├── interfaces/
-│   │   ├── components_chat_app-sidebar.AppSidebarProps.html
-│   │   ├── components_chat_chat-message.ChatMessageProps.html
-│   │   ├── components_chat_code-block.CodeBlockProps.html
-│   │   ├── components_chat_settings-modal.SettingsModalProps.html
-│   │   ├── components_chat_startup-video.StartupVideoProps.html
-│   │   ├── hooks_use-model-cache.ManagedModel.html
-│   │   ├── hooks_use-model-cache.StorageEstimateInfo.html
-│   │   ├── hooks_use-session.UseSessionProps.html
-│   │   ├── types_chat.Chat.html
-│   │   ├── types_chat.ChatSession.html
-│   │   └── types_chat.Message.html
-│   ├── media/
-│   │   ├── chatgpu_chat.jpg
-│   │   ├── chatgpu_home.jpg
-│   │   ├── chatgpu_models.jpg
-│   │   └── chatgpu_settings.jpg
-│   ├── modules/
-│   │   ├── components_chat_app-sidebar.html
-│   │   ├── components_chat_chat-message.html
-│   │   ├── components_chat_code-block.html
-│   │   ├── components_chat_model-manager-modal.html
-│   │   ├── components_chat_service-worker-register.html
-│   │   ├── components_chat_settings-modal.html
-│   │   ├── components_chat_startup-video.html
-│   │   ├── components_ui_avatar.html
-│   │   ├── components_ui_bubble.html
-│   │   ├── components_ui_button.html
-│   │   ├── components_ui_dialog.html
-│   │   ├── components_ui_dropdown-menu.html
-│   │   ├── components_ui_field.html
-│   │   ├── components_ui_input.html
-│   │   ├── components_ui_label.html
-│   │   ├── components_ui_message-scroller.html
-│   │   ├── components_ui_message.html
-│   │   ├── components_ui_select.html
-│   │   ├── components_ui_separator.html
-│   │   ├── components_ui_sheet.html
-│   │   ├── components_ui_sidebar.html
-│   │   ├── components_ui_skeleton.html
-│   │   ├── components_ui_sonner.html
-│   │   ├── components_ui_tabs.html
-│   │   ├── components_ui_textarea.html
-│   │   ├── components_ui_theme-provider.html
-│   │   ├── components_ui_tooltip.html
-│   │   ├── hooks_use-engine.html
-│   │   ├── hooks_use-mobile.html
-│   │   ├── hooks_use-model-cache.html
-│   │   ├── hooks_use-session.html
-│   │   ├── lib_fileToText.html
-│   │   ├── lib_utils.html
-│   │   ├── lib_worker.html
-│   │   ├── types_chat.html
-│   │   └── types_theme.html
-│   ├── types/
-│   │   └── types_theme.Theme.html
-│   ├── variables/
-│   │   ├── components_chat_app-sidebar.AppSidebar.html
-│   │   ├── components_chat_chat-message.ChatMessage.html
-│   │   ├── components_chat_code-block.CodeBlock.html
-│   │   ├── components_chat_settings-modal.SettingsModal.html
-│   │   ├── components_chat_startup-video.StartupVideo.html
-│   │   ├── components_ui_button.buttonVariants.html
-│   │   └── components_ui_tabs.tabsListVariants.html
-│   ├── .nojekyll
-│   ├── hierarchy.html
-│   ├── index.html
-│   └── modules.html
 ├── hooks/
 │   ├── use-engine.ts
 │   ├── use-mobile.ts
