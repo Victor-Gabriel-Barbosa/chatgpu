@@ -26,6 +26,13 @@ import {
   MessageFooter
 } from "@/components/ui/message";
 import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group"
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -192,7 +199,7 @@ export function ChatMessage({
   const [showReasoning, setShowReasoning] = useState(false);
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(msg.content);
+  const [editValue, setEditValue] = useState(mainContent);
 
   const displayReasoning = parsedThink || msg.reasoning;
   const isUser = msg.role === 'user';
@@ -204,14 +211,14 @@ export function ChatMessage({
 
   /** Salva a edição da mensagem. */
   const onSaveEdit = () => {
-    const trimmedValue = editValue.trim();
+    const trimmedValue = (editValue + files.map((f) => `<file name="${f.name}">${f.content}</file>`).join("\n")).trim();
     if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index);
     setIsEditing(false);
   };
 
   /** Cancela a edição da mensagem. */
   const onCancelEdit = () => {
-    setEditValue(msg.content);
+    setEditValue(mainContent);
     setIsEditing(false);
   };
 
@@ -258,9 +265,9 @@ export function ChatMessage({
         <Bubble variant={isUser && !isEditing ? "default" : "ghost"}>
           <BubbleContent className={cn("wrap-break-word", isEditing && "w-full p-0")}>
             {isEditing ? (
-              <div className="flex flex-col gap-2 w-full min-w-62.5 sm:min-w-100">
-                <textarea
-                  id="edit-input"
+              <InputGroup>
+                <InputGroupTextarea
+                  id={`chat-input-${index}`}
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
                   onKeyDown={(e) => {
@@ -269,14 +276,29 @@ export function ChatMessage({
                       onSaveEdit();
                     }
                   }}
-                  className="field-sizing-content leading-6 w-full bg-secondary p-3 resize-none overflow-y-auto max-h-55 rounded-xl text-sm outline-none border"
+                  className="max-h-55 min-h-12 resize-none overflow-y-auto leading-6 field-sizing-content"
                   rows={1}
                 />
-                <div className="flex justify-end gap-2 mt-1">
-                  <Button variant="secondary" size="sm" onClick={onCancelEdit}>Cancelar</Button>
-                  <Button size="sm" onClick={onSaveEdit} disabled={editValue.trim() === '' || editValue.trim() === msg.content}>Atualizar</Button>
-                </div>
-              </div>
+                <InputGroupAddon align="block-end">
+                  <InputGroupButton size="sm" className="ml-auto" variant="secondary" onClick={onCancelEdit}>
+                    Cancelar
+                  </InputGroupButton>
+                  <InputGroupButton size="sm" variant="default" disabled={editValue.trim() === "" || editValue.trim() === mainContent} onClick={onSaveEdit}>
+                    Atualizar
+                  </InputGroupButton>
+                </InputGroupAddon>
+                <InputGroupAddon align="block-start" className="min-w-0 flex-col items-start">
+                  {files.map((file, idx) => (
+                    <InputGroupText
+                      key={idx}
+                      className="min-w-0 max-w-full font-mono font-medium"
+                    >
+                      <File className="shrink-0" />
+                      <span className="truncate">{file.name}</span>
+                    </InputGroupText>
+                  ))}
+                </InputGroupAddon>
+              </InputGroup>
             ) : (
               <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
                 {preprocessLaTeX(mainContent)}
@@ -314,7 +336,7 @@ export function ChatMessage({
         {/* Rodapé da mensagem (ações e métricas) */}
         {!isEditing && (
           <MessageFooter className="m-1 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
               <Button
                 variant="ghost"
                 size="icon"

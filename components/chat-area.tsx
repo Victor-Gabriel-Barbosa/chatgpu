@@ -183,7 +183,7 @@ export function ChatArea({
           id="chat-input"
           value={value}
           rows={1}
-          readOnly={!isReady}
+          disabled={!isReady}
           placeholder={
             isReady
               ? "Envie uma mensagem..."
@@ -194,10 +194,10 @@ export function ChatArea({
           onChange={(e) => onValueChange(e.target.value)}
           onPaste={handlePaste}
           onKeyDown={handleKeyDown}
-          className="max-h-55 min-h-12 resize-none overflow-y-auto leading-6 field-sizing-content"
+          className="max-h-55 min-h-12 resize-none overflow-y-auto leading-6 field-sizing-content px-2.5"
         />
 
-        <InputGroupAddon align="block-end">
+        <InputGroupAddon align="block-end" className="min-w-0">
           {/* Anexar arquivo */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -207,6 +207,7 @@ export function ChatArea({
                 aria-label="Anexar arquivo"
                 disabled={!isReady}
                 onClick={() => fileInputRef.current?.click()}
+                className="shrink-0"
               >
                 <Plus strokeWidth={2.5} />
               </InputGroupButton>
@@ -234,9 +235,10 @@ export function ChatArea({
                 size="sm"
                 aria-label="Gerenciar modelos"
                 onClick={onOpenModelManager}
+                className="min-w-0 shrink justify-start"
               >
                 <HardDrive />
-                {selectedModelName ?? "Selecionar modelo"}
+                <span className="truncate">{selectedModelName ?? "Selecionar modelo"}</span>
               </InputGroupButton>
             </TooltipTrigger>
             <TooltipContent side="bottom">
