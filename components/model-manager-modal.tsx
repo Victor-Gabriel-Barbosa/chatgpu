@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Download, HardDrive, HardDriveDownload, Loader, RefreshCw, Trash2, X, Cpu } from "lucide-react";
+import { useState, useMemo, useDeferredValue } from "react";
+import { Download, HardDrive, HardDriveDownload, Loader, RefreshCw, Search, Trash2, X, Cpu } from "lucide-react";
 import { useModelCache } from "@/hooks/use-model-cache";
-import type { ManagedModel } from "@/types/model";
 import { Button } from "@/components/ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -57,13 +57,20 @@ export function ModelManagerModal({
 }: Readonly<ModelManagerModalProps>) {
   const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useModelCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const deferredQuery = useDeferredValue(searchQuery);
 
-  const groups: Record<string, ManagedModel[]> = {};
-  for (const model of models) {
-    if (!groups[model.groupLabel]) groups[model.groupLabel] = [];
-    groups[model.groupLabel].push(model);
-  }
+  /** Filtra e agrupa os modelos com base na pesquisa. */
+  const groups = useMemo(() => {
+    const query = deferredQuery.trim().toLowerCase();
+    const visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
+    return Map.groupBy(visible, (m) => m.groupLabel);
+  }, [models, deferredQuery]);
 
+  /**
+   * Confirma a remoção de um modelo.
+   * @param modelId - Identificador do modelo a ser removido.
+   */
   const handleConfirmDelete = (modelId: string) => {
     setConfirmingDeleteId(null);
     deleteModel(modelId);
@@ -109,6 +116,34 @@ export function ModelManagerModal({
           Visualize os modelos já baixados, baixe novos modelos ou remova modelos que não são mais necessários.
         </DialogDescription>
 
+        {/* Barra de pesquisa */}
+        <div className="px-4">
+          <InputGroup className="w-full">
+            <InputGroupInput
+              placeholder="Pesquisar modelos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Pesquisar modelos"
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            {searchQuery && (
+              <InputGroupAddon align="inline-end">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Limpar pesquisa"
+                  title="Limpar pesquisa"
+                >
+                  <X />
+                </Button>
+              </InputGroupAddon>
+            )}
+          </InputGroup>
+        </div>
+
         {/* Lista de modelos */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {isChecking && models.length === 0 ? (
@@ -116,13 +151,18 @@ export function ModelManagerModal({
               <Loader className="animate-spin" />
               Verificando modelos baixados...
             </div>
+          ) : groups.size === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-1 text-sm text-muted-foreground py-8">
+              <Search className="size-5" />
+              Nenhum modelo encontrado
+            </div>
           ) : (
             <RadioGroup
               value={selectedModel}
               onValueChange={setSelectModel}
               className="space-y-6"
             >
-              {Object.entries(groups).map(([groupLabel, groupModels]) => (
+              {[...groups].map(([groupLabel, groupModels]) => (
                 <div key={groupLabel}>
                   <h3 className="text-xs text-muted-foreground font-semibold uppercase tracking-wide mb-2">
                     {groupLabel}
@@ -230,17 +270,16 @@ export function ModelManagerModal({
         </div>
 
         {/* Rodapé (uso de armazenamento) */}
-        {storageEstimate && (
-          <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
-            <Field className="w-full max-w-sm">
-              <FieldLabel>
-                <span>Armazenamento usado no navegador</span>
-                <span className="ml-auto">{storageEstimate.usedGB} GB / {storageEstimate.quotaGB} GB</span>
-                </FieldLabel>
-              <Progress value={storageEstimate.percent} />
-            </Field>
-          </DialogFooter>
-        )}
+
+        <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
+          <Field className="w-full max-w-sm">
+            <FieldLabel>
+              <span>Armazenamento usado no navegador</span>
+              <span className="ml-auto">{storageEstimate?.usedGB ?? "N/A"} GB / {storageEstimate?.quotaGB ?? "N/A"} GB</span>
+            </FieldLabel>
+            <Progress value={storageEstimate?.percent ?? 0} />
+          </Field>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
