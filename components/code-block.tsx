@@ -3,9 +3,10 @@ import { createPortal } from 'react-dom';
 import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import { copyToClipboard } from '@/lib/utils';
 
 /** Propriedades do componente {@link CodeBlock}. */
 export interface CodeBlockProps {
@@ -28,24 +29,15 @@ export interface CodeBlockProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX com a barra de ferramentas e o código ou preview renderizado.
  */
-export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
+export function CodeBlock({ 
+  language, 
+  code 
+}: CodeBlockProps) {
   const [copied, setCopied] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const ext = language ? language.toLowerCase() : 'txt';
   const isHtml = ext === 'html';
-
-  /** Copia o snippet de código para a área de transferência do usuário e exibe uma notificação de feedback. */
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      toast.success("Copiado para a área de transferência");
-    }).catch(err => {
-      console.error('Copy failed', err);
-      toast.error("Falha ao copiar o código. Tente novamente");
-    });
-  };
 
   /** Gera e dispara o download do código em um arquivo de texto com a extensão correspondente à linguagem. */
   const handleDownload = () => {
@@ -114,7 +106,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           </Button>
           <Button
             variant="ghost"
-            onClick={handleCopy}
+            onClick={() => copyToClipboard(code)}
             title="Copiar código"
             className="text-muted-foreground"
             size="icon"

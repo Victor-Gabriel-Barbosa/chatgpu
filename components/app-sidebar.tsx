@@ -107,7 +107,7 @@ export interface AppSidebarProps {
  * 
  * @param props - Propriedades utilizadas para configurar a barra lateral.
 */
-export const AppSidebar: React.FC<AppSidebarProps> = ({
+export function AppSidebar({
   chats,
   currentChatId,
   isGenerating,
@@ -117,7 +117,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   exportChat,
   renameChat,
   setSettingsOpen
-}) => {
+}: AppSidebarProps) {
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
   const [editingChatId, setEditingChatId] = useState<string | null>(null);

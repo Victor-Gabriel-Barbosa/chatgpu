@@ -26,11 +26,11 @@ export interface StartupVideoProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX do modal de vídeo ou `null` caso `isOpen` seja falso.
  */
-export const StartupVideo: React.FC<StartupVideoProps> = ({
+export function StartupVideo({
   isOpen,
   onClose,
   src = "/chatgpu-video.mp4",
-}) => {
+}: StartupVideoProps) {
   const [isClosing, setIsClosing] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 

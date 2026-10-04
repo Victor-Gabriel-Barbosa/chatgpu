@@ -54,9 +54,12 @@ export interface SettingsModalProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX representando o modal de configurações.
  */
-export const SettingsModal: React.FC<SettingsModalProps> = ({
-  modelName, onClose, onWatchIntroVideo, setIsModelManagerOpen
-}) => {
+export function SettingsModal({ 
+  modelName, 
+  onClose, 
+  onWatchIntroVideo, 
+  setIsModelManagerOpen 
+}: SettingsModalProps) {
   const { theme, setTheme } = useTheme();
 
   return (

@@ -270,7 +270,6 @@ export function ModelManagerModal({
         </div>
 
         {/* Rodapé (uso de armazenamento) */}
-
         <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
           <Field className="w-full max-w-sm">
             <FieldLabel>

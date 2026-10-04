@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Check, Copy, Lightbulb, ChevronDown, Pencil, File, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { Copy, Lightbulb, ChevronDown, Pencil, File, Zap } from 'lucide-react';
 import { CodeBlock } from './code-block';
 import { Message as MessageType } from '@/types/chat';
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { cn } from "@/lib/utils";
+import { cn, copyToClipboard } from "@/lib/utils";
 
 /** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
@@ -40,16 +40,6 @@ export interface ChatMessageProps {
 
   /** Posição/índice da mensagem no histórico da conversa. */
   index: number;
-
-  /** Índice da mensagem cujo conteúdo foi copiado para a área de transferência, ou `null`. */
-  copiedMessageIndex: number | null;
-
-  /**
-   * Função disparada para copiar o texto principal da mensagem.
-   * @param content - Conteúdo textual a ser copiado.
-   * @param index - Índice da mensagem copiada.
-   */
-  handleCopyMessage: (content: string, index: number) => void;
 
   /**
    * Função opcional disparada ao salvar a edição do conteúdo de uma mensagem.
@@ -189,16 +179,14 @@ const messageComponents: Components = {
  * @param props - Propriedades utilizadas para configurar o componente {@link ChatMessage}.
  * @returns Elemento JSX que representa a mensagem no chat.
  */
-export const ChatMessage: React.FC<ChatMessageProps> = ({
+export function ChatMessage({
   msg,
   index,
-  copiedMessageIndex,
-  handleCopyMessage,
   handleSubmitEdit,
   isLastAssistant,
   isGenerating,
-  isReady
-}) => {
+  isReady,
+}: ChatMessageProps) {
   const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
 
   const [showReasoning, setShowReasoning] = useState(false);
@@ -331,10 +319,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-muted-foreground"
-                onClick={() => handleCopyMessage(mainContent, index)}
+                onClick={() => copyToClipboard(mainContent)}
                 title="Copiar mensagem"
               >
-                {copiedMessageIndex === index ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                <Copy className="w-4 h-4" />
               </Button>
 
               {isUser && handleSubmitEdit && (
