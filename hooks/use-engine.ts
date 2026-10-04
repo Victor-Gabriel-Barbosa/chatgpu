@@ -51,18 +51,26 @@ function destroyEngineSingleton() {
  * Cada tarefa submetida via `run` é encadeada à anterior por meio de uma cadeia de Promises.
  * Isso evita condições de corrida ao recarregar o modelo durante carregamentos simultâneos.
  *
- * @returns Função `run` que aceita uma tarefa e retorna sua Promise serializada.
+ * O método `reset` permite destravar a cadeia quando uma tarefa pendente nunca
+ * resolve (ex.: worker terminado), possibilitando que novas tarefas executem.
+ *
+ * @returns Objeto com `run` (submete uma tarefa) e `reset` (destrava a cadeia).
  */
 function createExclusiveRunner() {
   let chain = Promise.resolve();
-  return function run<T>(task: () => Promise<T> | T): Promise<T> {
-    const res = chain.then(task, task);
-    chain = res.then(() => undefined, () => undefined);
-    return res;
+  return {
+    run<T>(task: () => Promise<T> | T): Promise<T> {
+      const res = chain.then(task, task);
+      chain = res.then(() => undefined, () => undefined);
+      return res;
+    },
+    reset() {
+      chain = Promise.resolve();
+    },
   };
 }
 
-const runExclusive = createExclusiveRunner();
+const exclusiveRunner = createExclusiveRunner();
 
 /**
  * Gerencia a inicialização, seleção e carregamento do motor de IA WebLLM via Web Worker.
@@ -95,6 +103,7 @@ export function useEngine() {
   const cancelLoading = useCallback(() => {
     loadIdRef.current++;
     destroyEngineSingleton();
+    exclusiveRunner.reset();
     setEngine(null);
     setSelectedModel("");
     setIsReady(false);
@@ -154,7 +163,7 @@ export function useEngine() {
       showLoadingToast((report.progress ?? 0) * 100);
     });
 
-    runExclusive(() => {
+    exclusiveRunner.run(() => {
       if (currentLoadId !== loadIdRef.current) return;
       return sharedEngine.reload(selectedModel);
     })
