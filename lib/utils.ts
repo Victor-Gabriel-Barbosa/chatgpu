@@ -20,3 +20,10 @@ export function cn(...inputs: ClassValue[]) {
 export function round(value?: number, digits = 1) {
   return value !== undefined ? Number(value.toFixed(digits)) : undefined;
 }
+
+/**
+ * Aguarda um tempo determinado.
+ * @param ms - Tempo em milissegundos a ser aguardado.
+ * @returns Promessa que será resolvida após o tempo determinado.
+ */
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

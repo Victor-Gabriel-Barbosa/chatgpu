@@ -3,6 +3,7 @@ import { hasModelInCache, deleteModelAllInfoInCache } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 import { models as Models } from "@/config/models.json";
 import type { ManagedModel, StorageEstimateInfo } from "@/types/model";
+import { sleep } from "@/lib/utils";
 
 /**
  * Gerencia o cache de modelos, incluindo verificação de existência, exclusão e estimativa de uso.
@@ -81,7 +82,8 @@ export function useModelCache() {
         toast.error("Não foi possível remover o modelo. Tente novamente");
       } finally {
         setDeletingModelId(null);
-        refreshStorageEstimate();
+        await sleep(500);
+        await refreshStorageEstimate();
       }
     },
     [refreshStorageEstimate]

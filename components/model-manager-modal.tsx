@@ -5,6 +5,8 @@ import { Download, HardDrive, HardDriveDownload, Loader, RefreshCw, Trash2, X, C
 import { useModelCache } from "@/hooks/use-model-cache";
 import type { ManagedModel } from "@/types/model";
 import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Dialog,
@@ -230,18 +232,13 @@ export function ModelManagerModal({
         {/* Rodapé (uso de armazenamento) */}
         {storageEstimate && (
           <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
-            <div className="flex items-center justify-between mb-1.5">
-              <span>Armazenamento usado no navegador</span>
-              <span>
-                {storageEstimate.usedGB} GB / {storageEstimate.quotaGB} GB
-              </span>
-            </div>
-            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
-                style={{ width: `${Math.min(100, storageEstimate.percent)}%` }}
-              />
-            </div>
+            <Field className="w-full max-w-sm">
+              <FieldLabel>
+                <span>Armazenamento usado no navegador</span>
+                <span className="ml-auto">{storageEstimate.usedGB} GB / {storageEstimate.quotaGB} GB</span>
+                </FieldLabel>
+              <Progress value={storageEstimate.percent} />
+            </Field>
           </DialogFooter>
         )}
       </DialogContent>
