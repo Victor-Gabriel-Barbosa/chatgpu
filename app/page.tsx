@@ -220,7 +220,7 @@ export default function ChatInterface() {
                   {attachedFiles.map((file, i) => (
                     <div
                       key={`${file.name}-${i}`}
-                      className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-full border shadow-sm"
+                      className="flex items-center gap-1.5 bg-card text-xs pl-2.5 pr-1.5 py-1 rounded-lg border shadow-sm"
                     >
                       <File className="shrink-0" size={20} />
                       <span className="max-w-32 truncate">{file.name}</span>

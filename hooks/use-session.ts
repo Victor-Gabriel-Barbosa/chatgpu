@@ -231,7 +231,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     let prompt = input;
     if (files.length > 0) {
-      prompt += "\n\n";
+      if (input.trim()) prompt += "\n";
       for (const file of files) {
         try {
           const textContent = await fileToMarkdown(file);
