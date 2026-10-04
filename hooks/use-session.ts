@@ -243,7 +243,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       }
     }
 
-    const userMsg = prompt;
+    const userMsg = prompt.trim();
     setInput("");
 
     const newMessages: Message[] = [
@@ -308,7 +308,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     if (isGenerating || !engine || !isReady) return;
 
     const updatedMessages = messages.slice(0, index);
-    updatedMessages.push({ role: "user", content: newContent });
+    updatedMessages.push({ role: "user", content: newContent.trim() });
 
     setMessages(updatedMessages);
     setIsGenerating(true);
