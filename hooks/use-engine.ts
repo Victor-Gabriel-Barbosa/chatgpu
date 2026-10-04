@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 
@@ -30,15 +30,18 @@ function getEngineSingleton(): WebWorkerMLCEngine {
 }
 
 /**
- * Exibe ou atualiza o toast de progresso de carregamento do modelo.
- * @param percent - Percentual de progresso (0–100).
+ * Destrói as instâncias singleton do motor e do Web Worker, liberando seus recursos.
+ *
+ * @remarks
+ * Termina o Web Worker e anula as referências do singleton para que sejam
+ * recriados na próxima chamada a {@link getEngineSingleton}.
  */
-function showLoadingToast(percent: number) {
-  const clamped = Math.min(100, Math.max(0, Math.round(percent)));
-  toast.loading(`Carregando modelo (${clamped}%)`, {
-    id: LOADING_TOAST_ID,
-    duration: Infinity,
-  });
+function destroyEngineSingleton() {
+  if (workerSingleton) {
+    workerSingleton.terminate();
+    workerSingleton = null;
+  }
+  engineSingleton = null;
 }
 
 /**
@@ -67,17 +70,60 @@ const runExclusive = createExclusiveRunner();
  * @remarks
  * - Restaura automaticamente o último modelo selecionado a partir do `localStorage`.
  * - Serializa recarregamentos de modelo para evitar condições de corrida.
- * - Exibe toasts de progresso/sucesso/erro durante o carregamento.
+ * - Exibe toasts de progresso/sucesso/erro durante o carregamento, incluindo botão "Cancelar".
  * - Emite o evento global `model-cache-updated` ao concluir o download de um modelo.
  *
  * @returns Objeto contendo a instância do motor, estado de prontidão,
- * modelo selecionado e função para alterar o modelo.
+ * estado de carregamento, modelo selecionado, função para alterar o modelo
+ * e função para cancelar o carregamento em andamento.
  */
 export function useEngine() {
   const [engine, setEngine] = useState<WebWorkerMLCEngine | null>(null);
   const [selectedModel, setSelectedModel] = useState("");
   const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const loadIdRef = useRef(0);
+
+  /**
+   * Cancela o carregamento do modelo em andamento.
+   *
+   * @remarks
+   * Invalida o identificador de carregamento atual, destrói o Web Worker
+   * e o motor singleton (que serão recriados sob demanda), limpa a seleção
+   * de modelo e exibe um toast informativo.
+   */
+  const cancelLoading = useCallback(() => {
+    loadIdRef.current++;
+    destroyEngineSingleton();
+    setEngine(null);
+    setSelectedModel("");
+    setIsReady(false);
+    setIsLoading(false);
+    localStorage.removeItem(STORAGE_KEY);
+    toast.info("Carregamento do modelo cancelado.", {
+      id: LOADING_TOAST_ID,
+      duration: 2000,
+    });
+  }, []);
+
+  /**
+   * Exibe ou atualiza o toast de progresso de carregamento do modelo.
+   * @param percent - Percentual de progresso (0–100).
+   */
+  const showLoadingToast = useCallback(
+    (percent: number) => {
+      const clamped = Math.min(100, Math.max(0, Math.round(percent)));
+      toast.loading(`Carregando modelo (${clamped}%)`, {
+        id: LOADING_TOAST_ID,
+        duration: Infinity,
+        action: {
+          label: "Cancelar",
+          onClick: cancelLoading,
+        },
+      });
+    },
+    [cancelLoading]
+  );
 
   /** Restaura o último modelo selecionado a partir do `localStorage`. */
   useEffect(() => {
@@ -97,7 +143,10 @@ export function useEngine() {
     const currentLoadId = ++loadIdRef.current;
     const sharedEngine = getEngineSingleton();
 
-    Promise.resolve().then(() => setIsReady(false));
+    Promise.resolve().then(() => {
+      setIsReady(false);
+      setIsLoading(true);
+    });
     showLoadingToast(0);
 
     sharedEngine.setInitProgressCallback((report: InitProgressReport) => {
@@ -113,6 +162,7 @@ export function useEngine() {
         if (currentLoadId !== loadIdRef.current) return;
         setEngine(sharedEngine);
         setIsReady(true);
+        setIsLoading(false);
         window.dispatchEvent(new CustomEvent("model-cache-updated"));
         toast.success("Modelo carregado e pronto para uso!", {
           id: LOADING_TOAST_ID,
@@ -121,6 +171,7 @@ export function useEngine() {
       })
       .catch((error) => {
         if (currentLoadId !== loadIdRef.current) return;
+        setIsLoading(false);
         console.error("Erro ao carregar o modelo:", error);
         toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${error}`, {
           id: LOADING_TOAST_ID,
@@ -131,7 +182,7 @@ export function useEngine() {
     return () => {
       toast.dismiss(LOADING_TOAST_ID);
     };
-  }, [selectedModel]);
+  }, [selectedModel, showLoadingToast]);
 
-  return { engine, isReady, selectedModel, setSelectedModel };
+  return { engine, isReady, isLoading, selectedModel, setSelectedModel, cancelLoading };
 }
