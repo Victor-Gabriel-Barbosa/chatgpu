@@ -63,6 +63,9 @@ export interface ChatMessageProps {
 
   /** Define se há uma resposta em streaming sendo gerada no momento. */
   isGenerating?: boolean;
+
+  /** Define se a engine está pronta. */
+  isReady?: boolean;
 }
 
 /**
@@ -194,6 +197,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   handleSubmitEdit,
   isLastAssistant,
   isGenerating,
+  isReady
 }) => {
   const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
 
@@ -340,6 +344,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                   className="h-8 w-8 text-muted-foreground"
                   onClick={() => setIsEditing(true)}
                   title="Editar mensagem"
+                  aria-label="Editar mensagem"
+                  disabled={!isReady || isGenerating}
                 >
                   <Pencil className="w-4 h-4" />
                 </Button>

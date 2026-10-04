@@ -185,6 +185,7 @@ export default function ChatInterface() {
                             handleSubmitEdit={handleSubmitEdit}
                             isLastAssistant={index === lastAssistantIndex}
                             isGenerating={isGenerating}
+                            isReady={isReady}
                           />
                         </MessageScrollerItem>
                       ))}
