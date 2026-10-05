@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useState, type ChangeEvent, type ClipboardEvent } from "react";
+import { useState } from "react";
 import { ChatMessage } from "@/components/chat-message";
 import { Plus } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";

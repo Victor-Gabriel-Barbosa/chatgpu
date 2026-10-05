@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
+import { Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button"

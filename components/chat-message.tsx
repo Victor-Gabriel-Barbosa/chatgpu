@@ -290,7 +290,10 @@ export function ChatMessage({
                 {files.length > 0 && (
                   <InputGroupAddon align="block-start" className="min-w-0 flex-col items-start">
                   {files.map((file, idx) => (
-                    <InputGroupText className="min-w-0 max-w-full font-mono font-medium">
+                    <InputGroupText 
+                      key={`file-${idx}`}
+                      className="min-w-0 max-w-full font-mono font-medium"
+                    >
                       <File className="shrink-0" />
                       <span className="truncate">{file.name}</span>
                     </InputGroupText>
