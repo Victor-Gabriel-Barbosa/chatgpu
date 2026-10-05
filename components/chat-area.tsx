@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils"
 interface ChatInputProps {
   /** Texto atual no campo de entrada. */
   value: string
-  
+
   /**
    * Função chamada para atualizar o texto no campo de entrada.
    * @param value - Texto atual no campo de entrada.
@@ -95,7 +95,7 @@ export function ChatArea({
   currentSpeed,
   onOpenModelManager,
   className,
-}: ChatInputProps) {
+}: Readonly<ChatInputProps>) {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
@@ -139,7 +139,7 @@ export function ChatArea({
   }
 
   return (
-    <div className={cn("mx-auto w-full max-w-180", className)}>
+    <div className={cn("mx-auto w-full max-w-190 px-5", className)}>
       <div
         className={cn(
           "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
@@ -194,11 +194,11 @@ export function ChatArea({
           onChange={(e) => onValueChange(e.target.value)}
           onPaste={handlePaste}
           onKeyDown={handleKeyDown}
-          className="max-h-55 min-h-12 resize-none overflow-y-auto leading-6 field-sizing-content px-2.5"
+          className="max-h-55 min-h-12 resize-none overflow-y-auto leading-6 field-sizing-content px-3"
         />
 
         <InputGroupAddon align="block-end" className="min-w-0">
-          {/* Anexar arquivo */}
+          {/* Anexar arquivo(s) */}
           <Tooltip>
             <TooltipTrigger asChild>
               <InputGroupButton
@@ -274,16 +274,16 @@ export function ChatArea({
           ) : (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className="ml-auto">
-                  <InputGroupButton
-                    variant="default"
-                    size="icon-sm"
-                    aria-label="Enviar mensagem"
-                    onClick={() => onSend(attachedFiles)}
-                  >
-                    <SendHorizontal />
-                  </InputGroupButton>
-                </span>
+                <InputGroupButton
+                  variant="default"
+                  size="icon-sm"
+                  className="ml-auto"
+                  aria-label="Enviar mensagem"
+                  disabled={!isReady || (value.trim().length === 0 && attachedFiles.length === 0)}
+                  onClick={() => onSend(attachedFiles)}
+                >
+                  <SendHorizontal />
+                </InputGroupButton>
               </TooltipTrigger>
               <TooltipContent side="bottom">
                 <p>Enviar</p>

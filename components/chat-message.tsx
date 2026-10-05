@@ -193,7 +193,7 @@ export function ChatMessage({
   isLastAssistant,
   isGenerating,
   isReady,
-}: ChatMessageProps) {
+}: Readonly<ChatMessageProps>) {
   const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
 
   const [showReasoning, setShowReasoning] = useState(false);
@@ -287,17 +287,16 @@ export function ChatMessage({
                     Atualizar
                   </InputGroupButton>
                 </InputGroupAddon>
-                <InputGroupAddon align="block-start" className="min-w-0 flex-col items-start">
+                {files.length > 0 && (
+                  <InputGroupAddon align="block-start" className="min-w-0 flex-col items-start">
                   {files.map((file, idx) => (
-                    <InputGroupText
-                      key={idx}
-                      className="min-w-0 max-w-full font-mono font-medium"
-                    >
+                    <InputGroupText className="min-w-0 max-w-full font-mono font-medium">
                       <File className="shrink-0" />
                       <span className="truncate">{file.name}</span>
                     </InputGroupText>
                   ))}
                 </InputGroupAddon>
+                )}
               </InputGroup>
             ) : (
               <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>

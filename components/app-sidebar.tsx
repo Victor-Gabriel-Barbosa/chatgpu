@@ -117,7 +117,7 @@ export function AppSidebar({
   exportChat,
   renameChat,
   setSettingsOpen
-}: AppSidebarProps) {
+}: Readonly<AppSidebarProps>) {
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
   const [editingChatId, setEditingChatId] = useState<string | null>(null);

@@ -32,8 +32,7 @@ export interface CodeBlockProps {
 export function CodeBlock({ 
   language, 
   code 
-}: CodeBlockProps) {
-  const [copied, setCopied] = useState<boolean>(false);
+}: Readonly<CodeBlockProps>) {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const ext = language ? language.toLowerCase() : 'txt';
@@ -111,7 +110,7 @@ export function CodeBlock({
             className="text-muted-foreground"
             size="icon"
           >
-            {copied ? <Check /> : <Copy />}
+            <Copy />
           </Button>
         </div>
       </div>

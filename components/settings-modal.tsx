@@ -59,7 +59,7 @@ export function SettingsModal({
   onClose, 
   onWatchIntroVideo, 
   setIsModelManagerOpen 
-}: SettingsModalProps) {
+}: Readonly<SettingsModalProps>) {
   const { theme, setTheme } = useTheme();
 
   return (

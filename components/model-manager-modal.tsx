@@ -71,9 +71,9 @@ export function ModelManagerModal({
    * Confirma a remoção de um modelo.
    * @param modelId - Identificador do modelo a ser removido.
    */
-  const handleConfirmDelete = (modelId: string) => {
+  const handleConfirmDelete = async (modelId: string) => {
     setConfirmingDeleteId(null);
-    deleteModel(modelId);
+    await deleteModel(modelId);
     setSelectModel("");
   };
 
@@ -120,6 +120,7 @@ export function ModelManagerModal({
         <div className="px-4">
           <InputGroup className="w-full">
             <InputGroupInput
+              id="model-manager-search"
               placeholder="Pesquisar modelos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -197,7 +198,7 @@ export function ModelManagerModal({
                               disabled={!model.isCached || isGenerating}
                             />
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium leading-tight break-words">
+                              <p className="text-sm font-medium leading-tight wrap-break-word">
                                 {model.name}
                               </p>
                               <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
