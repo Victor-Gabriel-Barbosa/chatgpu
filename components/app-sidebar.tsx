@@ -191,7 +191,7 @@ export function AppSidebar({
                 variant="ghost"
                 onClick={toggleSidebar}
                 aria-label={isExpanded ? "Fechar barra lateral" : "Abrir barra lateral"}
-                className="group/toggle text-muted-foreground ml-auto"
+                className={cn("group/toggle text-muted-foreground", isExpanded || isMobile ? "ml-auto" : "")}
                 size="icon"
               >
                 {isExpanded || isMobile ? (
@@ -199,7 +199,7 @@ export function AppSidebar({
                 ) : (
                   <>
                     <Image
-                      className="absolute transition-opacity duration-200 opacity-100 group-hover/toggle:opacity-0"
+                      className="absolute transition-opacity duration-400 opacity-100 group-hover/toggle:opacity-0"
                       src="/icon0.svg"
                       alt="ChatGPU"
                       width={20}
