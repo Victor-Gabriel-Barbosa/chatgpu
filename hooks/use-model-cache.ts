@@ -66,7 +66,7 @@ export function useModelCache() {
 
   /** Inicializa a verificação de cache quando o hook é montado. */
   useEffect(() => {
-    Promise.resolve().then(() => refreshCacheStatus());
+    queueMicrotask(() => refreshCacheStatus());
   }, [refreshCacheStatus]);
 
   /** Deleta um modelo do cache. */

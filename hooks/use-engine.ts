@@ -137,7 +137,7 @@ export function useEngine() {
   /** Restaura o último modelo selecionado a partir do `localStorage`. */
   useEffect(() => {
     const savedModel = localStorage.getItem(STORAGE_KEY);
-    if (savedModel) Promise.resolve().then(() => setSelectedModel(savedModel));
+    if (savedModel) queueMicrotask(() => setSelectedModel(savedModel));
   }, []);
 
   /** Atualiza o `localStorage` com o modelo selecionado. */
@@ -152,7 +152,7 @@ export function useEngine() {
     const currentLoadId = ++loadIdRef.current;
     const sharedEngine = getEngineSingleton();
 
-    Promise.resolve().then(() => {
+    queueMicrotask(() => {
       setIsReady(false);
       setIsLoading(true);
     });

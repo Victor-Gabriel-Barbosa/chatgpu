@@ -439,4 +439,4 @@ export function ChatMessage({
       </MessageContent>
     </Message>
   );
-};
+}
