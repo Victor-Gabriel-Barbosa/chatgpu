@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Copy, Download, Code2, Maximize2, Minimize2, LayoutTemplate } from 'lucide-react';
+import { Copy, Download, Code2, Maximize2, X, LayoutTemplate } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button"
@@ -29,9 +29,9 @@ export interface CodeBlockProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX com a barra de ferramentas e o código ou preview renderizado.
  */
-export function CodeBlock({ 
-  language, 
-  code 
+export function CodeBlock({
+  language,
+  code
 }: Readonly<CodeBlockProps>) {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -57,8 +57,8 @@ export function CodeBlock({
   };
 
   return (
-    <div className="my-4 bg-background border rounded-xl overflow-hidden shadow-sm w-full">
-      <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b min-w-0 overflow-auto">
+    <div className="my-4 bg-background border border-border rounded-xl overflow-hidden shadow-sm w-full">
+      <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b border-border min-w-0 overflow-auto">
         <div className="flex items-center gap-4">
           <span className="font-sans lowercase">{language || 'code'}</span>
 
@@ -116,7 +116,7 @@ export function CodeBlock({
       </div>
 
       {isHtml && activeTab === 'preview' ? (
-        <div className="bg-white w-full">
+        <div className="w-full">
           <iframe
             srcDoc={code}
             title="HTML Preview"
@@ -141,7 +141,7 @@ export function CodeBlock({
             <SyntaxHighlighter
               language={ext}
               style={vscDarkPlus}
-              customStyle={{ margin: 0, padding: '1rem', background: 'transparent', fontSize: '0.875rem', lineHeight: '1.5' }}
+              customStyle={{ margin: 0, padding: '1rem', background: 'transparent', fontSize: '1rem', lineHeight: '1.5' }}
               PreTag="div"
             >
               {code}
@@ -152,29 +152,22 @@ export function CodeBlock({
 
       {/* Preview em tela cheia */}
       {isFullscreen && typeof document !== 'undefined' ? createPortal(
-        <div className="absolute inset-0 z-10 bg-background flex flex-col animate-in fade-in duration-200">
-          <div className="flex items-center justify-between px-4 py-3 bg-background">
-            <div className="flex items-center gap-2">
-              <LayoutTemplate className="text-foreground" />
-              <span className="text-xl font-semibold text-foreground">Preview</span>
-            </div>
-            <Button
-              variant="ghost"
-              onClick={() => setIsFullscreen(false)}
-              title="Minimizar preview"
-              size="icon"
-            >
-              <Minimize2 />
-            </Button>
-          </div>
-          <div className="flex-1 bg-white">
-            <iframe
-              srcDoc={code}
-              title="HTML Preview Fullscreen"
-              className="w-full h-full border-0"
-              sandbox="allow-scripts allow-forms"
-            />
-          </div>
+        <div className="absolute inset-0 z-10 flex flex-col animate-in fade-in duration-800">
+          <Button
+            variant="secondary"
+            onClick={() => setIsFullscreen(false)}
+            title="Fechar preview"
+            size="icon"
+            className="absolute top-4 right-4"
+          >
+            <X />
+          </Button>
+          <iframe
+            srcDoc={code}
+            title="HTML Preview Fullscreen"
+            className="w-full h-full border-0"
+            sandbox="allow-scripts allow-forms"
+          />
         </div>,
         document.getElementById('main-chat-area') || document.body
       ) : null}
