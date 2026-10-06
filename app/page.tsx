@@ -120,7 +120,7 @@ export default function ChatInterface() {
                           scrollAnchor={message.role === "user"}
                         >
                           <ChatMessage
-                            key={index}
+                            key={JSON.stringify([currentChatId, index])}
                             msg={message}
                             index={index}
                             handleSubmitEdit={handleSubmitEdit}
