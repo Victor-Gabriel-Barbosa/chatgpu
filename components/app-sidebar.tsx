@@ -178,9 +178,11 @@ export function AppSidebar({
         <div className="flex items-center">
           <Link
             href="/"
-            className="flex items-center gap-2 overflow-hidden group-data-[collapsible=icon]:hidden px-2"
+            className="flex items-center gap-0.5 overflow-hidden group-data-[collapsible=icon]:hidden"
           >
-            <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
+            <span className="flex size-8 shrink-0 items-center justify-center">
+              <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
+            </span>
             <span className="font-semibold text-primary truncate whitespace-nowrap">
               ChatGPU
             </span>
@@ -192,7 +194,7 @@ export function AppSidebar({
                 variant="ghost"
                 onClick={toggleSidebar}
                 aria-label={isExpanded ? "Fechar barra lateral" : "Abrir barra lateral"}
-                className={cn("group/toggle text-muted-foreground", isExpanded || isMobile ? "ml-auto" : "")}
+                className={cn("group/toggle relative size-8 shrink-0 text-muted-foreground", isExpanded || isMobile ? "ml-auto" : "")}
                 size="icon"
               >
                 {isExpanded || isMobile ? (
