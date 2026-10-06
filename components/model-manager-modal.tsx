@@ -1,7 +1,25 @@
 "use client";
 
 import { useState, useMemo, useDeferredValue } from "react";
-import { Download, HardDrive, HardDriveDownload, Loader, RefreshCw, Search, Trash2, X, Cpu } from "lucide-react";
+import { 
+  Download, 
+  HardDrive, 
+  HardDriveDownload, 
+  Loader, 
+  RefreshCw, 
+  Search, 
+  Trash2, 
+  X, 
+  Cpu, 
+  SlidersHorizontal, 
+  ArrowDownAZ,
+  ArrowUp10,
+  ArrowDown10,
+  Save,
+  SaveOff,
+  TextAlignJustify,
+  TextAlignStart
+} from "lucide-react";
 import { useModelCache } from "@/hooks/use-model-cache";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -17,6 +35,14 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import { cn } from "@/lib/utils";
 
@@ -58,14 +84,25 @@ export function ModelManagerModal({
   const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useModelCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("none");
+  const [sortOrder, setSortOrder] = useState("none");
   const deferredQuery = useDeferredValue(searchQuery);
 
   /** Filtra e agrupa os modelos com base na pesquisa. */
   const groups = useMemo(() => {
     const query = deferredQuery.trim().toLowerCase();
-    const visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
+    let visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
+
+    if (filter === "downloaded") visible = visible.filter((m) => m.isCached);
+    if (filter === "not-downloaded") visible = visible.filter((m) => !m.isCached);
+    if (sortOrder === "alphabetical") visible = visible.sort((a, b) => a.name.localeCompare(b.name));
+    if (sortOrder === "size-asc") visible = visible.sort((a, b) => a.sizeGB - b.sizeGB);
+    if (sortOrder === "size-desc") visible = visible.sort((a, b) => b.sizeGB - a.sizeGB);
+    if (sortOrder === "vram-asc") visible = visible.sort((a, b) => (a.vramGB ?? Infinity) - (b.vramGB ?? Infinity));
+    if (sortOrder === "vram-desc") visible = visible.sort((a, b) => (b.vramGB ?? -Infinity) - (a.vramGB ?? -Infinity));
+
     return Map.groupBy(visible, (m) => m.groupLabel);
-  }, [models, deferredQuery]);
+  }, [models, deferredQuery, filter, sortOrder]);
 
   /**
    * Confirma a remoção de um modelo.
@@ -142,6 +179,67 @@ export function ModelManagerModal({
                 </Button>
               </InputGroupAddon>
             )}
+            <InputGroupAddon align="inline-end">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="Filtrar modelos"
+                    title="Filtrar modelos"
+                  >
+                    <SlidersHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40">
+                  <DropdownMenuRadioGroup value={filter} onValueChange={setFilter}>
+                    <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
+                    <DropdownMenuRadioItem value="none">
+                      <TextAlignJustify />
+                      Todos
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="downloaded">
+                      <Save />
+                      Baixados
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="not-downloaded">
+                      <SaveOff />
+                      Não baixados
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                  <DropdownMenuRadioGroup value={sortOrder} onValueChange={setSortOrder}>
+                    <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
+                    <DropdownMenuRadioItem value="none">
+                      <TextAlignStart />
+                      Sem ordenação
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="alphabetical">
+                      <ArrowDownAZ /> 
+                      Ordem alfabética
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="size-asc">
+                     <ArrowDown10 />
+                      Menor tamanho
+                    </DropdownMenuRadioItem>
+
+                    <DropdownMenuRadioItem value="size-desc">
+                      <ArrowUp10 />
+                      Maior tamanho
+                    </DropdownMenuRadioItem>
+
+                    <DropdownMenuRadioItem value="vram-asc">
+                      <ArrowDown10 />
+                      Menor VRAM
+                    </DropdownMenuRadioItem>
+
+                    <DropdownMenuRadioItem value="vram-desc">
+                      <ArrowUp10 />
+                      Maior VRAM
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </InputGroupAddon>
           </InputGroup>
         </div>
 

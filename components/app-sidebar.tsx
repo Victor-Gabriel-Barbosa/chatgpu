@@ -46,6 +46,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
 import { cn } from "@/lib/utils"
 
@@ -211,7 +212,12 @@ export function AppSidebar({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>{isExpanded ? "Minimizar" : "Expandir"}</p>
+              {isExpanded ? "Minimizar" : "Expandir"}{" "}
+              <KbdGroup>
+                <Kbd>Ctrl</Kbd>
+                <span>+</span>
+                <Kbd>B</Kbd>
+              </KbdGroup>
             </TooltipContent>
           </Tooltip>
         </div>
