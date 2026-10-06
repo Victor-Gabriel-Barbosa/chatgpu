@@ -55,10 +55,13 @@ export interface Message {
   content: string;
 
   /** Texto de raciocínio interno opcional gerado pelo modelo antes da resposta. */
-  reasoning?: string;
+  think?: string;
 
   /** Métricas de desempenho da geração da mensagem. */
   metrics?: MessageMetrics;
+
+  /** Lista de arquivos embutidos ou anexados à mensagem. */
+  files?: EmbeddedFile[];
 }
 
 /** Representa um arquivo embutido no corpo da mensagem. */
@@ -68,16 +71,4 @@ export interface EmbeddedFile {
 
   /** Conteúdo textual interno do arquivo. */
   content: string;
-}
-
-/** Estrutura resultante da separação do conteúdo bruto de uma mensagem. */
-export interface ParsedMessageContent {
-  /** Bloco de raciocínio da IA contido nas tags `<think>`, se presente. */
-  think: string | null;
-
-  /** Conteúdo textual principal da mensagem limpo de tags especiais. */
-  mainContent: string;
-  
-  /** Lista de arquivos anexados ou embutidos no corpo da mensagem. */
-  files: EmbeddedFile[];
 }

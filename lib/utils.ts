@@ -1,7 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { toast } from "sonner";
-import type { ParsedMessageContent, EmbeddedFile } from '@/types/chat';
 
 /**
  * Combina classes CSS de forma condicional e resolve conflitos de estilo do Tailwind CSS.
@@ -43,51 +42,3 @@ export async function copyToClipboard(content: string): Promise<void> {
     toast.error("Falha ao copiar a mensagem. Tente novamente");
   }
 }
-
-/**
- * Separa o bloco de raciocínio e os arquivos embutidos do conteúdo principal da mensagem.
- *
- * @remarks
- * Extrai dados das tags `<file name="...">...</file>` e blocos `<think>...</think>`,
- * tratando inclusive tags incompletas durante streaming.
- *
- * @param content - Conteúdo completo e bruto da mensagem.
- * @returns Objeto contendo o raciocínio extraído, o conteúdo principal e a lista de arquivos.
- */
-export const parseMessageContent = (content: string): ParsedMessageContent => {
-  if (!content) return { think: null, mainContent: '', files: [] };
-
-  const files: EmbeddedFile[] = [];
-  let processedContent = content;
-
-  const fileRegex = /<file name="([^"]+)">([\s\S]*?)<\/file>/g;
-  let match;
-  while ((match = fileRegex.exec(processedContent)) !== null) {
-    files.push({
-      name: match[1],
-      content: match[2].trim()
-    });
-  }
-
-  processedContent = processedContent.replace(/<file name="[^"]+">[\s\S]*?<\/file>/g, '').trim();
-
-  const thinkMatch = new RegExp(/<think>([\s\S]*?)<\/think>/).exec(processedContent);
-  if (thinkMatch) {
-    return {
-      think: thinkMatch[1].trim(),
-      mainContent: processedContent.replace(/<think>[\s\S]*?<\/think>/, '').trim(),
-      files
-    };
-  }
-
-  const openThinkMatch = new RegExp(/<think>([\s\S]*)/).exec(processedContent);
-  if (openThinkMatch) {
-    return {
-      think: openThinkMatch[1].trim(),
-      mainContent: processedContent.replace(/<think>[\s\S]*/, '').trim(),
-      files
-    };
-  }
-
-  return { think: null, mainContent: processedContent, files };
-};

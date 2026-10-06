@@ -60,7 +60,7 @@ export function useModelCache() {
       setCacheStatus(Object.fromEntries(entries));
     } finally {
       setIsChecking(false);
-      refreshStorageEstimate();
+      queueMicrotask(() => refreshStorageEstimate());
     }
   }, [flatModels, refreshStorageEstimate]);
 

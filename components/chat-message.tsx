@@ -37,7 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { cn, copyToClipboard, parseMessageContent } from "@/lib/utils";
+import { cn, copyToClipboard } from "@/lib/utils";
 
 /** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
@@ -83,14 +83,11 @@ export function ChatMessage({
   isGenerating,
   isReady,
 }: Readonly<ChatMessageProps>) {
-  const { think: parsedThink, mainContent, files } = parseMessageContent(msg.content);
-
   const [showReasoning, setShowReasoning] = useState(false);
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(mainContent);
+  const [editValue, setEditValue] = useState(msg.content);
 
-  const displayReasoning = parsedThink || msg.reasoning;
   const isUser = msg.role === 'user';
 
   /** Alterna o estado de expansão de um arquivo específico. */
@@ -100,14 +97,14 @@ export function ChatMessage({
 
   /** Salva a edição da mensagem. */
   const onSaveEdit = () => {
-    const trimmedValue = (editValue + files.map((f) => `<file name="${f.name}">${f.content}</file>`).join("\n")).trim();
+    const trimmedValue = editValue.trim();
     if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index);
     setIsEditing(false);
   };
 
   /** Cancela a edição da mensagem. */
   const onCancelEdit = () => {
-    setEditValue(mainContent);
+    setEditValue(msg.content);
     setIsEditing(false);
   };
 
@@ -127,7 +124,7 @@ export function ChatMessage({
 
       <MessageContent className="min-h-16">
         {/* Bloco de raciocínio */}
-        {displayReasoning && !isUser && (
+        {msg?.think && !isUser && (
           <div key="reasoning">
             <Button
               variant="link"
@@ -143,7 +140,7 @@ export function ChatMessage({
             {showReasoning && (
               <div className="mt-2 p-3 bg-muted/30 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
-                  {displayReasoning}
+                  {msg.think}
                 </ReactMarkdown>
               </div>
             )}
@@ -172,13 +169,13 @@ export function ChatMessage({
                   <InputGroupButton size="sm" className="ml-auto" variant="secondary" onClick={onCancelEdit}>
                     Cancelar
                   </InputGroupButton>
-                  <InputGroupButton size="sm" variant="default" disabled={editValue.trim() === "" || editValue.trim() === mainContent} onClick={onSaveEdit}>
+                  <InputGroupButton size="sm" variant="default" disabled={editValue.trim() === "" || editValue.trim() === msg.content} onClick={onSaveEdit}>
                     Atualizar
                   </InputGroupButton>
                 </InputGroupAddon>
-                {files.length > 0 && (
+                {msg?.files && msg.files.length > 0 && (
                   <InputGroupAddon align="block-start" className="min-w-0 flex-col items-start">
-                  {files.map((file, idx) => (
+                  {msg.files.map((file, idx) => (
                     <InputGroupText 
                       key={`file-${idx}`}
                       className="min-w-0 max-w-full font-mono font-medium"
@@ -192,14 +189,14 @@ export function ChatMessage({
               </InputGroup>
             ) : (
               <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
-                {mainContent}
+                {msg.content}
               </ReactMarkdown>
             )}
 
             {/* Arquivos Anexados */}
-            {files.length > 0 && !isEditing && (
+            {msg?.files && msg?.files?.length > 0 && !isEditing && (
               <div className="flex flex-wrap gap-2">
-                {files.map((file, idx) => {
+                {msg.files.map((file, idx) => {
                   const isExpanded = expandedFiles[idx];
 
                   return (
@@ -232,7 +229,7 @@ export function ChatMessage({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-muted-foreground"
-                onClick={() => copyToClipboard(mainContent)}
+                onClick={() => copyToClipboard(msg.content)}
                 title="Copiar mensagem"
               >
                 <Copy className="w-4 h-4" />

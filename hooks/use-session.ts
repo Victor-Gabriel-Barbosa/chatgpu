@@ -30,7 +30,6 @@ export interface UseSessionProps {
  */
 export function useSession({ engine, isReady }: UseSessionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentSpeed, setCurrentSpeed] = useState<number | null>(null);
   const [chats, setChats] = useState<ChatSession[]>([]);
@@ -151,11 +150,12 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   };
 
   /**
-   * Exporta os dados da conversa em arquivo JSON, suportando download no navegador ou escrita nativa via Tauri.
+   * Exporta os dados da conversa em arquivo JSON.
    * @param chatId - Identificador do chat a ser exportado.
    */
-  const exportChat = async (chatId: string) => {
+  const exportChat = (chatId: string) => {
     const chat = chats.find((c) => c.id === chatId);
+
     if (!chat) {
       toast.error("Chat não encontrado para exportação");
       return;
@@ -165,32 +165,18 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const fileName = `${chat.title || "chat"}.json`;
 
     try {
-      if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
-        const { save } = await import("@tauri-apps/plugin-dialog");
-        const { writeTextFile } = await import("@tauri-apps/plugin-fs");
+      const blob = new Blob([chatData], {
+        type: "application/json",
+      });
 
-        const filePath = await save({
-          defaultPath: fileName,
-          filters: [{ name: "JSON", extensions: ["json"] }],
-        });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
 
-        if (!filePath) return;
+      link.href = url;
+      link.download = fileName;
+      link.click();
 
-        await writeTextFile(filePath, chatData);
-      } else {
-        const blob = new Blob([chatData], {
-          type: "application/json",
-        });
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = fileName;
-        link.click();
-
-        URL.revokeObjectURL(url);
-      }
+      URL.revokeObjectURL(url);
 
       toast.success("Chat exportado com sucesso");
     } catch (error) {
@@ -226,29 +212,30 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    *
    * @param files - Lista opcional de arquivos anexados cujo conteúdo textual será incluído no prompt.
    */
-  const handleSend = async (files: File[] = []) => {
-    if (engine == null || (!input.trim() && files.length === 0)) return;
+  const handleSend = async (input: string, files?: File[]) => {
+    if (engine == null || (!input.trim() && files && files?.length === 0)) return;
 
-    let prompt = input;
-    if (files.length > 0) {
-      if (input.trim()) prompt += "\n";
-      for (const file of files) {
-        try {
-          const textContent = await fileToMarkdown(file);
-          prompt += `<file name="${file.name}">\n${textContent}\n</file>\n`;
-        } catch (error) {
-          console.error(`Erro ao ler o arquivo ${file.name}`, error);
-          toast.error(`Erro ao ler o arquivo ${file.name}`);
+    const newMessage: Message = {
+      role: "user",
+      content: input.trim(),
+    };
+
+    if (files && files.length > 0) {
+      await Promise.all(
+        files.map(async (file) => {
+          const markdown = await fileToMarkdown(file);
+          newMessage.files = newMessage.files || [];
+          newMessage.files.push({
+            name: file.name,
+            content: markdown
+          });
         }
-      }
+        ))
     }
-
-    const userMsg = prompt.trim();
-    setInput("");
 
     const newMessages: Message[] = [
       ...messages,
-      { role: "user", content: userMsg },
+      newMessage,
     ];
     setMessages(newMessages);
     setIsGenerating(true);
@@ -259,10 +246,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       activeChatId = Date.now().toString();
       setCurrentChatId(activeChatId);
 
-      const fileRegex = /<file name="([^"]+)">/g;
-      const fileNames = Array.from(userMsg.matchAll(fileRegex), (match) => match[1]);
-      const title = fileNames.length > 0? fileNames.join(", ") : userMsg;
-
+      const title = newMessage.content?.trim() || newMessage.files?.[0]?.name || "Novo Chat";
       const newChat: ChatSession = {
         id: activeChatId,
         title: title.length > 30 ? title.slice(0, 27) + "..." : title,
@@ -347,8 +331,6 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
   return {
     messages,
-    input,
-    setInput,
     isGenerating,
     currentSpeed,
     chats,

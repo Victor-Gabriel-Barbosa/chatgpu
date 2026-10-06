@@ -29,20 +29,60 @@ export async function streamAssistantReply(
 
   const completion = await engine.chat.completions.create({
     stream: true,
-    messages: chatHistory.map(({ role, content }) => ({ role, content })),
+    messages: chatHistory.map(({ role, content, files }) => ({
+      role,
+      content: [
+        content,
+        ...(files ?? []).map(
+          (file) => `<file>\n${file.name}\n${file.content}\n</file>`,
+        ),
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
+    })),
     stream_options: { include_usage: true },
   });
 
   const startTime = performance.now();
   let resp = "";
+  let think = "";
   let tokenCount = 0;
   let firstTokenTime: number | null = null;
+  let pendingText = "";
+  let insideThink = false;
   let metrics: MessageMetrics = {};
+
+  const updateParsedOutput = () => {
+    const append = (text: string) => {
+      if (insideThink) think += text;
+      else resp += text;
+    };
+
+    while (pendingText.length > 0) {
+      const tag = insideThink ? "</think>" : "<think>";
+      const tagIndex = pendingText.indexOf(tag);
+
+      if (tagIndex !== -1) {
+        append(pendingText.slice(0, tagIndex));
+        pendingText = pendingText.slice(tagIndex + tag.length);
+        insideThink = !insideThink;
+        continue;
+      }
+
+      const lastLt = pendingText.lastIndexOf("<");
+      const isPartialTag = lastLt >= 0 && tag.startsWith(pendingText.slice(lastLt));
+      const cut = isPartialTag ? lastLt : pendingText.length;
+
+      append(pendingText.slice(0, cut));
+      pendingText = pendingText.slice(cut);
+      return;
+    }
+  };
 
   const commit = (persist = false) => {
     setMessages((prev) => {
       const next = [...prev];
-      next[next.length - 1] = { ...next[next.length - 1], content: resp, metrics };
+      next[next.length - 1] = { ...next[next.length - 1], content: resp, think, metrics };
       if (persist) updateChatMessages(chatId, next);
       return next;
     });
@@ -51,7 +91,8 @@ export async function streamAssistantReply(
   for await (const chunk of completion) {
     const delta = chunk.choices[0]?.delta?.content;
     if (delta) {
-      resp += delta;
+      pendingText += delta;
+      updateParsedOutput();
       tokenCount++;
       firstTokenTime ??= performance.now();
 

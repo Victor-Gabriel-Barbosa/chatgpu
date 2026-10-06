@@ -1,10 +1,9 @@
 "use client"
 
-import Image from "next/image"
-import * as React from "react"
-import { ACCEPTED_FILE_TYPES } from "@/config/file-types"
+import Image from "next/image";
+import * as React from "react";
+import { ACCEPTED_FILE_TYPES } from "@/config/file-types";
 import { useState, type ChangeEvent, type ClipboardEvent } from "react";
-
 import {
   File as FileIcon,
   HardDrive,
@@ -14,7 +13,6 @@ import {
   X,
   Zap,
 } from "lucide-react"
-
 import {
   InputGroup,
   InputGroupAddon,
@@ -27,24 +25,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+
 import { cn } from "@/lib/utils"
 
 /** Propriedades do componente de entrada do chat {@link ChatArea}. */
 interface ChatInputProps {
-  /** Texto atual no campo de entrada. */
-  value: string
-
-  /**
-   * Função chamada para atualizar o texto no campo de entrada.
-   * @param value - Texto atual no campo de entrada.
-   */
-  onValueChange: (value: string) => void
-
   /**
    * Função chamada para enviar uma mensagem.
    * @param files - Arquivos anexados à mensagem.
    */
-  onSend: (files: File[]) => void
+  onSend: (message: string, files: File[]) => void
 
   /** Função chamada para interromper a geração de texto. */
   onStop: () => void
@@ -83,8 +73,6 @@ interface ChatInputProps {
  * @param props - Propriedades utilizadas para configurar a área de entrada do chat.
  */
 export function ChatArea({
-  value,
-  onValueChange,
   onSend,
   onStop,
   isReady,
@@ -96,6 +84,7 @@ export function ChatArea({
   onOpenModelManager,
   className,
 }: Readonly<ChatInputProps>) {
+  const [input, setInput] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
@@ -134,7 +123,11 @@ export function ChatArea({
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      if (isReady && (attachedFiles.length > 0 || value.trim().length > 0) && !isGenerating) onSend(attachedFiles)
+      if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) {
+        onSend(input.trim(), attachedFiles);
+        setInput("");
+        setAttachedFiles([]);
+      }
     }
   }
 
@@ -181,7 +174,7 @@ export function ChatArea({
         {/* Entrada de texto */}
         <InputGroupTextarea
           id="chat-input"
-          value={value}
+          value={input}
           rows={1}
           disabled={!isReady}
           placeholder={
@@ -191,7 +184,7 @@ export function ChatArea({
                 ? "Carregando modelo..."
                 : "Selecione um modelo..."
           }
-          onChange={(e) => onValueChange(e.target.value)}
+          onChange={(e) => setInput(e.target.value)}
           onPaste={handlePaste}
           onKeyDown={handleKeyDown}
           className="max-h-55 min-h-12 resize-none overflow-y-auto leading-6 field-sizing-content px-3"
@@ -279,8 +272,12 @@ export function ChatArea({
                   size="icon-sm"
                   className="ml-auto"
                   aria-label="Enviar mensagem"
-                  disabled={!isReady || (value.trim().length === 0 && attachedFiles.length === 0)}
-                  onClick={() => onSend(attachedFiles)}
+                  disabled={!isReady || (input.trim().length === 0 && attachedFiles.length === 0)}
+                  onClick={() => { 
+                    onSend(input.trim(), attachedFiles); 
+                    setInput(""); 
+                    setAttachedFiles([]); 
+                  }}
                 >
                   <SendHorizontal />
                 </InputGroupButton>

@@ -41,8 +41,6 @@ export default function ChatInterface() {
   const { engine, isReady, selectedModel, setSelectedModel } = useEngine();
   const {
     messages,
-    input,
-    setInput,
     isGenerating,
     currentSpeed,
     chats,
@@ -141,8 +139,6 @@ export default function ChatInterface() {
           {/* Área de entrada */}
           <ChatArea
             className="pb-4"
-            value={input}
-            onValueChange={setInput}
             onSend={handleSend}
             onStop={handleStop}
             onOpenModelManager={() => setIsModelManagerOpen(true)}
