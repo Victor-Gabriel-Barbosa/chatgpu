@@ -13,8 +13,6 @@ import {
   Cpu, 
   SlidersHorizontal, 
   ArrowDownAZ,
-  ArrowUp10,
-  ArrowDown10,
   Save,
   SaveOff,
   TextAlignJustify,
@@ -96,10 +94,8 @@ export function ModelManagerModal({
     if (filter === "downloaded") visible = visible.filter((m) => m.isCached);
     if (filter === "not-downloaded") visible = visible.filter((m) => !m.isCached);
     if (sortOrder === "alphabetical") visible = visible.sort((a, b) => a.name.localeCompare(b.name));
-    if (sortOrder === "size-asc") visible = visible.sort((a, b) => a.sizeGB - b.sizeGB);
-    if (sortOrder === "size-desc") visible = visible.sort((a, b) => b.sizeGB - a.sizeGB);
-    if (sortOrder === "vram-asc") visible = visible.sort((a, b) => (a.vramGB ?? Infinity) - (b.vramGB ?? Infinity));
-    if (sortOrder === "vram-desc") visible = visible.sort((a, b) => (b.vramGB ?? -Infinity) - (a.vramGB ?? -Infinity));
+    if (sortOrder === "size") visible = visible.sort((a, b) => a.sizeGB - b.sizeGB);
+    if (sortOrder === "vram") visible = visible.sort((a, b) => (a.vramGB ?? Infinity) - (b.vramGB ?? Infinity));
 
     return Map.groupBy(visible, (m) => m.groupLabel);
   }, [models, deferredQuery, filter, sortOrder]);
@@ -211,30 +207,20 @@ export function ModelManagerModal({
                     <DropdownMenuLabel>Ordenar por</DropdownMenuLabel>
                     <DropdownMenuRadioItem value="none">
                       <TextAlignStart />
-                      Sem ordenação
+                      Padrão
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="size">
+                     <HardDriveDownload />
+                      Tamanho
+                    </DropdownMenuRadioItem>
+
+                    <DropdownMenuRadioItem value="vram">
+                      <Cpu />
+                      VRAM
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="alphabetical">
                       <ArrowDownAZ /> 
-                      Ordem alfabética
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="size-asc">
-                     <ArrowDown10 />
-                      Menor tamanho
-                    </DropdownMenuRadioItem>
-
-                    <DropdownMenuRadioItem value="size-desc">
-                      <ArrowUp10 />
-                      Maior tamanho
-                    </DropdownMenuRadioItem>
-
-                    <DropdownMenuRadioItem value="vram-asc">
-                      <ArrowDown10 />
-                      Menor VRAM
-                    </DropdownMenuRadioItem>
-
-                    <DropdownMenuRadioItem value="vram-desc">
-                      <ArrowUp10 />
-                      Maior VRAM
+                      Nome (A–Z)
                     </DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
@@ -276,7 +262,7 @@ export function ModelManagerModal({
                         <div
                           key={model.id}
                           className={cn(
-                            "flex items-center justify-between gap-3 rounded-xl border bg-card p-3 transition-colors",
+                            "flex items-center justify-between gap-1 rounded-xl border bg-card p-3 transition-colors",
                             isActive && "border-primary bg-accent/40"
                           )}
                         >
@@ -284,7 +270,7 @@ export function ModelManagerModal({
                           <label
                             htmlFor={`model-${model.id}`}
                             className={cn(
-                              "flex items-center gap-3 min-w-0 flex-1",
+                              "flex items-center gap-2 min-w-0 flex-1",
                               model.isCached && !isGenerating
                                 ? "cursor-pointer"
                                 : "cursor-not-allowed opacity-70"
