@@ -52,11 +52,12 @@ export async function streamAssistantReply(
   let insideThink = false;
   let metrics: MessageMetrics = {};
 
+  /** Atualiza o conteúdo da mensagem do assistente com base no texto pendente e nas tags `<think>`. */
   const updateParsedOutput = () => {
     const append = (text: string) => {
       if (insideThink) think += text;
       else resp += text;
-    };
+    }
 
     while (pendingText.length > 0) {
       const tag = insideThink ? "</think>" : "<think>";
@@ -79,6 +80,10 @@ export async function streamAssistantReply(
     }
   };
 
+  /**
+   * Atualiza o estado das mensagens com o conteúdo atual e as métricas de geração.
+   * @param persist - Indica se as mensagens devem ser persistidas no banco de dados local.
+   */
   const commit = (persist = false) => {
     setMessages((prev) => {
       const next = [...prev];
@@ -86,8 +91,9 @@ export async function streamAssistantReply(
       if (persist) updateChatMessages(chatId, next);
       return next;
     });
-  };
+  }
 
+  /** Processa cada chunk do stream de resposta, atualizando o conteúdo e as métricas em tempo real. */
   for await (const chunk of completion) {
     const delta = chunk.choices[0]?.delta?.content;
     if (delta) {

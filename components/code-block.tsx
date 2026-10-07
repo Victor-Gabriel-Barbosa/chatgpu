@@ -6,7 +6,7 @@ import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { copyToClipboard } from '@/lib/utils';
+import { copyToClipboard, downloadFile } from '@/lib/utils';
 
 /** Propriedades do componente {@link CodeBlock}. */
 export interface CodeBlockProps {
@@ -37,24 +37,6 @@ export function CodeBlock({
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const ext = language ? language.toLowerCase() : 'txt';
   const isHtml = ext === 'html';
-
-  /** Gera e dispara o download do código em um arquivo de texto com a extensão correspondente à linguagem. */
-  const handleDownload = () => {
-    const filename = `snippet.${ext}`;
-
-    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    URL.revokeObjectURL(url);
-  };
 
   return (
     <div className="my-4 bg-background border border-border rounded-xl overflow-hidden shadow-sm w-full">
@@ -96,7 +78,7 @@ export function CodeBlock({
           )}
           <Button
             variant="ghost"
-            onClick={handleDownload}
+            onClick={() => downloadFile(`snippet.${ext}`, code)}
             title="Download"
             className="text-muted-foreground"
             size="icon"
@@ -173,4 +155,4 @@ export function CodeBlock({
       ) : null}
     </div>
   );
-};
+}

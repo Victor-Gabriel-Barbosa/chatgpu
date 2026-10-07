@@ -42,3 +42,21 @@ export async function copyToClipboard(content: string): Promise<void> {
     toast.error("Falha ao copiar a mensagem. Tente novamente");
   }
 }
+
+/**
+ * Faz o download de um arquivo.
+ * @param filename - Nome do arquivo a ser baixado.
+ * @param content - Conteúdo do arquivo.
+ * @param type - Tipo MIME do arquivo.
+ */
+export const downloadFile = (
+  filename: string,
+  content: string,
+  type = "text/plain"
+) => {
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([content], { type }));
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+};

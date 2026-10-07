@@ -18,7 +18,7 @@ export const reasoningComponents: Components = {
   strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
   a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{children}</a>,
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>
-};
+}
 
 /** Mapeamento de componentes customizados para renderização de Markdown no corpo da mensagem. */
 export const messageComponents: Components = {
@@ -43,4 +43,4 @@ export const messageComponents: Components = {
   hr: () => <hr className="border border-border my-4" />,
   a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{children}</a>,
   p: ({ children }) => <p className="mb-2 last:mb-0 max-w-full">{children}</p>
-};
+}

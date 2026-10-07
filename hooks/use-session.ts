@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { fileToMarkdown } from "@/lib/fileToMarkdown";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
 import { streamAssistantReply } from "@/lib/stream-assistant-reply";
+import { downloadFile } from "@/lib/utils";
 
 /** Propriedades para inicialização do hook {@link useSession}. */
 export interface UseSessionProps {
@@ -161,23 +162,12 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       return;
     }
 
-    const chatData = JSON.stringify(chat, null, 2);
-    const fileName = `${chat.title || "chat"}.json`;
-
     try {
-      const blob = new Blob([chatData], {
-        type: "application/json",
-      });
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = fileName;
-      link.click();
-
-      URL.revokeObjectURL(url);
-
+      downloadFile(
+        `${chat.title || "chat"}.json`,
+        JSON.stringify(chat, null, 2),
+        "application/json"
+      );
       toast.success("Chat exportado com sucesso");
     } catch (error) {
       console.error(error);
@@ -209,7 +199,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * @remarks
    * Converte arquivos anexados em texto plano delimitado por tags `<file>`, inicializa uma nova sessão
    * caso não haja chat ativo e gerencia o streaming da resposta do assistente.
-   *
+   * @param input - Texto da mensagem do usuário a ser enviada ao modelo.
    * @param files - Lista opcional de arquivos anexados cujo conteúdo textual será incluído no prompt.
    */
   const handleSend = async (input: string, files?: File[]) => {
@@ -229,8 +219,8 @@ export function useSession({ engine, isReady }: UseSessionProps) {
             name: file.name,
             content: markdown
           });
-        }
-        ))
+        })
+      );
     }
 
     const newMessages: Message[] = [

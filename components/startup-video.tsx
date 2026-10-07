@@ -91,4 +91,4 @@ export function StartupVideo({
       </button>
     </dialog>
   );
-};
+}

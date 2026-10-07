@@ -178,7 +178,7 @@ export function AppSidebar({
         <div className="flex items-center">
           <Link
             href="/"
-            className="flex items-center gap-0.5 overflow-hidden group-data-[collapsible=icon]:hidden"
+            className="flex items-center gap-0.5 overflow-hidden group-data-[collapsible=icon]:hidden pr-1.5"
           >
             <span className="flex size-8 shrink-0 items-center justify-center">
               <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
@@ -230,7 +230,12 @@ export function AppSidebar({
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton variant="outline" onClick={createNewChat} tooltip="Novo Chat">
+                <SidebarMenuButton
+                  variant="outline"
+                  onClick={createNewChat}
+                  disabled={isGenerating}
+                  tooltip="Novo Chat"
+                >
                   <Plus strokeWidth={2.5} />
                   <span>Novo Chat</span>
                 </SidebarMenuButton>

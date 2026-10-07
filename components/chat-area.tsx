@@ -97,17 +97,9 @@ export function ChatArea({
 
   /** Adiciona arquivos copiados para a área de transferência à lista de anexos. */
   const handlePaste = (e: ClipboardEvent<HTMLTextAreaElement>) => {
-    const items = Array.from(e.clipboardData.items);
-
-    const files = items
-      .filter((item) => item.kind === "file")
-      .map((item) => item.getAsFile())
-      .filter((file): file is File => file !== null);
-
+    const files = Array.from(e.clipboardData.files);
     if (files.length === 0) return;
-
     e.preventDefault();
-
     setAttachedFiles((prev) => [...prev, ...files]);
   };
 
@@ -116,6 +108,15 @@ export function ChatArea({
     setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  /** Envia a mensagem digitada pelo usuário. */
+  const handleSend = () => {
+    if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) {
+      onSend(input.trim(), attachedFiles);
+      setInput("");
+      setAttachedFiles([]);
+    }
+  }
+
   /**
    * Lida com eventos de teclado no campo de entrada.
    * @param e - Evento de teclado.
@@ -123,11 +124,7 @@ export function ChatArea({
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) {
-        onSend(input.trim(), attachedFiles);
-        setInput("");
-        setAttachedFiles([]);
-      }
+      if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) handleSend()
     }
   }
 
@@ -154,7 +151,7 @@ export function ChatArea({
             {attachedFiles.map((file, i) => (
               <div
                 key={`${file.name}-${i}`}
-                className="flex items-center gap-1.5 rounded-lg border bg-card py-1 pr-1.5 pl-2.5 text-xs shadow-sm"
+                className="flex items-center gap-1.5 rounded-lg border bg-card p-1.5 text-xs shadow-sm"
               >
                 <FileIcon className="shrink-0" size={16} />
                 <span className="max-w-32 truncate">{file.name}</span>
@@ -273,11 +270,7 @@ export function ChatArea({
                   className="ml-auto"
                   aria-label="Enviar mensagem"
                   disabled={!isReady || (input.trim().length === 0 && attachedFiles.length === 0)}
-                  onClick={() => { 
-                    onSend(input.trim(), attachedFiles); 
-                    setInput(""); 
-                    setAttachedFiles([]); 
-                  }}
+                  onClick={handleSend}
                 >
                   <SendHorizontal />
                 </InputGroupButton>

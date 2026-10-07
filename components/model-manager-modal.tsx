@@ -89,8 +89,8 @@ export function ModelManagerModal({
   /** Filtra e agrupa os modelos com base na pesquisa. */
   const groups = useMemo(() => {
     const query = deferredQuery.trim().toLowerCase();
+    
     let visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
-
     if (filter === "downloaded") visible = visible.filter((m) => m.isCached);
     if (filter === "not-downloaded") visible = visible.filter((m) => !m.isCached);
     if (sortOrder === "alphabetical") visible = visible.sort((a, b) => a.name.localeCompare(b.name));
