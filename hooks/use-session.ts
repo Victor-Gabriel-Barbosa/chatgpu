@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
-import { ChatSession, Message } from "@/types/chat";
+import { ChatSession, Message, EmbeddedFile } from "@/types/chat";
 import { toast } from "sonner";
 import { fileToMarkdown } from "@/lib/fileToMarkdown";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
@@ -239,7 +239,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       const title = newMessage.content?.trim() || newMessage.files?.[0]?.name || "Novo Chat";
       const newChat: ChatSession = {
         id: activeChatId,
-        title: title.length > 30 ? title.slice(0, 27) + "..." : title,
+        title: title.length > 50 ? title.slice(0, 47) + "..." : title,
         messages: newMessages,
         updatedAt: Date.now(),
       };
@@ -277,12 +277,13 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * Edita uma mensagem do histórico, descartando as interações posteriores e solicitando nova resposta ao modelo.
    * @param newContent - Novo texto da mensagem editada.
    * @param index - Posição da mensagem no histórico a ser editada.
+   * @param files - Arquivos anexados à mensagem editada.
    */
-  const handleSubmitEdit = async (newContent: string, index: number) => {
+  const handleSubmitEdit = async (newContent: string, index: number, files?: EmbeddedFile[]) => {
     if (isGenerating || !engine || !isReady) return;
 
     const updatedMessages = messages.slice(0, index);
-    updatedMessages.push({ role: "user", content: newContent.trim() });
+    updatedMessages.push({ role: "user", content: newContent.trim(), files: files || [] });
 
     setMessages(updatedMessages);
     setIsGenerating(true);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Copy, Lightbulb, ChevronDown, Pencil, File, Zap } from 'lucide-react';
-import { Message as MessageType } from '@/types/chat';
+import { Message as MessageType, EmbeddedFile } from '@/types/chat';
 import { Button } from "@/components/ui/button";
 import { reasoningComponents, messageComponents } from '@/components/markdown-components';
 import ReactMarkdown from 'react-markdown';
@@ -49,10 +49,10 @@ export interface ChatMessageProps {
 
   /**
    * Função opcional disparada ao salvar a edição do conteúdo de uma mensagem.
-   * @param newContent - Novo conteúdo textual da mensagem.
+   * @param input - Novo conteúdo textual da mensagem.
    * @param index - Índice da mensagem que foi editada.
    */
-  handleSubmitEdit?: (newContent: string, index: number) => void;
+  handleSubmitEdit?: (input: string, index: number, files?: EmbeddedFile[]) => void;
 
   /** Define se a mensagem é a última resposta gerada pelo assistente no histórico. */
   isLastAssistant?: boolean;
@@ -98,7 +98,7 @@ export function ChatMessage({
   /** Salva a edição da mensagem. */
   const onSaveEdit = () => {
     const trimmedValue = editValue.trim();
-    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index);
+    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index, msg.files);
     setIsEditing(false);
   };
 
@@ -149,7 +149,7 @@ export function ChatMessage({
 
         {/* Corpo da mensagem */}
         <Bubble variant={isUser && !isEditing ? "default" : "ghost"}>
-          <BubbleContent className={cn("wrap-break-word", isEditing && "w-full p-0")}>
+          <BubbleContent className={cn("wrap-break-word", isUser && "whitespace-pre-wrap", isEditing && "w-full p-0")}>
             {isEditing ? (
               <InputGroup>
                 <InputGroupTextarea
