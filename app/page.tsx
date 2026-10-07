@@ -107,7 +107,7 @@ export default function ChatInterface() {
           {/* Mensagens */}
           {hasMessages && (
             <div className="flex min-h-0 flex-1 flex-col">
-              <MessageScrollerProvider>
+              <MessageScrollerProvider autoScroll>
                 <MessageScroller>
                   <MessageScrollerViewport>
                     <MessageScrollerContent className="max-w-3xl mx-auto w-full p-8">
