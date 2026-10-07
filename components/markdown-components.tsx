@@ -41,6 +41,6 @@ export const messageComponents: Components = {
   ol: ({ children }) => <ol className="list-decimal list-inside my-2 space-y-1 ml-2">{children}</ol>,
   strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
   hr: () => <hr className="border border-border my-4" />,
-  a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{children}</a>,
+  a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="hover:underline break-all">{children}</a>,
   p: ({ children }) => <p className="mb-2 last:mb-0 max-w-full">{children}</p>
 }
