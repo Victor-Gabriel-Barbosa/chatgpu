@@ -375,4 +375,4 @@ export function AppSidebar({
       <SidebarRail />
     </Sidebar>
   );
-};
+}

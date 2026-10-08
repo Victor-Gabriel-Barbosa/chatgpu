@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import { useTheme } from "next-themes";
 import { Settings, Cpu, Film, HardDrive, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from "@/components/ui/button"
@@ -147,4 +146,4 @@ export function SettingsModal({
       </DialogContent>
     </Dialog>
   );
-};
+}

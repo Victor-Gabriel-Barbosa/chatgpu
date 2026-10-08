@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ export interface StartupVideoProps {
  *
  * @remarks
  * O vídeo é reproduzido automaticamente e pode ser dispensado por clique, término da reprodução,
- * ou pelas teclas `Escape`, `Enter` e `Espaço`. Inclui uma transição suave de fade-out antes de disparar o fechamento.
+ * ou pressionar qualquer tecla. Inclui uma transição suave de fade-out antes de disparar o fechamento.
  *
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX do modal de vídeo ou `null` caso `isOpen` seja falso.
@@ -32,13 +32,10 @@ export function StartupVideo({
   src = "/chatgpu-video.mp4",
 }: Readonly<StartupVideoProps>) {
   const [isClosing, setIsClosing] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   /** Inicia o encerramento da exibição pausando o vídeo e disparando a animação de fade-out. */
   const handleDismiss = useCallback(() => {
     setIsClosing(true);
-    if (videoRef.current) videoRef.current.pause();
-    
     setTimeout(() => {
       onClose();
       setIsClosing(false);
@@ -49,44 +46,40 @@ export function StartupVideo({
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === " " || e.key === "Enter") {
-        e.preventDefault();
-        handleDismiss();
-      }
+    const onKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      handleDismiss();      
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [isOpen, handleDismiss]);
 
   if (!isOpen) return null;
 
   return (
     <dialog
+      open
       aria-modal="true"
       aria-label="Vídeo de Apresentação ChatGPU"
-      open
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center bg-black w-screen h-screen max-w-none max-h-none overflow-hidden border-0 p-0 cursor-pointer select-none transition-opacity duration-700 ease-in-out",
-        isClosing ? "opacity-0 pointer-events-none" : "opacity-100"
+        "fixed inset-0 z-50 h-screen w-screen max-h-none max-w-none overflow-hidden border-0 bg-black p-0 transition-opacity duration-600",
+        isClosing ? "pointer-events-none opacity-0" : "opacity-100"
       )}
     >
       <button
         type="button"
         aria-label="Fechar vídeo de apresentação"
         onClick={handleDismiss}
-        className="w-full h-full cursor-pointer border-0 bg-transparent p-0"
+        className="h-full w-full cursor-pointer"
       >
         <video
           src={src}
-          playsInline
           autoPlay
           muted
+          playsInline
           onEnded={handleDismiss}
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover"
         />
       </button>
     </dialog>
