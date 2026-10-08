@@ -60,7 +60,7 @@ const providers: Array<[RegExp, string]> = [
 const getProvider = (id: string) => providers.find(([re]) => re.test(id))?.[1] ?? "Outros";
 
 /** Gera a lista de modelos e salva em um arquivo JSON. */
-(async () => {
+void (async () => {
   const chatModels = prebuiltAppConfig.model_list.filter((m) => m.model_type !== ModelType.embedding);
 
   const modelList = await Promise.all(

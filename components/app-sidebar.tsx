@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useState, useEffect, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Chat } from "@/types/chat";
 import { Button } from "@/components/ui/button";
 import {
@@ -135,6 +136,12 @@ export function AppSidebar({
     }
   }, [editingChatId]);
 
+  /** Atalho de teclado para criar um novo chat (Ctrl + Shift + O). */
+  useHotkeys("mod+shift+o", () => createNewChat(), {
+    enabled: !isGenerating,
+    preventDefault: true,
+  });
+
   /**
    * Salva o novo nome do chat.
    * @param chatId - Identificador da conversa a ser renomeada.
@@ -234,10 +241,18 @@ export function AppSidebar({
                   variant="outline"
                   onClick={createNewChat}
                   disabled={isGenerating}
-                  tooltip="Novo Chat"
+                  tooltip="Novo chat"
+                  className="group/new-chat whitespace-nowrap"
                 >
                   <Plus strokeWidth={2.5} />
-                  <span>Novo Chat</span>
+                  <span>Novo chat</span>
+                  <KbdGroup className="ml-auto opacity-0 transition-opacity duration-200 group-hover/new-chat:opacity-100">
+                    <Kbd>Ctrl</Kbd>
+                    <span>+</span>
+                    <Kbd>Shift</Kbd>
+                    <span>+</span>
+                    <Kbd>O</Kbd>
+                  </KbdGroup>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

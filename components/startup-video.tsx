@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 import { cn } from "@/lib/utils";
 
@@ -43,17 +44,10 @@ export function StartupVideo({
   }, [onClose]);
 
   /** Gerencia eventos de teclado para permitir o fechamento do modal de vídeo. */
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      handleDismiss();      
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isOpen, handleDismiss]);
+  useHotkeys("*", handleDismiss, {
+    enabled: isOpen,
+    preventDefault: true,
+  });
 
   if (!isOpen) return null;
 

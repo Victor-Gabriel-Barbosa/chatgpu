@@ -35,7 +35,8 @@ export function CodeBlock({
 }: Readonly<CodeBlockProps>) {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-  const ext = language ? language.toLowerCase() : 'txt';
+
+  const ext = language ? language.toLowerCase() : 'md';
   const isHtml = ext === 'html';
 
   return (
