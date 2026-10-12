@@ -149,7 +149,7 @@ export function ChatMessage({
 
         {/* Corpo da mensagem */}
         <Bubble variant={isUser && !isEditing ? "default" : "ghost"}>
-          <BubbleContent className={cn("wrap-break-word", isUser && "whitespace-pre-wrap", isEditing && "w-full p-0")}>
+          <BubbleContent className={cn("wrap-break-word", isEditing && "w-full p-0")}>
             {isEditing ? (
               <InputGroup>
                 <InputGroupTextarea
@@ -188,7 +188,7 @@ export function ChatMessage({
                 )}
               </InputGroup>
             ) : (
-              <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
                 {msg.content}
               </ReactMarkdown>
             )}
