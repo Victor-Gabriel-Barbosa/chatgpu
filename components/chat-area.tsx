@@ -175,8 +175,8 @@ export function ChatArea({
           rows={1}
           disabled={!isReady}
           placeholder={
-            (isReady && "Envie uma mensagem...") ||
             (isGenerating && "Gerando resposta...") ||
+            (isReady && "Envie uma mensagem...") ||
             (hasSelectedModel && "Carregando modelo...") ||
             "Selecione um modelo..."
           }
