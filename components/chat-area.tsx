@@ -173,7 +173,6 @@ export function ChatArea({
           id="chat-input"
           value={input}
           rows={1}
-          disabled={!isReady}
           placeholder={
             (isGenerating && "Gerando resposta...") ||
             (isReady && "Envie uma mensagem...") ||
@@ -194,7 +193,6 @@ export function ChatArea({
                 variant="default"
                 size="icon-sm"
                 aria-label="Anexar arquivo"
-                disabled={!isReady}
                 onClick={() => fileInputRef.current?.click()}
                 className="shrink-0"
               >
