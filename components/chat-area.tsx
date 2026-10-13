@@ -87,11 +87,6 @@ export function ChatArea({
   const [input, setInput] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement>(null)
-  const placeholder =
-    (isReady && "Envie uma mensagem...") ||
-    (isGenerating && "Gerando resposta...") ||
-    (hasSelectedModel && "Carregando modelo...") ||
-    "Selecione um modelo..."
 
   /** Adiciona os arquivos escolhidos pelo usuário à lista de anexos. */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -179,7 +174,12 @@ export function ChatArea({
           value={input}
           rows={1}
           disabled={!isReady}
-          placeholder={placeholder}
+          placeholder={
+            (isReady && "Envie uma mensagem...") ||
+            (isGenerating && "Gerando resposta...") ||
+            (hasSelectedModel && "Carregando modelo...") ||
+            "Selecione um modelo..."
+          }
           onChange={(e) => setInput(e.target.value)}
           onPaste={handlePaste}
           onKeyDown={handleKeyDown}
