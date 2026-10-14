@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useDeferredValue } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Chat } from "@/types/chat";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,12 @@ import {
   PanelLeftOpen,
   Pencil,
   Trash2,
+  Search,
   Sun,
   Moon,
   Monitor,
   Upload,
+  X,
 } from "lucide-react";
 import {
   Tooltip,
@@ -32,6 +34,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
   Sidebar,
   SidebarContent,
@@ -124,9 +127,17 @@ export function AppSidebar({
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const isExpanded = state === "expanded";
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /** Filtra os chats com base na pesquisa. */
+  const visibleChats = useMemo(() => {
+    const query = deferredSearchQuery.trim().toLowerCase();
+    return query ? chats.filter((chat) => chat.title.toLowerCase().includes(query)) : chats;
+  }, [chats, deferredSearchQuery]);
 
   /** Foca no input de renomear quando o modo de edição é ativado. */
   useEffect(() => {
@@ -262,9 +273,36 @@ export function AppSidebar({
         {/* Lista de conversas */}
         <SidebarGroup>
           <SidebarGroupLabel>Conversas</SidebarGroupLabel>
+          <div className="pb-2 group-data-[collapsible=icon]:hidden">
+            <InputGroup className="w-full">
+              <InputGroupInput
+                id="app-sidebar-search"
+                placeholder="Pesquisar conversas..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Pesquisar conversas"
+              />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+              {searchQuery && (
+                <InputGroupAddon align="inline-end">
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setSearchQuery("")}
+                    aria-label="Limpar pesquisa"
+                    title="Limpar pesquisa"
+                  >
+                    <X />
+                  </Button>
+                </InputGroupAddon>
+              )}
+            </InputGroup>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {chats.map((chat) => (
+              {visibleChats.map((chat) => (
                 <SidebarMenuItem key={chat.id}>
                   {editingChatId === chat.id ? (
                     <div className="flex h-8 items-center gap-2 rounded-md px-2">
@@ -338,6 +376,11 @@ export function AppSidebar({
                   )}
                 </SidebarMenuItem>
               ))}
+              {searchQuery.trim() && visibleChats.length === 0 && (
+                <li className="px-2 py-1.5 text-sm text-muted-foreground">
+                  Nenhuma conversa encontrada
+                </li>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
