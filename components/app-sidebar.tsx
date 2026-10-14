@@ -136,8 +136,8 @@ export function AppSidebar({
   /** Filtra os chats com base na pesquisa. */
   const visibleChats = useMemo(() => {
     const query = deferredSearchQuery.trim().toLowerCase();
-    return query ? chats.filter((chat) => chat.title.toLowerCase().includes(query)) : chats;
-  }, [chats, deferredSearchQuery]);
+    return query && isExpanded ? chats.filter((chat) => chat.title.toLowerCase().includes(query)) : chats;
+  }, [chats, deferredSearchQuery, isExpanded]);
 
   /** Foca no input de renomear quando o modo de edição é ativado. */
   useEffect(() => {
