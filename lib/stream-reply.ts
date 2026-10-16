@@ -53,7 +53,7 @@ export async function streamReply(
   let metrics: MessageMetrics = {};
 
   /** Atualiza o conteúdo da mensagem do assistente com base no texto pendente e nas tags `<think>`. */
-  const updateParsedOutput = () => {
+  const updateOutput = () => {
     const append = (text: string) => {
       if (insideThink) think += text;
       else resp += text;
@@ -98,7 +98,7 @@ export async function streamReply(
     const delta = chunk.choices[0]?.delta?.content;
     if (delta) {
       pendingText += delta;
-      updateParsedOutput();
+      updateOutput();
       tokenCount++;
       firstTokenTime ??= performance.now();
 

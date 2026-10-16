@@ -42,34 +42,32 @@ export default function ChatInterface() {
   const {
     messages,
     isGenerating,
-    currentSpeed,
     chats,
-    currentChatId,
+    chatId,
     handleNewChat,
     handleRenameChat,
     loadChat,
     deleteChat,
     exportChat,
     handleSend,
-    handleSubmitEdit,
+    handleEdit,
     handleStop,
   } = useSession({ engine, isReady });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isModelManagerOpen, setIsModelManagerOpen] = useState(false);
-  const [isStartupVideoOpen, setIsStartupVideoOpen] = useState(true);
-
+  const [isVideoOpen, setIsVideoOpen] = useState(true);
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const isEmpty = messages.length === 0;
-  const selectedModelName = models.flatMap(group => group.options).find(model => model.id === selectedModel)?.name;
+  const modelName = models.flatMap(group => group.options).find(model => model.id === selectedModel)?.name;
 
   return (
     <>
       {/* Barra lateral */}
       <AppSidebar
         chats={chats}
-        chatId={currentChatId}
+        chatId={chatId}
         isGenerating={isGenerating}
-        setCurrentChatId={loadChat}
+        setChatId={loadChat}
         createNewChat={handleNewChat}
         deleteChat={deleteChat}
         exportChat={exportChat}
@@ -86,7 +84,7 @@ export default function ChatInterface() {
           <SidebarTrigger />
 
           <span className="font-medium truncate max-w-50">
-            {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
+            {chats.find((chat) => chat.id === chatId)?.title || "Novo Chat"}
           </span>
 
           <Button
@@ -118,10 +116,10 @@ export default function ChatInterface() {
                           scrollAnchor={message.role === "user"}
                         >
                           <ChatMessage
-                            key={JSON.stringify([currentChatId, index])}
+                            key={JSON.stringify([chatId, index])}
                             message={message}
                             index={index}
-                            handleEdit={handleSubmitEdit}
+                            handleEdit={handleEdit}
                             isLast={index === lastAssistantIndex}
                             isGenerating={isGenerating}
                             isReady={isReady}
@@ -144,10 +142,8 @@ export default function ChatInterface() {
             onOpen={() => setIsModelManagerOpen(true)}
             isReady={isReady}
             isGenerating={isGenerating}
-            hasModel={!!selectedModel}
             isEmpty={isEmpty}
-            modelName={selectedModelName}
-            currentSpeed={currentSpeed}
+            modelName={modelName}
           />
         </div>
       </SidebarInset>
@@ -155,9 +151,9 @@ export default function ChatInterface() {
       {/* Modal de configurações */}
       {isSettingsOpen && (
         <Settings
-          modelName={selectedModelName}
+          modelName={modelName}
           onClose={() => setIsSettingsOpen(false)}
-          onWatch={() => setIsStartupVideoOpen(true)}
+          onWatch={() => setIsVideoOpen(true)}
           setIsModelManagerOpen={setIsModelManagerOpen}
         />
       )}
@@ -174,8 +170,8 @@ export default function ChatInterface() {
 
       {/* Vídeo de introdução na inicialização */}
       <Video
-        isOpen={isStartupVideoOpen}
-        onClose={() => setIsStartupVideoOpen(false)}
+        isOpen={isVideoOpen}
+        onClose={() => setIsVideoOpen(false)}
       />
 
       {/* Toaster para notificações */}

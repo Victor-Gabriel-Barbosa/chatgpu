@@ -100,8 +100,8 @@ export function ChatMessage({
 
   /** Salva a edição da mensagem. */
   const onSaveEdit = () => {
-    const trimmedValue = editValue.trim();
-    if (trimmedValue && trimmedValue !== message.content && handleEdit) handleEdit(trimmedValue, index, message.files);
+    const value = editValue.trim();
+    if (value && value !== message.content && handleEdit) handleEdit(value, index, message.files);
     setIsEditing(false);
   };
 
@@ -276,7 +276,7 @@ export function ChatMessage({
                 </TooltipTrigger>
                 <TooltipContent side="top" className="text-xs">
                   <div className="flex flex-col gap-1 font-mono text-xs">
-                    <p className="font-semibold text-center pb-1 border-b border-secondary text-secondary">Desempenho da Geração</p>
+                    <p className="font-semibold text-center pb-1 border-b border-secondary text-secondary">Desempenho da geração</p>
                     {message.metrics?.tokensPerSecond !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Velocidade:</span>

@@ -35,4 +35,4 @@ class ChatDatabase extends Dexie {
 export const db = new ChatDatabase();
 
 /** Chave usada na tabela `settings` para persistir o ID do chat atualmente selecionado. */
-export const CURRENT_CHAT_SETTING_KEY = "chatgpu-current-session";
+export const CHAT_SETTING_KEY = "chatgpu-session";

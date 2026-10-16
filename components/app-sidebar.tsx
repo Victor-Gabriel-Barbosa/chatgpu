@@ -69,7 +69,7 @@ export interface AppSidebarProps {
    * Seleciona uma conversa pelo seu identificador.
    * @param id - Identificador da conversa a ser selecionada.
    */
-  setCurrentChatId: (id: string) => void;
+  setChatId: (id: string) => void;
 
   /** Função para iniciar uma nova conversa. */
   createNewChat: () => void;
@@ -119,7 +119,7 @@ export function AppSidebar({
   chats,
   chatId,
   isGenerating,
-  setCurrentChatId,
+  setChatId,
   createNewChat,
   deleteChat,
   exportChat,
@@ -188,7 +188,7 @@ export function AppSidebar({
    */
   const handleSelectChat = (id: string) => {
     if (editingChatId !== null) return;
-    setCurrentChatId(id);
+    setChatId(id);
     if (isMobile) setOpenMobile(false);
   };
 

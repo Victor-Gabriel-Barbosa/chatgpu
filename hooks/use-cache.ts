@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { hasModelInCache, deleteModelAllInfoInCache } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 import { models as Models } from "@/config/models.json";
-import type { ManagedModel, StorageEstimateInfo } from "@/types/model";
+import type { ManagedModel, StorageInfo } from "@/types/model";
 import { sleep } from "@/lib/utils";
 
 /**
@@ -27,20 +27,20 @@ export function useCache() {
   const [cacheStatus, setCacheStatus] = useState<Record<string, boolean>>({});
   const [isChecking, setIsChecking] = useState(true);
   const [deletingModelId, setDeletingModelId] = useState<string | null>(null);
-  const [storageEstimate, setStorageEstimate] = useState<StorageEstimateInfo | null>(null);
+  const [storageInfo, setStorageInfo] = useState<StorageInfo | null>(null);
 
   /** Atualiza a estimativa de uso do armazenamento. */
-  const refreshStorageEstimate = useCallback(async () => {
+  const refreshStorageInfo = useCallback(async () => {
     if (!navigator.storage?.estimate) return;
     try {
       const { usage = 0, quota = 0 } = await navigator.storage.estimate();
-      setStorageEstimate({
+      setStorageInfo({
         usedGB: (usage / 1e9).toFixed(2),
         quotaGB: (quota / 1e9).toFixed(2),
         percent: quota > 0 ? Math.round((usage / quota) * 100) : 0,
       });
     } catch {
-      setStorageEstimate(null);
+      setStorageInfo(null);
     }
   }, []);
 
@@ -60,9 +60,9 @@ export function useCache() {
       setCacheStatus(Object.fromEntries(entries));
     } finally {
       setIsChecking(false);
-      queueMicrotask(() => refreshStorageEstimate());
+      queueMicrotask(() => refreshStorageInfo());
     }
-  }, [flatModels, refreshStorageEstimate]);
+  }, [flatModels, refreshStorageInfo]);
 
   /** Inicializa a verificação de cache quando o hook é montado. */
   useEffect(() => {
@@ -83,10 +83,10 @@ export function useCache() {
       } finally {
         setDeletingModelId(null);
         await sleep(500);
-        await refreshStorageEstimate();
+        await refreshStorageInfo();
       }
     },
-    [refreshStorageEstimate]
+    [refreshStorageInfo]
   );
 
   /** Atualiza o cache quando o evento global `model-cache-updated` é emitido. */
@@ -111,7 +111,7 @@ export function useCache() {
     models,
     isChecking,
     deletingModelId,
-    storageEstimate,
+    storageInfo,
     deleteModel,
     refreshCacheStatus,
   };

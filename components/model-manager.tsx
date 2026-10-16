@@ -83,7 +83,7 @@ export function ModelManager({
   onClose,
   className
 }: Readonly<ModelManagerProps>) {
-  const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useCache();
+  const { models, isChecking, deletingModelId, storageInfo, deleteModel, refreshCacheStatus } = useCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("none");
@@ -363,9 +363,9 @@ export function ModelManager({
           <Field className="w-full max-w-sm">
             <FieldLabel>
               <span>Armazenamento usado no navegador</span>
-              <span className="ml-auto">{storageEstimate?.usedGB ?? "N/A"} GB / {storageEstimate?.quotaGB ?? "N/A"} GB</span>
+              <span className="ml-auto">{storageInfo?.usedGB ?? "N/A"} GB / {storageInfo?.quotaGB ?? "N/A"} GB</span>
             </FieldLabel>
-            <Progress value={storageEstimate?.percent ?? 0} />
+            <Progress value={storageInfo?.percent ?? 0} />
           </Field>
         </DialogFooter>
       </DialogContent>

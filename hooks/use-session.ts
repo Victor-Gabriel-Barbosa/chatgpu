@@ -3,7 +3,7 @@ import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { ChatSession, Message, TextFile, type SendMessage } from "@/types/chat";
 import { toast } from "sonner";
 import { fileToMarkdown } from "@/lib/file-to-markdown";
-import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
+import { db, CHAT_SETTING_KEY } from "@/db/database";
 import { streamReply } from "@/lib/stream-reply";
 import { downloadFile } from "@/lib/utils";
 
@@ -32,9 +32,9 @@ export interface UseSessionProps {
 export function useSession({ engine, isReady }: UseSessionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentSpeed, setCurrentSpeed] = useState<number | null>(null);
+  const [speed, setSpeed] = useState<number | null>(null);
   const [chats, setChats] = useState<ChatSession[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [chatId, setChatId] = useState<string | null>(null);
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
   /** Carrega as sessões de chat salvas do banco de dados quando o hook é montado. */
@@ -47,21 +47,21 @@ export function useSession({ engine, isReady }: UseSessionProps) {
           .orderBy("updatedAt")
           .reverse()
           .toArray();
-        const savedCurrentChatSetting = await db.settings.get(
-          CURRENT_CHAT_SETTING_KEY,
+        const savedChatSetting = await db.settings.get(
+          CHAT_SETTING_KEY,
         );
 
         if (!isMounted) return;
 
         setChats(savedChats);
 
-        const savedCurrentChatId = savedCurrentChatSetting?.value ?? null;
-        if (savedCurrentChatId) {
+        const savedChatId = savedChatSetting?.value ?? null;
+        if (savedChatId) {
           const activeChat = savedChats.find(
-            (c: ChatSession) => c.id === savedCurrentChatId,
+            (c: ChatSession) => c.id === savedChatId,
           );
           if (activeChat) {
-            setCurrentChatId(savedCurrentChatId);
+            setChatId(savedChatId);
             setMessages(activeChat.messages);
           }
         }
@@ -86,25 +86,25 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     const persistCurrentChatId = async () => {
       try {
-        if (currentChatId) {
+        if (chatId) {
           await db.settings.put({
-            key: CURRENT_CHAT_SETTING_KEY,
-            value: currentChatId,
+            key: CHAT_SETTING_KEY,
+            value: chatId,
           });
-        } else await db.settings.delete(CURRENT_CHAT_SETTING_KEY);
+        } else await db.settings.delete(CHAT_SETTING_KEY);
       } catch (error) {
         console.error("Erro ao salvar sessão atual:", error);
       }
     };
 
     persistCurrentChatId();
-  }, [currentChatId, isSessionLoaded]);
+  }, [chatId, isSessionLoaded]);
 
   /** Inicia uma nova conversa, limpando as mensagens exibidas e desmarcando o chat ativo. */
   const handleNewChat = () => {
     if (isGenerating) return;
     setMessages([]);
-    setCurrentChatId(null);
+    setChatId(null);
   };
 
   /**
@@ -132,7 +132,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chat = chats.find((c) => c.id === chatId);
     if (chat) {
       setMessages(chat.messages);
-      setCurrentChatId(chatId);
+      setChatId(chatId);
     }
   };
 
@@ -142,7 +142,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    */
   const deleteChat = (chatId: string) => {
     setChats((prev) => prev.filter((c) => c.id !== chatId));
-    if (currentChatId === chatId) handleNewChat();
+    if (chatId === chatId) handleNewChat();
 
     db.chats.delete(chatId).catch((error) => {
       console.error("Erro ao excluir chat:", error);
@@ -231,11 +231,11 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     setMessages(newMessages);
     setIsGenerating(true);
 
-    let activeChatId = currentChatId;
+    let activeChatId = chatId;
     if (activeChatId) updateChatMessages(activeChatId, newMessages);
     else {
       activeChatId = Date.now().toString();
-      setCurrentChatId(activeChatId);
+      setChatId(activeChatId);
 
       const title = newMessage.content?.trim() || newMessage.files?.[0]?.name || "Novo Chat";
       const newChat: ChatSession = {
@@ -256,21 +256,21 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chatHistory = [...newMessages];
 
     try {
-      setCurrentSpeed(null);
+      setSpeed(null);
       await streamReply(
         engine,
         chatHistory,
         activeChatId,
         setMessages,
         updateChatMessages,
-        setCurrentSpeed,
+        setSpeed,
       );
     } catch (error) {
       console.error("Erro na inferência:", error);
       toast.error(`Erro na inferência: ${error}`);
     } finally {
       setIsGenerating(false);
-      setCurrentSpeed(null);
+      setSpeed(null);
     }
   };
 
@@ -280,7 +280,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * @param index - Posição da mensagem no histórico a ser editada.
    * @param files - Arquivos anexados à mensagem editada.
    */
-  const handleSubmitEdit = async (newContent: string, index: number, files?: TextFile[]) => {
+  const handleEdit = async (newContent: string, index: number, files?: TextFile[]) => {
     if (isGenerating || !engine || !isReady) return;
 
     const updatedMessages = messages.slice(0, index);
@@ -289,26 +289,26 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     setMessages(updatedMessages);
     setIsGenerating(true);
 
-    if (currentChatId) updateChatMessages(currentChatId, updatedMessages);
+    if (chatId) updateChatMessages(chatId, updatedMessages);
 
     const chatHistory = [...updatedMessages];
 
     try {
-      setCurrentSpeed(null);
+      setSpeed(null);
       await streamReply(
         engine,
         chatHistory,
-        currentChatId!,
+        chatId!,
         setMessages,
         updateChatMessages,
-        setCurrentSpeed,
+        setSpeed,
       );
     } catch (error) {
       console.error("Erro na inferência (edição):", error);
       toast.error(`Erro na inferência (edição): ${error}`);
     } finally {
       setIsGenerating(false);
-      setCurrentSpeed(null);
+      setSpeed(null);
     }
   };
 
@@ -316,24 +316,24 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const handleStop = () => {
     if (engine && isGenerating) {
       engine.interruptGenerate();
-      setCurrentSpeed(null);
-      if (currentChatId) updateChatMessages(currentChatId, messages);
+      setSpeed(null);
+      if (chatId) updateChatMessages(chatId, messages);
     }
   };
 
   return {
     messages,
     isGenerating,
-    currentSpeed,
+    speed,
     chats,
-    currentChatId,
+    chatId,
     handleNewChat,
     handleRenameChat,
     loadChat,
     deleteChat,
     exportChat,
     handleSend,
-    handleSubmitEdit,
+    handleEdit,
     handleStop,
   };
 }

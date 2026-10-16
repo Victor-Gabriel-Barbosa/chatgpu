@@ -35,34 +35,28 @@ interface ChatInputProps {
    * Função chamada para enviar uma mensagem.
    * @param message - Mensagem do usuário a ser enviada ao modelo.
    */
-  onSend: (message: SendMessage) => void
+  onSend: (message: SendMessage) => void;
 
   /** Função chamada para interromper a geração de texto. */
-  onStop: () => void
+  onStop: () => void;
 
   /** Função chamada para abrir o gerenciador de modelos. */
-  onOpen: () => void
+  onOpen: () => void;
 
   /** Indica se o chat está pronto para enviar mensagens. */
-  isReady: boolean
+  isReady: boolean;
 
   /** Indica se uma resposta está sendo gerada. */
-  isGenerating: boolean
-
-  /** Indica se tem um modelo selecionado. */
-  hasModel: boolean
+  isGenerating: boolean;
 
   /** Indica se o chat esta vazio. */
-  isEmpty: boolean
+  isEmpty: boolean;
 
   /** Nome do modelo selecionado. */
-  modelName?: string | null
-
-  /** Velocidade atual de geração. */
-  currentSpeed?: number | null
+  modelName?: string;
 
   /** Classe CSS adicional para o componente. */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -78,21 +72,19 @@ export function ChatArea({
   onStop,
   isReady,
   isGenerating,
-  hasModel,
   isEmpty,
   modelName,
-  currentSpeed,
   onOpen,
   className,
 }: Readonly<ChatInputProps>) {
   const [input, setInput] = useState("");
-  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   /** Adiciona os arquivos escolhidos pelo usuário à lista de anexos. */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files ?? []);
-    if (selected.length > 0) setAttachedFiles((prev) => [...prev, ...selected]);
+    if (selected.length > 0) setFiles((prev) => [...prev, ...selected]);
     e.target.value = "";
   };
 
@@ -101,20 +93,20 @@ export function ChatArea({
     const files = Array.from(e.clipboardData.files);
     if (files.length === 0) return;
     e.preventDefault();
-    setAttachedFiles((prev) => [...prev, ...files]);
+    setFiles((prev) => [...prev, ...files]);
   };
 
   /** Remove um anexo da lista pelo índice. */
-  const removeAttachedFile = (index: number) => {
-    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   /** Envia a mensagem digitada pelo usuário. */
   const handleSend = () => {
-    if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) {
-      onSend({ content: input.trim(), files: attachedFiles });
+    if (isReady && (files.length > 0 || input.trim().length > 0) && !isGenerating) {
+      onSend({ content: input.trim(), files: files });
       setInput("");
-      setAttachedFiles([]);
+      setFiles([]);
     }
   }
 
@@ -125,7 +117,7 @@ export function ChatArea({
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) handleSend()
+      if (isReady && (files.length > 0 || input.trim().length > 0) && !isGenerating) handleSend()
     }
   }
 
@@ -147,9 +139,9 @@ export function ChatArea({
 
       <InputGroup className="rounded-xl bg-card shadow-md">
         {/* Chips dos arquivos anexados */}
-        {attachedFiles.length > 0 && (
+        {files.length > 0 && (
           <InputGroupAddon align="block-start" className="flex-wrap gap-2">
-            {attachedFiles.map((file, i) => (
+            {files.map((file, i) => (
               <div
                 key={`${file.name}-${i}`}
                 className="flex items-center gap-1.5 rounded-lg border bg-card p-1.5 text-xs shadow-sm"
@@ -160,7 +152,7 @@ export function ChatArea({
                   variant="ghost"
                   size="icon-xs"
                   aria-label={`Remover ${file.name}`}
-                  onClick={() => removeAttachedFile(i)}
+                  onClick={() => removeFile(i)}
                 >
                   <X />
                 </InputGroupButton>
@@ -177,7 +169,7 @@ export function ChatArea({
           placeholder={
             (isGenerating && "Gerando resposta...") ||
             (isReady && "Envie uma mensagem...") ||
-            (hasModel && "Carregando modelo...") ||
+            (modelName && "Carregando modelo...") ||
             "Selecione um modelo..."
           }
           onChange={(e) => setInput(e.target.value)}
@@ -237,12 +229,6 @@ export function ChatArea({
           {/* Enviar ou parar geração */}
           {isGenerating ? (
             <div className="ml-auto flex items-center gap-2">
-              {currentSpeed !== null && currentSpeed !== undefined && (
-                <InputGroupText className="font-mono text-xs">
-                  <Zap className="size-3.5 animate-pulse fill-primary text-primary" />
-                  {currentSpeed} tokens/s
-                </InputGroupText>
-              )}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <InputGroupButton
@@ -267,7 +253,7 @@ export function ChatArea({
                   size="icon-sm"
                   className="ml-auto"
                   aria-label="Enviar mensagem"
-                  disabled={!isReady || (input.trim().length === 0 && attachedFiles.length === 0)}
+                  disabled={!isReady || (input.trim().length === 0 && files.length === 0)}
                   onClick={handleSend}
                 >
                   <SendHorizontal />
