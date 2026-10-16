@@ -80,35 +80,6 @@ export function Settings({
           </DialogTitle>
         </DialogHeader>
 
-        <Tooltip key="settings-model-manager-tooltip">
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              onClick={() => setIsModelManagerOpen(true)}
-              aria-label="Gerenciar modelos"
-            >
-              <HardDrive /> {modelName ?? "Selecionar modelo"}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side={"right"}>
-            <p>Gerenciar modelos</p>
-          </TooltipContent>
-        </Tooltip>
-
-        {onWatch && (
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center"
-            onClick={() => {
-              onClose();
-              onWatch();
-            }}
-          >
-            <Film />
-            Assistir introdução
-          </Button>
-        )}
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button>
@@ -138,6 +109,35 @@ export function Settings({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Tooltip key="settings-model-manager-tooltip">
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              onClick={() => setIsModelManagerOpen(true)}
+              aria-label="Gerenciar modelos"
+            >
+              <HardDrive /> {modelName ?? "Selecionar modelo"}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={"right"}>
+            <p>Gerenciar modelos</p>
+          </TooltipContent>
+        </Tooltip>
+
+        {onWatch && (
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-center"
+            onClick={() => {
+              onClose();
+              onWatch();
+            }}
+          >
+            <Film />
+            Assistir introdução
+          </Button>
+        )}
 
         <DialogFooter>
           <p className="text-xs text-foreground flex gap-3 items-center">

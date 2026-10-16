@@ -50,7 +50,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import { Kbd } from "@/components/ui/kbd";
 
 import { cn } from "@/lib/utils"
 
@@ -150,12 +150,6 @@ export function AppSidebar({
     }
   }, [editingChatId]);
 
-  /** Atalho de teclado para criar um novo chat (Ctrl + Shift + O). */
-  useHotkeys("mod+shift+o", () => createNewChat(), {
-    enabled: !isGenerating,
-    preventDefault: true,
-  });
-
   /**
    * Salva o novo nome do chat.
    * @param chatId - Identificador da conversa a ser renomeada.
@@ -191,6 +185,26 @@ export function AppSidebar({
     setChatId(id);
     if (isMobile) setOpenMobile(false);
   };
+
+  /** Atalho de teclado para criar um novo chat (Ctrl + Shift + O). */
+  useHotkeys("mod+shift+o", () => createNewChat(), {
+    enabled: !isGenerating,
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
+  /** Atalho de teclado para alternar o tema (Ctrl + Shift + M). */
+  useHotkeys("mod+shift+m", () => setTheme(theme === "dark" ? "light" : "dark"), {
+    enabled: !isGenerating,
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
+  /** Atalho de teclado para abrir o menu de configurações (Ctrl + Shift + K). */
+  useHotkeys("mod+shift+k", () => setSettingsOpen(true), {
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
 
   return (
     <Sidebar collapsible="icon" className={cn(className)}>
@@ -236,11 +250,9 @@ export function AppSidebar({
             </TooltipTrigger>
             <TooltipContent side="right">
               {isExpanded ? "Minimizar" : "Expandir"}{" "}
-              <KbdGroup>
-                <Kbd>Ctrl</Kbd>
-                <span>+</span>
-                <Kbd>B</Kbd>
-              </KbdGroup>
+              <Kbd>
+                Ctrl + B
+              </Kbd>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -255,18 +267,23 @@ export function AppSidebar({
                   variant="outline"
                   onClick={createNewChat}
                   disabled={isGenerating}
-                  tooltip="Novo chat"
+                  tooltip={{
+                    children: (
+                      <>
+                        <span>Novo Chat</span>
+                        <Kbd>
+                          Ctrl + Shift + O
+                        </Kbd>
+                      </>
+                    ),
+                  }}
                   className="group/new-chat whitespace-nowrap"
                 >
                   <Plus strokeWidth={2.5} />
                   <span>Novo chat</span>
-                  <KbdGroup className="ml-auto opacity-0 transition-opacity duration-200 group-hover/new-chat:opacity-100">
-                    <Kbd>Ctrl</Kbd>
-                    <span>+</span>
-                    <Kbd>Shift</Kbd>
-                    <span>+</span>
-                    <Kbd>O</Kbd>
-                  </KbdGroup>
+                  <Kbd className="ml-auto opacity-0 transition-opacity duration-200 group-hover/new-chat:opacity-100">
+                    Ctrl + Shift + O
+                  </Kbd>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -279,7 +296,7 @@ export function AppSidebar({
           <div className="pb-2 group-data-[collapsible=icon]:hidden">
             <InputGroup className="w-full">
               <InputGroupInput
-                id="app-sidebar-search"
+                id="sidebar-search"
                 placeholder="Pesquisar conversas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -291,6 +308,7 @@ export function AppSidebar({
               {searchQuery && (
                 <InputGroupAddon align="inline-end">
                   <Button
+                    id="sidebar-search-clear"
                     variant="ghost"
                     size="icon-sm"
                     onClick={() => setSearchQuery("")}
@@ -325,6 +343,7 @@ export function AppSidebar({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarMenuButton
+                          id={`sidebar-chat-${chat.id}`}
                           isActive={chatId === chat.id}
                           onClick={() => handleSelectChat(chat.id)}
                           disabled={isGenerating}
@@ -395,10 +414,25 @@ export function AppSidebar({
           <SidebarMenuItem>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton tooltip="Tema">
+                <SidebarMenuButton 
+                  tooltip={{
+                    children: (
+                      <>
+                        <span>Tema</span>
+                        <Kbd>
+                          Ctrl + Shift + M
+                        </Kbd>
+                      </>
+                    ),
+                  }}
+                  className="group/theme whitespace-nowrap"
+                >
                   <Sun className="dark:hidden" />
                   <Moon className="hidden dark:block" />
                   <span>Tema</span>
+                  <Kbd className="ml-auto opacity-0 transition-opacity duration-200 group-hover/theme:opacity-100">
+                    Ctrl + Shift + M
+                  </Kbd>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side={isMobile ? "bottom" : isExpanded ? "top" : "right"} align="end">
@@ -425,9 +459,25 @@ export function AppSidebar({
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={() => setSettingsOpen(true)} tooltip="Configurações">
+            <SidebarMenuButton 
+              onClick={() => setSettingsOpen(true)} 
+              tooltip={{
+                children: (
+                  <>
+                    <span>Configurações</span>
+                    <Kbd>
+                      Ctrl + Shift + K
+                    </Kbd>
+                  </>
+                ),
+              }}
+              className="group/settings whitespace-nowrap"
+            >
               <Settings />
               <span>Configurações</span>
+              <Kbd className="ml-auto opacity-0 transition-opacity duration-200 group-hover/settings:opacity-100">
+                Ctrl + Shift + K
+              </Kbd>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

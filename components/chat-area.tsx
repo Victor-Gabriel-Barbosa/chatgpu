@@ -2,23 +2,22 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { ACCEPTED_FILE_TYPES } from "@/config/file-types";
+import { useHotkeys } from "react-hotkeys-hook";
 import { useState, type ChangeEvent, type ClipboardEvent } from "react";
+import { ACCEPTED_FILE_TYPES } from "@/config/file-types";
 import type { SendMessage } from "@/types/chat";
 import {
   File as FileIcon,
   HardDrive,
   Plus,
-  SendHorizontal,
+  ArrowUp,
   Square,
   X,
-  Zap,
 } from "lucide-react"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-  InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
 import {
@@ -26,6 +25,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Kbd } from "@/components/ui/kbd"
 
 import { cn } from "@/lib/utils"
 
@@ -121,6 +121,37 @@ export function ChatArea({
     }
   }
 
+  /** Foca no campo de entrada de texto (Shift + Esc). */
+  useHotkeys("shift+esc", () => document.getElementById("chat-input")?.focus(), {
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
+  /** Abre o seletor de arquivos (Ctrl + U). */
+  useHotkeys("ctrl+u", () => fileInputRef.current?.click(), {
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
+  /** Abre o seletor de modelos (Ctrl + M). */
+  useHotkeys("ctrl+m", () => onOpen(), {
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
+  /** Envia a mensagem (Ctrl + Enter). */
+  useHotkeys("ctrl+enter", () => handleSend(), {
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
+  /** Para a geração (Shift + P). */
+  useHotkeys("mod+p", () => onStop(), {
+    enabled: isGenerating,
+    enableOnFormTags: true,
+    preventDefault: true,
+  });
+
   return (
     <div className={cn("mx-auto w-full max-w-190 px-5", className)}>
       <div
@@ -179,13 +210,13 @@ export function ChatArea({
         />
 
         <InputGroupAddon align="block-end" className="min-w-0">
-          {/* Anexar arquivo(s) */}
+          {/* Anexar arquivos */}
           <Tooltip>
             <TooltipTrigger asChild>
               <InputGroupButton
                 variant="default"
                 size="icon-sm"
-                aria-label="Anexar arquivo"
+                aria-label="Anexar arquivos"
                 onClick={() => fileInputRef.current?.click()}
                 className="shrink-0"
               >
@@ -193,7 +224,10 @@ export function ChatArea({
               </InputGroupButton>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Anexar arquivo(s)</p>
+              <span>Anexar arquivos</span>
+              <Kbd>
+                Ctrl + U
+              </Kbd>
             </TooltipContent>
           </Tooltip>
 
@@ -222,7 +256,10 @@ export function ChatArea({
               </InputGroupButton>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Gerenciar modelos</p>
+              <span>Gerenciar modelos</span>
+              <Kbd>
+                Ctrl + M
+              </Kbd>
             </TooltipContent>
           </Tooltip>
 
@@ -241,7 +278,10 @@ export function ChatArea({
                   </InputGroupButton>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  <p>Parar resposta</p>
+                  <span>Parar resposta</span>
+                  <Kbd>
+                    Ctrl + P
+                  </Kbd>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -256,11 +296,14 @@ export function ChatArea({
                   disabled={!isReady || (input.trim().length === 0 && files.length === 0)}
                   onClick={handleSend}
                 >
-                  <SendHorizontal />
+                  <ArrowUp />
                 </InputGroupButton>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p>Enviar</p>
+                <span>Enviar</span>
+                <Kbd>
+                  Ctrl + Enter
+                </Kbd>
               </TooltipContent>
             </Tooltip>
           )}

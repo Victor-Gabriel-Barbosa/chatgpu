@@ -134,7 +134,6 @@ export function ChatMessage({
               onClick={() => setShowReasoning(!showReasoning)}
               className="max-w-full min-w-0 p-0 h-auto"
             >
-              <Lightbulb className="w-4 h-4 shrink-0 mr-1" />
               <span className={cn("min-w-0 truncate text-xs", isGenerating && isLast && "shimmer")}>
                 Raciocínio
               </span>
