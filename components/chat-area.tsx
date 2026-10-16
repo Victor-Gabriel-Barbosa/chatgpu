@@ -134,7 +134,7 @@ export function ChatArea({
       <div
         className={cn(
           "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
-          isEmpty || !isReady
+          isEmpty && isReady
             ? "opacity-100 translate-y-0 mb-8 max-h-20"
             : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
         )}
