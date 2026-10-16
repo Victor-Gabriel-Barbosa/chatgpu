@@ -9,7 +9,7 @@ import { sleep } from "@/lib/utils";
  * Gerencia o cache de modelos, incluindo verificação de existência, exclusão e estimativa de uso.
  * @returns Estado do cache de modelos.
  */
-export function useModelCache() {
+export function useCache() {
   const flatModels = useMemo(
     () =>
       Models.flatMap((group) =>

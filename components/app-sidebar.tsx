@@ -60,7 +60,7 @@ export interface AppSidebarProps {
   chats: Chat[];
 
   /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
-  currentChatId: string | null;
+  chatId: string | null;
 
   /** Indica se uma resposta está sendo gerada atualmente. */
   isGenerating: boolean;
@@ -98,6 +98,9 @@ export interface AppSidebarProps {
    * @param isOpen - Valor booleano indicando se o modal de configurações deve ser aberto.
    */
   setSettingsOpen: (isOpen: boolean) => void;
+
+  /** Classe CSS adicional para o componente. */
+  className?: string;
 }
 
 /**
@@ -114,14 +117,15 @@ export interface AppSidebarProps {
 */
 export function AppSidebar({
   chats,
-  currentChatId,
+  chatId,
   isGenerating,
   setCurrentChatId,
   createNewChat,
   deleteChat,
   exportChat,
   renameChat,
-  setSettingsOpen
+  setSettingsOpen,
+  className
 }: Readonly<AppSidebarProps>) {
   const { theme, setTheme } = useTheme();
   const { state, isMobile, toggleSidebar, setOpenMobile } = useSidebar();
@@ -129,7 +133,6 @@ export function AppSidebar({
   const [editingName, setEditingName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearchQuery = useDeferredValue(searchQuery);
-
   const isExpanded = state === "expanded";
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -190,7 +193,7 @@ export function AppSidebar({
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className={cn(className)}>
       {/* Cabeçalho (logo e toggle) */}
       <SidebarHeader>
         <div className="flex items-center">
@@ -322,7 +325,7 @@ export function AppSidebar({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarMenuButton
-                          isActive={currentChatId === chat.id}
+                          isActive={chatId === chat.id}
                           onClick={() => handleSelectChat(chat.id)}
                           disabled={isGenerating}
                         >

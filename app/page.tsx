@@ -5,9 +5,9 @@ import { useState } from "react";
 import { ChatMessage } from "@/components/chat-message";
 import { Plus } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SettingsModal } from "@/components/settings-modal";
-import { ModelManagerModal } from "@/components/model-manager-modal";
-import { StartupVideo } from "@/components/startup-video";
+import { Settings } from "@/components/settings";
+import { ModelManager } from "@/components/model-manager";
+import { Video } from "@/components/video";
 import { models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
@@ -59,7 +59,7 @@ export default function ChatInterface() {
   const [isStartupVideoOpen, setIsStartupVideoOpen] = useState(true);
 
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
-  const hasMessages = messages.length > 0;
+  const isEmpty = messages.length === 0;
   const selectedModelName = models.flatMap(group => group.options).find(model => model.id === selectedModel)?.name;
 
   return (
@@ -67,7 +67,7 @@ export default function ChatInterface() {
       {/* Barra lateral */}
       <AppSidebar
         chats={chats}
-        currentChatId={currentChatId}
+        chatId={currentChatId}
         isGenerating={isGenerating}
         setCurrentChatId={loadChat}
         createNewChat={handleNewChat}
@@ -101,11 +101,11 @@ export default function ChatInterface() {
         <div
           className={cn(
             "flex-1 min-h-0 flex flex-col",
-            !hasMessages && "justify-center"
+            isEmpty && "justify-center"
           )}
         >
           {/* Mensagens */}
-          {hasMessages && (
+          {!isEmpty && (
             <div className="flex min-h-0 flex-1 flex-col">
               <MessageScrollerProvider autoScroll>
                 <MessageScroller>
@@ -119,10 +119,10 @@ export default function ChatInterface() {
                         >
                           <ChatMessage
                             key={JSON.stringify([currentChatId, index])}
-                            msg={message}
+                            message={message}
                             index={index}
-                            handleSubmitEdit={handleSubmitEdit}
-                            isLastAssistant={index === lastAssistantIndex}
+                            handleEdit={handleSubmitEdit}
+                            isLast={index === lastAssistantIndex}
                             isGenerating={isGenerating}
                             isReady={isReady}
                           />
@@ -141,12 +141,12 @@ export default function ChatInterface() {
             className="pb-4"
             onSend={handleSend}
             onStop={handleStop}
-            onOpenModelManager={() => setIsModelManagerOpen(true)}
+            onOpen={() => setIsModelManagerOpen(true)}
             isReady={isReady}
             isGenerating={isGenerating}
-            hasSelectedModel={!!selectedModel}
-            hasMessages={hasMessages}
-            selectedModelName={selectedModelName}
+            hasModel={!!selectedModel}
+            isEmpty={isEmpty}
+            modelName={selectedModelName}
             currentSpeed={currentSpeed}
           />
         </div>
@@ -154,17 +154,17 @@ export default function ChatInterface() {
 
       {/* Modal de configurações */}
       {isSettingsOpen && (
-        <SettingsModal
+        <Settings
           modelName={selectedModelName}
           onClose={() => setIsSettingsOpen(false)}
-          onWatchIntroVideo={() => setIsStartupVideoOpen(true)}
+          onWatch={() => setIsStartupVideoOpen(true)}
           setIsModelManagerOpen={setIsModelManagerOpen}
         />
       )}
 
       {/* Modal de gerenciamento de modelos baixados */}
       {isModelManagerOpen && (
-        <ModelManagerModal
+        <ModelManager
           selectedModel={selectedModel}
           isGenerating={isGenerating}
           setSelectModel={setSelectedModel}
@@ -173,7 +173,7 @@ export default function ChatInterface() {
       )}
 
       {/* Vídeo de introdução na inicialização */}
-      <StartupVideo
+      <Video
         isOpen={isStartupVideoOpen}
         onClose={() => setIsStartupVideoOpen(false)}
       />

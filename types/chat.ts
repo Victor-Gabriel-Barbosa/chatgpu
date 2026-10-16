@@ -61,12 +61,21 @@ export interface Message {
   metrics?: MessageMetrics;
 
   /** Lista de arquivos embutidos ou anexados à mensagem. */
-  files?: EmbeddedFile[];
+  files?: TextFile[];
 }
 
-/** Representa um arquivo embutido no corpo da mensagem. */
-export interface EmbeddedFile {
-  /** Nome ou caminho do arquivo extraído. */
+/** Representa uma mensagem que será enviada ao modelo. */
+export interface SendMessage {
+  /** Conteúdo textual da mensagem. */
+  content: string;
+
+  /** Arquivos anexados à mensagem. */
+  files?: File[];
+}
+
+/** Representa um arquivo transformado em texto e embutido no corpo da mensagem. */
+export interface TextFile {
+  /** Nome do arquivo extraído. */
   name: string;
 
   /** Conteúdo textual interno do arquivo. */

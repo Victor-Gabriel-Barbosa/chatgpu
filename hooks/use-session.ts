@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
-import { ChatSession, Message, EmbeddedFile } from "@/types/chat";
+import { ChatSession, Message, TextFile, type SendMessage } from "@/types/chat";
 import { toast } from "sonner";
 import { fileToMarkdown } from "@/lib/fileToMarkdown";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
@@ -199,15 +199,16 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * @remarks
    * Converte arquivos anexados em texto plano delimitado por tags `<file>`, inicializa uma nova sessão
    * caso não haja chat ativo e gerencia o streaming da resposta do assistente.
-   * @param input - Texto da mensagem do usuário a ser enviada ao modelo.
-   * @param files - Lista opcional de arquivos anexados cujo conteúdo textual será incluído no prompt.
+   * @param message - Mensagem do usuário a ser enviada ao modelo.
    */
-  const handleSend = async (input: string, files?: File[]) => {
-    if (engine == null || (!input.trim() && files && files?.length === 0)) return;
+  const handleSend = async (message: SendMessage) => {
+    const { content, files } = message;
+
+    if (engine == null || (!content.trim() && files?.length === 0)) return;
 
     const newMessage: Message = {
       role: "user",
-      content: input.trim(),
+      content: content.trim(),
     };
 
     if (files && files.length > 0) {
@@ -279,7 +280,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * @param index - Posição da mensagem no histórico a ser editada.
    * @param files - Arquivos anexados à mensagem editada.
    */
-  const handleSubmitEdit = async (newContent: string, index: number, files?: EmbeddedFile[]) => {
+  const handleSubmitEdit = async (newContent: string, index: number, files?: TextFile[]) => {
     if (isGenerating || !engine || !isReady) return;
 
     const updatedMessages = messages.slice(0, index);

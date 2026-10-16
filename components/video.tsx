@@ -5,8 +5,8 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { cn } from "@/lib/utils";
 
-/** Propriedades do componente {@link StartupVideo}. */
-export interface StartupVideoProps {
+/** Propriedades do componente {@link Video}. */
+export interface VideoProps {
   /** Determina se a sobreposição com o vídeo de inicialização está ativa e visível. */
   isOpen: boolean;
 
@@ -15,6 +15,9 @@ export interface StartupVideoProps {
 
   /** Caminho ou URL do arquivo de vídeo a ser exibido. */
   src?: string;
+
+  /** Classe CSS adicional para o componente. */
+  className?: string;
 }
 
 /**
@@ -27,11 +30,12 @@ export interface StartupVideoProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX do modal de vídeo ou `null` caso `isOpen` seja falso.
  */
-export function StartupVideo({
+export function Video({
   isOpen,
   onClose,
   src = "/chatgpu-video.mp4",
-}: Readonly<StartupVideoProps>) {
+  className
+}: Readonly<VideoProps>) {
   const [isClosing, setIsClosing] = useState(false);
 
   /** Inicia o encerramento da exibição pausando o vídeo e disparando a animação de fade-out. */
@@ -58,7 +62,8 @@ export function StartupVideo({
       aria-label="Vídeo de Apresentação ChatGPU"
       className={cn(
         "fixed inset-0 z-50 h-screen w-screen max-h-none max-w-none overflow-hidden border-0 bg-black p-0 transition-opacity duration-600",
-        isClosing ? "pointer-events-none opacity-0" : "opacity-100"
+        isClosing ? "pointer-events-none opacity-0" : "opacity-100",
+        className
       )}
     >
       <button

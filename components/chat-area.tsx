@@ -1,9 +1,10 @@
 "use client"
 
 import Image from "next/image";
-import * as React from "react";
+import { useRef } from "react";
 import { ACCEPTED_FILE_TYPES } from "@/config/file-types";
 import { useState, type ChangeEvent, type ClipboardEvent } from "react";
+import type { SendMessage } from "@/types/chat";
 import {
   File as FileIcon,
   HardDrive,
@@ -32,15 +33,15 @@ import { cn } from "@/lib/utils"
 interface ChatInputProps {
   /**
    * Função chamada para enviar uma mensagem.
-   * @param files - Arquivos anexados à mensagem.
+   * @param message - Mensagem do usuário a ser enviada ao modelo.
    */
-  onSend: (message: string, files: File[]) => void
+  onSend: (message: SendMessage) => void
 
   /** Função chamada para interromper a geração de texto. */
   onStop: () => void
 
   /** Função chamada para abrir o gerenciador de modelos. */
-  onOpenModelManager: () => void
+  onOpen: () => void
 
   /** Indica se o chat está pronto para enviar mensagens. */
   isReady: boolean
@@ -48,14 +49,14 @@ interface ChatInputProps {
   /** Indica se uma resposta está sendo gerada. */
   isGenerating: boolean
 
-  /** Indica se um modelo foi selecionado. */
-  hasSelectedModel: boolean
+  /** Indica se tem um modelo selecionado. */
+  hasModel: boolean
 
-  /** Indica se há mensagens no chat. */
-  hasMessages: boolean
+  /** Indica se o chat esta vazio. */
+  isEmpty: boolean
 
   /** Nome do modelo selecionado. */
-  selectedModelName?: string | null
+  modelName?: string | null
 
   /** Velocidade atual de geração. */
   currentSpeed?: number | null
@@ -77,16 +78,16 @@ export function ChatArea({
   onStop,
   isReady,
   isGenerating,
-  hasSelectedModel,
-  hasMessages,
-  selectedModelName,
+  hasModel,
+  isEmpty,
+  modelName,
   currentSpeed,
-  onOpenModelManager,
+  onOpen,
   className,
 }: Readonly<ChatInputProps>) {
   const [input, setInput] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   /** Adiciona os arquivos escolhidos pelo usuário à lista de anexos. */
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +112,7 @@ export function ChatArea({
   /** Envia a mensagem digitada pelo usuário. */
   const handleSend = () => {
     if (isReady && (attachedFiles.length > 0 || input.trim().length > 0) && !isGenerating) {
-      onSend(input.trim(), attachedFiles);
+      onSend({ content: input.trim(), files: attachedFiles });
       setInput("");
       setAttachedFiles([]);
     }
@@ -133,7 +134,7 @@ export function ChatArea({
       <div
         className={cn(
           "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
-          !hasMessages && isReady
+          isEmpty || !isReady
             ? "opacity-100 translate-y-0 mb-8 max-h-20"
             : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
         )}
@@ -176,7 +177,7 @@ export function ChatArea({
           placeholder={
             (isGenerating && "Gerando resposta...") ||
             (isReady && "Envie uma mensagem...") ||
-            (hasSelectedModel && "Carregando modelo...") ||
+            (hasModel && "Carregando modelo...") ||
             "Selecione um modelo..."
           }
           onChange={(e) => setInput(e.target.value)}
@@ -221,11 +222,11 @@ export function ChatArea({
                 variant="outline"
                 size="sm"
                 aria-label="Gerenciar modelos"
-                onClick={onOpenModelManager}
+                onClick={onOpen}
                 className="min-w-0 shrink justify-start"
               >
                 <HardDrive />
-                <span className="truncate">{selectedModelName ?? "Selecionar modelo"}</span>
+                <span className="truncate">{modelName ?? "Selecionar modelo"}</span>
               </InputGroupButton>
             </TooltipTrigger>
             <TooltipContent side="bottom">

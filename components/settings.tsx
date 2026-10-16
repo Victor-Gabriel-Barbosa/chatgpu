@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Settings, Cpu, Film, HardDrive, Sun, Moon, Monitor } from 'lucide-react';
+import { Settings as SettingsIcon, Cpu, Film, HardDrive, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -24,8 +24,8 @@ import {
 
 import { cn } from "@/lib/utils"
 
-/** Propriedades do componente {@link SettingsModal}. */
-export interface SettingsModalProps {
+/** Propriedades do componente {@link Settings}. */
+export interface SettingsProps {
   /** Nome do modelo atualmente selecionado ou indefinido se nenhum estiver ativo. */
   modelName: string | undefined;
 
@@ -33,13 +33,16 @@ export interface SettingsModalProps {
   onClose: () => void;
 
   /** Função de callback opcional para exibir o vídeo de introdução. */
-  onWatchIntroVideo?: () => void;
+  onWatch?: () => void;
 
   /**
    * Função acionada para controlar a visibilidade do modal de gerenciamento de modelos.
    * @param isOpen - Valor booleano indicando se o modal de gerenciamento de modelos deve ser aberto.
    */
   setIsModelManagerOpen: (isOpen: boolean) => void;
+
+  /** Classe CSS adicional para o componente. */
+  className?: string;
 }
 
 /**
@@ -53,12 +56,13 @@ export interface SettingsModalProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX representando o modal de configurações.
  */
-export function SettingsModal({ 
-  modelName, 
-  onClose, 
-  onWatchIntroVideo, 
-  setIsModelManagerOpen 
-}: Readonly<SettingsModalProps>) {
+export function Settings({
+  modelName,
+  onClose,
+  onWatch,
+  setIsModelManagerOpen,
+  className
+}: Readonly<SettingsProps>) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -68,10 +72,10 @@ export function SettingsModal({
         if (!open) onClose();
       }}
     >
-      <DialogContent aria-describedby="Configurações" className="max-w-md max-h-[85vh] overflow-y-auto">
+      <DialogContent aria-describedby="Configurações" className={cn("max-w-md max-h-[85vh] overflow-y-auto", className)}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Settings />
+            <SettingsIcon />
             Configurações
           </DialogTitle>
         </DialogHeader>
@@ -91,13 +95,13 @@ export function SettingsModal({
           </TooltipContent>
         </Tooltip>
 
-        {onWatchIntroVideo && (
+        {onWatch && (
           <Button
             variant="outline"
             className="w-full flex items-center justify-center"
             onClick={() => {
               onClose();
-              onWatchIntroVideo();
+              onWatch();
             }}
           >
             <Film />

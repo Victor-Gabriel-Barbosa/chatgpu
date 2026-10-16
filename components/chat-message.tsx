@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Copy, Lightbulb, ChevronDown, Pencil, File, Zap } from 'lucide-react';
-import { Message as MessageType, EmbeddedFile } from '@/types/chat';
+import { Message as MessageType, TextFile } from '@/types/chat';
 import { Button } from "@/components/ui/button";
 import { reasoningComponents, messageComponents } from '@/components/markdown-components';
 import ReactMarkdown from 'react-markdown';
@@ -42,7 +42,7 @@ import { cn, copyToClipboard } from "@/lib/utils";
 /** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
   /** Dados completos da mensagem, incluindo papel (role), texto e métricas. */
-  msg: MessageType;
+  message: MessageType;
 
   /** Posição/índice da mensagem no histórico da conversa. */
   index: number;
@@ -52,16 +52,19 @@ export interface ChatMessageProps {
    * @param input - Novo conteúdo textual da mensagem.
    * @param index - Índice da mensagem que foi editada.
    */
-  handleSubmitEdit?: (input: string, index: number, files?: EmbeddedFile[]) => void;
+  handleEdit?: (input: string, index: number, files?: TextFile[]) => void;
 
   /** Define se a mensagem é a última resposta gerada pelo assistente no histórico. */
-  isLastAssistant?: boolean;
+  isLast?: boolean;
 
   /** Define se há uma resposta em streaming sendo gerada no momento. */
   isGenerating?: boolean;
 
   /** Define se a engine está pronta. */
   isReady?: boolean;
+
+  /** Classe CSS adicional para o componente. */
+  className?: string;
 }
 
 /**
@@ -76,19 +79,19 @@ export interface ChatMessageProps {
  * @returns Elemento JSX que representa a mensagem no chat.
  */
 export function ChatMessage({
-  msg,
+  message,
   index,
-  handleSubmitEdit,
-  isLastAssistant,
+  handleEdit,
+  isLast,
   isGenerating,
   isReady,
+  className,
 }: Readonly<ChatMessageProps>) {
   const [showReasoning, setShowReasoning] = useState(false);
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(msg.content);
-
-  const isUser = msg.role === 'user';
+  const [editValue, setEditValue] = useState(message.content);
+  const isUser = message.role === 'user';
 
   /** Alterna o estado de expansão de um arquivo específico. */
   const toggleFile = (idx: number) => {
@@ -98,23 +101,23 @@ export function ChatMessage({
   /** Salva a edição da mensagem. */
   const onSaveEdit = () => {
     const trimmedValue = editValue.trim();
-    if (trimmedValue && trimmedValue !== msg.content && handleSubmitEdit) handleSubmitEdit(trimmedValue, index, msg.files);
+    if (trimmedValue && trimmedValue !== message.content && handleEdit) handleEdit(trimmedValue, index, message.files);
     setIsEditing(false);
   };
 
   /** Cancela a edição da mensagem. */
   const onCancelEdit = () => {
-    setEditValue(msg.content);
+    setEditValue(message.content);
     setIsEditing(false);
   };
 
   return (
     <Message
       align={isUser ? 'end' : 'start'}
-      className="group w-full max-w-full min-w-0"
+      className={cn("group w-full max-w-full min-w-0", className)}
     >
       {!isUser && (
-        <MessageAvatar className={isGenerating && isLastAssistant ? "animate-spin" : ""}>
+        <MessageAvatar className={isGenerating && isLast ? "animate-spin" : ""}>
           <Avatar>
             <AvatarImage src="/icon0.svg" alt="ChatGPU" />
             <AvatarFallback>AI</AvatarFallback>
@@ -124,7 +127,7 @@ export function ChatMessage({
 
       <MessageContent className="min-h-16">
         {/* Bloco de raciocínio */}
-        {msg?.think && !isUser && (
+        {message?.think && !isUser && (
           <div key="reasoning">
             <Button
               variant="link"
@@ -132,7 +135,7 @@ export function ChatMessage({
               className="max-w-full min-w-0 p-0 h-auto"
             >
               <Lightbulb className="w-4 h-4 shrink-0 mr-1" />
-              <span className={cn("min-w-0 truncate text-xs", isGenerating && isLastAssistant && "shimmer")}>
+              <span className={cn("min-w-0 truncate text-xs", isGenerating && isLast && "shimmer")}>
                 Raciocínio
               </span>
               <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
@@ -140,7 +143,7 @@ export function ChatMessage({
             {showReasoning && (
               <div className="mt-2 p-3 bg-muted/30 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
-                  {msg.think}
+                  {message.think}
                 </ReactMarkdown>
               </div>
             )}
@@ -169,34 +172,34 @@ export function ChatMessage({
                   <InputGroupButton size="sm" className="ml-auto" variant="secondary" onClick={onCancelEdit}>
                     Cancelar
                   </InputGroupButton>
-                  <InputGroupButton size="sm" variant="default" disabled={editValue.trim() === "" || editValue.trim() === msg.content} onClick={onSaveEdit}>
+                  <InputGroupButton size="sm" variant="default" disabled={editValue.trim() === "" || editValue.trim() === message.content} onClick={onSaveEdit}>
                     Atualizar
                   </InputGroupButton>
                 </InputGroupAddon>
-                {msg?.files && msg.files.length > 0 && (
+                {message?.files && message.files.length > 0 && (
                   <InputGroupAddon align="block-start" className="min-w-0 flex-col items-start">
-                  {msg.files.map((file, idx) => (
-                    <InputGroupText 
-                      key={`file-${idx}`}
-                      className="min-w-0 max-w-full font-mono font-medium"
-                    >
-                      <File className="shrink-0" />
-                      <span className="truncate">{file.name}</span>
-                    </InputGroupText>
-                  ))}
-                </InputGroupAddon>
+                    {message.files.map((file, idx) => (
+                      <InputGroupText
+                        key={`file-${idx}`}
+                        className="min-w-0 max-w-full font-mono font-medium"
+                      >
+                        <File className="shrink-0" />
+                        <span className="truncate">{file.name}</span>
+                      </InputGroupText>
+                    ))}
+                  </InputGroupAddon>
                 )}
               </InputGroup>
             ) : (
               <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
-                {msg.content}
+                {message.content}
               </ReactMarkdown>
             )}
 
             {/* Arquivos Anexados */}
-            {msg?.files && msg?.files?.length > 0 && !isEditing && (
+            {message?.files && message?.files?.length > 0 && !isEditing && (
               <div className="flex flex-wrap gap-2">
-                {msg.files.map((file, idx) => {
+                {message.files.map((file, idx) => {
                   const isExpanded = expandedFiles[idx];
 
                   return (
@@ -229,13 +232,13 @@ export function ChatMessage({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-muted-foreground"
-                onClick={() => copyToClipboard(msg.content)}
+                onClick={() => copyToClipboard(message.content)}
                 title="Copiar mensagem"
               >
                 <Copy className="w-4 h-4" />
               </Button>
 
-              {isUser && handleSubmitEdit && (
+              {isUser && handleEdit && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -250,22 +253,22 @@ export function ChatMessage({
               )}
             </div>
 
-            {!isUser && (msg.metrics?.tokensPerSecond !== undefined || (isGenerating && isLastAssistant)) && (
+            {!isUser && (message.metrics?.tokensPerSecond !== undefined || (isGenerating && isLast)) && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex items-center gap-1 font-mono text-muted-foreground py-0.5 px-2 rounded-md hover:bg-muted transition-colors cursor-default select-none">
                     <Zap
                       className={cn(
                         "w-3 h-3 shrink-0",
-                        isGenerating && isLastAssistant
+                        isGenerating && isLast
                           ? "text-primary fill-primary animate-pulse"
                           : "text-muted-foreground"
                       )}
                     />
                     <span>
-                      {msg.metrics?.tokensPerSecond !== undefined
-                        ? `${msg.metrics.tokensPerSecond} tokens/s`
-                        : isGenerating && isLastAssistant
+                      {message.metrics?.tokensPerSecond !== undefined
+                        ? `${message.metrics.tokensPerSecond} tokens/s`
+                        : isGenerating && isLast
                           ? "Calculando..."
                           : ""}
                     </span>
@@ -274,46 +277,46 @@ export function ChatMessage({
                 <TooltipContent side="top" className="text-xs">
                   <div className="flex flex-col gap-1 font-mono text-xs">
                     <p className="font-semibold text-center pb-1 border-b border-secondary text-secondary">Desempenho da Geração</p>
-                    {msg.metrics?.tokensPerSecond !== undefined && (
+                    {message.metrics?.tokensPerSecond !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Velocidade:</span>
-                        <span className="font-medium">{msg.metrics.tokensPerSecond} tokens/s</span>
+                        <span className="font-medium">{message.metrics.tokensPerSecond} tokens/s</span>
                       </div>
                     )}
-                    {msg.metrics?.completionTokens !== undefined && (
+                    {message.metrics?.completionTokens !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Tokens gerados:</span>
-                        <span className="font-medium">{msg.metrics.completionTokens}</span>
+                        <span className="font-medium">{message.metrics.completionTokens}</span>
                       </div>
                     )}
-                    {msg.metrics?.promptTokens !== undefined && (
+                    {message.metrics?.promptTokens !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Tokens do prompt:</span>
-                        <span className="font-medium">{msg.metrics.promptTokens}</span>
+                        <span className="font-medium">{message.metrics.promptTokens}</span>
                       </div>
                     )}
-                    {msg.metrics?.totalTokens !== undefined && (
+                    {message.metrics?.totalTokens !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Total de tokens:</span>
-                        <span className="font-medium">{msg.metrics.totalTokens}</span>
+                        <span className="font-medium">{message.metrics.totalTokens}</span>
                       </div>
                     )}
-                    {msg.metrics?.prefillTokensPerSecond !== undefined && (
+                    {message.metrics?.prefillTokensPerSecond !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Velocidade prefill:</span>
-                        <span className="font-medium">{msg.metrics.prefillTokensPerSecond} tokens/s</span>
+                        <span className="font-medium">{message.metrics.prefillTokensPerSecond} tokens/s</span>
                       </div>
                     )}
-                    {msg.metrics?.timeToFirstToken !== undefined && (
+                    {message.metrics?.timeToFirstToken !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">TTFT:</span>
-                        <span className="font-medium">{msg.metrics.timeToFirstToken}s</span>
+                        <span className="font-medium">{message.metrics.timeToFirstToken}s</span>
                       </div>
                     )}
-                    {msg.metrics?.elapsedTime !== undefined && (
+                    {message.metrics?.elapsedTime !== undefined && (
                       <div className="flex justify-between gap-4">
                         <span className="text-secondary">Tempo total:</span>
-                        <span className="font-medium">{msg.metrics.elapsedTime}s</span>
+                        <span className="font-medium">{message.metrics.elapsedTime}s</span>
                       </div>
                     )}
                   </div>

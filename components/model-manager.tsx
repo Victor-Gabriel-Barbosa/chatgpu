@@ -1,24 +1,24 @@
 "use client";
 
 import { useState, useMemo, useDeferredValue } from "react";
-import { 
-  Download, 
-  HardDrive, 
-  HardDriveDownload, 
-  Loader, 
-  RefreshCw, 
-  Search, 
-  Trash2, 
-  X, 
-  Cpu, 
-  SlidersHorizontal, 
+import {
+  Download,
+  HardDrive,
+  HardDriveDownload,
+  Loader,
+  RefreshCw,
+  Search,
+  Trash2,
+  X,
+  Cpu,
+  SlidersHorizontal,
   ArrowDownAZ,
   Save,
   SaveOff,
   TextAlignJustify,
   TextAlignStart
 } from "lucide-react";
-import { useModelCache } from "@/hooks/use-model-cache";
+import { useCache } from "@/hooks/use-cache";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -44,8 +44,8 @@ import {
 
 import { cn } from "@/lib/utils";
 
-/** Propriedades do componente {@link ModelManagerModal}. */
-interface ModelManagerModalProps {
+/** Propriedades do componente {@link ModelManager}. */
+interface ModelManagerProps {
   /** Identificador do modelo atualmente selecionado. */
   selectedModel: string;
 
@@ -60,6 +60,9 @@ interface ModelManagerModalProps {
 
   /** Função de retorno para fechar o diálogo modal. */
   onClose: () => void;
+
+  /** Classe CSS adicional para o componente. */
+  className?: string;
 }
 
 /**
@@ -73,13 +76,14 @@ interface ModelManagerModalProps {
  * @param props - Propriedades utilizadas para configurar o componente.
  * @returns Elemento JSX contendo a estrutura do modal de gerenciamento de modelos.
  */
-export function ModelManagerModal({
+export function ModelManager({
   selectedModel,
   isGenerating,
   setSelectModel,
   onClose,
-}: Readonly<ModelManagerModalProps>) {
-  const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useModelCache();
+  className
+}: Readonly<ModelManagerProps>) {
+  const { models, isChecking, deletingModelId, storageEstimate, deleteModel, refreshCacheStatus } = useCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("none");
@@ -89,7 +93,7 @@ export function ModelManagerModal({
   /** Filtra e agrupa os modelos com base na pesquisa. */
   const groups = useMemo(() => {
     const query = deferredQuery.trim().toLowerCase();
-    
+
     let visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
     if (filter === "downloaded") visible = visible.filter((m) => m.isCached);
     if (filter === "not-downloaded") visible = visible.filter((m) => !m.isCached);
@@ -112,7 +116,7 @@ export function ModelManagerModal({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg max-h-[80vh] flex flex-col gap-0 p-0 rounded-2xl [&>button]:hidden">
+      <DialogContent className={cn("max-w-lg max-h-[80vh] flex flex-col gap-0 p-0 rounded-2xl [&>button]:hidden", className)}>
         {/* Cabeçalho */}
         <DialogHeader className="flex-row items-center justify-between gap-2 p-4 space-y-0">
           <div className="flex items-center gap-2">
@@ -210,7 +214,7 @@ export function ModelManagerModal({
                       Padrão
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="size">
-                     <HardDriveDownload />
+                      <HardDriveDownload />
                       Tamanho
                     </DropdownMenuRadioItem>
 
@@ -219,7 +223,7 @@ export function ModelManagerModal({
                       VRAM
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="alphabetical">
-                      <ArrowDownAZ /> 
+                      <ArrowDownAZ />
                       Nome (A–Z)
                     </DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>

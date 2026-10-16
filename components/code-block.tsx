@@ -5,16 +5,20 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
 import { copyToClipboard, downloadFile } from '@/lib/utils';
+
+import { cn } from '@/lib/utils';
 
 /** Propriedades do componente {@link CodeBlock}. */
 export interface CodeBlockProps {
   /** Linguagem de programação do snippet de código (ex: 'typescript', 'html', 'python'). */
-  language: string;
+  lang: string;
 
   /** Conteúdo textual do código a ser renderizado. */
   code: string;
+
+  /** Classe CSS adicional para o componente. */
+  className?: string;
 }
 
 /**
@@ -30,20 +34,20 @@ export interface CodeBlockProps {
  * @returns Elemento JSX com a barra de ferramentas e o código ou preview renderizado.
  */
 export function CodeBlock({
-  language,
-  code
+  lang,
+  code,
+  className,
 }: Readonly<CodeBlockProps>) {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-
-  const ext = language ? language.toLowerCase() : 'md';
+  const ext = lang ? lang.toLowerCase() : 'md';
   const isHtml = ext === 'html';
 
   return (
-    <div className="my-4 bg-background border border-border rounded-xl overflow-hidden shadow-sm w-full">
+    <div className={cn("my-4 bg-background border border-border rounded-xl overflow-hidden shadow-sm w-full", className)}>
       <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b border-border min-w-0 overflow-auto">
         <div className="flex items-center gap-4">
-          <span className="font-sans lowercase">{language || 'code'}</span>
+          <span className="font-sans lowercase">{lang || 'code'}</span>
 
           {isHtml && (
             <Tabs

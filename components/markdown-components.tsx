@@ -1,5 +1,5 @@
 import { Components } from 'react-markdown';
-import { CodeBlock}  from '@/components/code-block';
+import { CodeBlock } from '@/components/code-block';
 
 /** Mapeamento de componentes customizados para renderização de Markdown no bloco de raciocínio. */
 export const reasoningComponents: Components = {
@@ -8,7 +8,7 @@ export const reasoningComponents: Components = {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
-      <CodeBlock language={match[1]} code={(children as string ?? '').replace(/\n$/, '')} />
+      <CodeBlock lang={match[1]} code={(children as string ?? '').replace(/\n$/, '')} />
     ) : (
       <code className="px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word" {...rest}>
         {children}
@@ -27,7 +27,7 @@ export const messageComponents: Components = {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
-      <CodeBlock language={match[1]} code={(children as string ?? '').replace(/\n$/, '')} />
+      <CodeBlock lang={match[1]} code={(children as string ?? '').replace(/\n$/, '')} />
     ) : (
       <code className="px-1.5 py-0.5 rounded text-sm font-mono wrap-break-word" {...rest}>
         {children}
