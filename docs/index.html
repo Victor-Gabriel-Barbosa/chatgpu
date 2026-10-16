@@ -156,7 +156,7 @@
 <p>Em resumo, o fluxo de execução é: mensagem enviada → processamento pelo worker → download ou carregamento a partir do cache → inicialização da engine WebLLM → inferência local via WebGPU → tokens retornados em streaming para a thread principal, atualizando a interface em tempo real.</p>
 <hr>
 <h2 id="métricas-de-desempenho" class="tsd-anchor-link">Métricas de desempenho<a href="#métricas-de-desempenho" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>Cada resposta do assistente é acompanhada de métricas de geração, calculadas em tempo real no próprio navegador durante o streaming. A lógica está em <a href="modules/lib_stream-assistant-reply.html"><code>lib/stream-assistant-reply.ts</code></a>, na função <code>streamAssistantReply</code>, e os valores ficam guardados no campo <code>metrics</code> de cada mensagem (tipo <code>MessageMetrics</code>, em <code>types/chat.ts</code>).</p>
+<p>Cada resposta do assistente é acompanhada de métricas de geração, calculadas em tempo real no próprio navegador durante o streaming. A lógica está em <a href="lib/stream-assistant-reply.ts"><code>lib/stream-assistant-reply.ts</code></a>, na função <code>streamAssistantReply</code>, e os valores ficam guardados no campo <code>metrics</code> de cada mensagem (tipo <code>MessageMetrics</code>, em <code>types/chat.ts</code>).</p>
 <h3 id="métricas-coletadas" class="tsd-anchor-link">Métricas coletadas<a href="#métricas-coletadas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <table>
 <thead>
