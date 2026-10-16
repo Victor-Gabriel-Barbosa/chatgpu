@@ -17,7 +17,7 @@ import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
  * @param updateChatMessages - Função responsável por atualizar as mensagens na lista de chats e no IndexedDB.
  * @param onSpeedUpdate - Callback opcional para notificar a velocidade atual de geração em tokens por segundo.
  */
-export async function streamAssistantReply(
+export async function streamReply(
   engine: WebWorkerMLCEngine,
   chatHistory: Message[],
   chatId: string,

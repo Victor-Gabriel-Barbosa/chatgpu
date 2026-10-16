@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 import { ChatSession, Message, TextFile, type SendMessage } from "@/types/chat";
 import { toast } from "sonner";
-import { fileToMarkdown } from "@/lib/fileToMarkdown";
+import { fileToMarkdown } from "@/lib/file-to-markdown";
 import { db, CURRENT_CHAT_SETTING_KEY } from "@/db/database";
-import { streamAssistantReply } from "@/lib/stream-assistant-reply";
+import { streamReply } from "@/lib/stream-reply";
 import { downloadFile } from "@/lib/utils";
 
 /** Propriedades para inicialização do hook {@link useSession}. */
@@ -257,7 +257,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     try {
       setCurrentSpeed(null);
-      await streamAssistantReply(
+      await streamReply(
         engine,
         chatHistory,
         activeChatId,
@@ -295,7 +295,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     try {
       setCurrentSpeed(null);
-      await streamAssistantReply(
+      await streamReply(
         engine,
         chatHistory,
         currentChatId!,
