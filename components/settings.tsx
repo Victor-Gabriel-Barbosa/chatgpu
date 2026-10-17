@@ -164,7 +164,9 @@ export function Settings({
               <DialogDescription className="pt-2">
                 Essa ação é irreversível. Todas as conversas, configurações
                 e modelos baixados armazenados localmente serão removidos.
-                <p className="pt-2">Para continuar, digite <strong className="text-foreground">Confirmar</strong>.</p>
+                <br />
+                <br />
+                Para continuar, digite <strong className="text-foreground">Confirmar</strong>.
               </DialogDescription>
             </DialogHeader>
 
