@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTheme } from "next-themes";
-import { Settings as SettingsIcon, Cpu, Film, HardDrive, Sun, Moon, Monitor, Trash2 } from 'lucide-react';
+import { Settings as SettingsIcon, Cpu, Film, HardDrive, Sun, Moon, Monitor, Trash2, TriangleAlert } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -157,7 +157,10 @@ export function Settings({
 
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Limpar dados da aplicação?</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                <TriangleAlert />
+                Limpar dados da aplicação?
+              </DialogTitle>
               <DialogDescription className="pt-2">
                 Essa ação é irreversível. Todas as conversas, configurações
                 e modelos baixados armazenados localmente serão removidos.
