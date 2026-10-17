@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react"
 import { useTheme } from "next-themes";
-import { Settings as SettingsIcon, Cpu, Film, HardDrive, Sun, Moon, Monitor } from 'lucide-react';
+import { Settings as SettingsIcon, Cpu, Film, HardDrive, Sun, Moon, Monitor, Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Tooltip,
   TooltipContent,
@@ -10,10 +13,13 @@ import {
 } from "@/components/ui/tooltip"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   DropdownMenu,
@@ -23,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { cn } from "@/lib/utils"
+import { clearStorage } from "@/lib/clear-storage"
 
 /** Propriedades do componente {@link Settings}. */
 export interface SettingsProps {
@@ -64,6 +71,7 @@ export function Settings({
   className
 }: Readonly<SettingsProps>) {
   const { theme, setTheme } = useTheme();
+  const [confirmText, setConfirmText] = useState("");
 
   return (
     <Dialog
@@ -138,6 +146,56 @@ export function Settings({
             Assistir introdução
           </Button>
         )}
+
+        <Dialog onOpenChange={(open) => { if (!open) setConfirmText(""); }}>
+          <DialogTrigger asChild>
+            <Button variant="destructive">
+              <Trash2 />
+              Limpar dados
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Limpar dados da aplicação?</DialogTitle>
+              <DialogDescription className="pt-2">
+                Essa ação é irreversível. Todas as conversas, configurações
+                e modelos baixados armazenados localmente serão removidos.
+                <p className="pt-2">Para continuar, digite <strong className="text-foreground">Confirmar</strong>.</p>
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-2">
+              <Label htmlFor="confirm-clear" className="sr-only">
+                Digite Confirmar para continuar
+              </Label>
+
+              <Input
+                id="confirm-clear"
+                placeholder="Digite Confirmar"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                autoComplete="off"
+              />
+            </div>
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DialogClose>
+
+              <DialogClose asChild>
+                <Button
+                  variant="destructive"
+                  disabled={confirmText !== "Confirmar"}
+                  onClick={clearStorage}
+                >
+                  Limpar dados
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <DialogFooter>
           <p className="text-xs text-foreground flex gap-3 items-center">

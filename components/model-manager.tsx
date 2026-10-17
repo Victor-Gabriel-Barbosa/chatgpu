@@ -131,7 +131,6 @@ export function ModelManager({
               onClick={() => refreshCacheStatus()}
               disabled={isChecking}
               aria-label="Verificar novamente"
-              title="Verificar novamente"
               size="icon"
             >
               <RefreshCw className={isChecking ? "animate-spin" : ""} />
@@ -140,7 +139,6 @@ export function ModelManager({
               <Button
                 variant="ghost"
                 aria-label="Fechar"
-                title="Fechar"
                 size="icon"
               >
                 <X />
@@ -173,7 +171,6 @@ export function ModelManager({
                   size="icon-sm"
                   onClick={() => setSearchQuery("")}
                   aria-label="Limpar pesquisa"
-                  title="Limpar pesquisa"
                 >
                   <X />
                 </Button>
