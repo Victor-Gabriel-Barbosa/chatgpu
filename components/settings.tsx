@@ -162,11 +162,8 @@ export function Settings({
                 Limpar dados da aplicação?
               </DialogTitle>
               <DialogDescription className="pt-2">
-                Essa ação é irreversível. Todas as conversas, configurações
-                e modelos baixados armazenados localmente serão removidos.
-                <br />
-                <br />
-                Para continuar, digite <strong className="text-foreground">Confirmar</strong>.
+                <span className="block">Essa ação é irreversível. Todas as conversas, configurações e modelos baixados armazenados localmente serão removidos.</span>
+                <span className="block pt-2">Para continuar, digite <strong className="text-foreground">Confirmar</strong>.</span>
               </DialogDescription>
             </DialogHeader>
 
