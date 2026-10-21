@@ -206,7 +206,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const handleSend = async (message: SendMessage) => {
     const { content, files } = message;
 
-    if (engine == null || (!content.trim() && files?.length === 0)) return;
+    if (!engine || !isReady || (!content.trim() && files?.length === 0)) return;
 
     const newMessage: Message = {
       role: "user",
