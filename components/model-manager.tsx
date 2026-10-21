@@ -122,7 +122,7 @@ export function ModelManager({
           <div className="flex items-center gap-2">
             <HardDrive />
             <DialogTitle className="font-semibold text-base">
-              Modelos baixados
+              Gerenciar modelos
             </DialogTitle>
           </div>
           <div className="flex items-center gap-1">

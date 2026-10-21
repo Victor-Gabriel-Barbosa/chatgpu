@@ -483,7 +483,10 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarFooter>
 
-      <SidebarRail />
+      <SidebarRail 
+        title={isExpanded ? "Minimizar" : "Expandir"}
+        aria-label={isExpanded ? "Minimizar" : "Expandir"}
+      />
     </Sidebar>
   );
 }
