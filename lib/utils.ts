@@ -60,3 +60,22 @@ export const downloadFile = (
   link.click();
   URL.revokeObjectURL(link.href);
 };
+
+/**
+ * Normaliza o texto Markdown para corrigir a formatação de expressões matemáticas.
+ * @param text - Texto Markdown a ser normalizado.
+ * @returns Texto normalizado para renderização.
+ */
+export function normalizeMarkdown(text: string): string {
+  return text
+    .split(/(```[\s\S]*?```|`[^`\n]*`)/g)
+    .map((part, i) =>
+      i % 2 === 1
+        ? part
+        : part
+            .replace(/(?<!\\)R\$(?=\s?\d)/g, () => String.raw`R\$`)
+            .replace(/\\\[([\s\S]*?)\\\]/g, (_, m) => '$$' + m + '$$')
+            .replace(/\\\(([\s\S]*?)\\\)/g, (_, m) => '$' + m + '$')
+    )
+    .join('');
+}

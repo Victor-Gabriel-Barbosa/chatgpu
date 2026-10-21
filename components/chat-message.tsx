@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Copy, Lightbulb, ChevronDown, Pencil, File, Zap } from 'lucide-react';
+import { Copy, ChevronDown, Pencil, File, Zap } from 'lucide-react';
 import { Message as MessageType, TextFile } from '@/types/chat';
 import { Button } from "@/components/ui/button";
 import { reasoningComponents, messageComponents } from '@/components/markdown-components';
@@ -37,7 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { cn, copyToClipboard } from "@/lib/utils";
+import { cn, copyToClipboard, normalizeMarkdown } from "@/lib/utils";
 
 /** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
@@ -140,8 +140,8 @@ export function ChatMessage({
               <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${showReasoning ? 'rotate-180' : ''}`} />
             </Button>
             {showReasoning && (
-              <div className="mt-2 p-3 bg-muted/30 border border-primary text-primary rounded-lg text-xs leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
+              <div className="mt-2 p-3 bg-muted/30 border border-primary text-primary rounded-lg text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={reasoningComponents}>
                   {message.think}
                 </ReactMarkdown>
               </div>
@@ -190,8 +190,8 @@ export function ChatMessage({
                 )}
               </InputGroup>
             ) : (
-              <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
-                {message.content}
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
+                {normalizeMarkdown(message.content)}
               </ReactMarkdown>
             )}
 
@@ -211,7 +211,7 @@ export function ChatMessage({
                       {isExpanded && (
                         <div className="w-full animate-in fade-in slide-in-from-top-1 duration-200 bg-secondary rounded-xl p-3">
                           <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]} rehypePlugins={[rehypeKatex]} components={messageComponents}>
-                            {file.content}
+                            {normalizeMarkdown(file.content)}
                           </ReactMarkdown>
                         </div>
                       )}
