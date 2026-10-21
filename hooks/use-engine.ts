@@ -181,7 +181,7 @@ export function useEngine() {
       .catch((error) => {
         if (currentLoadId !== loadIdRef.current) return;
         setIsLoading(false);
-        m.error("Erro ao carregar o modelo:", error);
+        console.error("Erro ao carregar o modelo:", error);
         toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${error}`, {
           id: LOADING_TOAST_ID,
           duration: 5000,
