@@ -80,7 +80,7 @@ export default function ChatInterface() {
         id="main-chat-area"
         className="h-full min-h-0 overflow-hidden min-w-0 flex flex-col"
       >
-        <div className="bg-background md:hidden sticky top-0 z-10 flex h-14 items-center justify-between p-3 transition-colors duration-200">
+        <div className="bg-background md:hidden sticky top-0 z-50 flex h-14 items-center justify-between p-3 transition-colors duration-200">
           <SidebarTrigger />
 
           <span className="font-medium truncate max-w-50">

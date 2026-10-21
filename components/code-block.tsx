@@ -5,9 +5,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { copyToClipboard, downloadFile } from '@/lib/utils';
 
-import { cn } from '@/lib/utils';
+import { copyToClipboard, downloadFile , cn } from '@/lib/utils';
 
 /** Propriedades do componente {@link CodeBlock}. */
 export interface CodeBlockProps {
