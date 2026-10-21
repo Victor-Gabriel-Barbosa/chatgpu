@@ -2,6 +2,15 @@ import { Message, MessageMetrics } from "@/types/chat";
 import { round } from "./utils";
 import { WebWorkerMLCEngine } from "@mlc-ai/web-llm";
 
+/** Tag que marca o início do conteúdo de raciocínio. */
+const THINK_OPEN = "<think>";
+
+/** Tag que marca o final do conteúdo de raciocínio. */
+const THINK_CLOSE = "</think>";
+
+/** Intervalo de tempo em milissegundos entre cada atualização de renderização. */
+const INTERVAL_MS = 50;
+
 /**
  * Executa o streaming da resposta do assistente via WebLLM e atualiza as mensagens e métricas progressivamente.
  *
@@ -46,89 +55,112 @@ export async function streamReply(
   const startTime = performance.now();
   let resp = "";
   let think = "";
+  let buffer = "";
+  let insideThink = false;
   let tokenCount = 0;
   let firstTokenTime: number | null = null;
-  let pendingText = "";
-  let insideThink = false;
+  let hasUsage = false;
+  let lastRender = Number.NEGATIVE_INFINITY;
   let metrics: MessageMetrics = {};
 
-  /** Atualiza o conteúdo da mensagem do assistente com base no texto pendente e nas tags `<think>`. */
-  const updateOutput = () => {
-    const append = (text: string) => {
-      if (insideThink) think += text;
-      else resp += text;
-    }
-
-    while (pendingText.length > 0) {
-      const tag = insideThink ? "</think>" : "<think>";
-      const tagIndex = pendingText.indexOf(tag);
+  /** Processa o buffer, separando o conteúdo de raciocínio do texto da resposta. */
+  const consume = (flush = false) => {
+    while (buffer) {
+      const tag = insideThink ? THINK_CLOSE : THINK_OPEN;
+      const tagIndex = buffer.indexOf(tag);
 
       if (tagIndex !== -1) {
-        append(pendingText.slice(0, tagIndex));
-        pendingText = pendingText.slice(tagIndex + tag.length);
+        const text = buffer.slice(0, tagIndex);
+        if (insideThink) think += text;
+        else resp += text;
+        buffer = buffer.slice(tagIndex + tag.length);
         insideThink = !insideThink;
         continue;
       }
 
-      const lastLt = pendingText.lastIndexOf("<");
-      const isPartialTag = lastLt >= 0 && tag.startsWith(pendingText.slice(lastLt));
-      const cut = isPartialTag ? lastLt : pendingText.length;
+      let keep = 0;
+      if (!flush) {
+        const lastLt = buffer.lastIndexOf("<");
+        if (lastLt !== -1 && tag.startsWith(buffer.slice(lastLt))) keep = buffer.length - lastLt;
+      }
 
-      append(pendingText.slice(0, cut));
-      pendingText = pendingText.slice(cut);
+      const text = buffer.slice(0, buffer.length - keep);
+      if (insideThink) think += text;
+      else resp += text;
+      buffer = buffer.slice(buffer.length - keep);
       return;
     }
   };
 
-  /**
-   * Atualiza o estado das mensagens com o conteúdo atual e as métricas de geração.
-   * @param persist - Indica se as mensagens devem ser persistidas no banco de dados local.
-   */
-  const commit = (persist = false) => {
+  /** Atualiza as métricas de geração em tempo real. */
+  const updateMetrics = () => {
+    if (hasUsage || firstTokenTime === null) return;
+
+    const elapsed = (performance.now() - firstTokenTime) / 1000;
+    metrics = {
+      ...metrics,
+      tokensPerSecond:
+        elapsed > 0.05 ? round((tokenCount - 1) / elapsed) : metrics.tokensPerSecond,
+      completionTokens: tokenCount,
+      timeToFirstToken: round((firstTokenTime - startTime) / 1000, 2),
+    };
+  };
+
+  /** Atualiza o estado da mensagem e notifica a velocidade de geração. */
+  const render = () => {
+    updateMetrics();
+
+    const snapshot = { content: resp, think, metrics };
     setMessages((prev) => {
-      const next = [...prev];
-      next[next.length - 1] = { ...next[next.length - 1], content: resp, think, metrics };
-      if (persist) updateChatMessages(chatId, next);
+      const next = prev.slice();
+      next[next.length - 1] = { ...next[next.length - 1], ...snapshot };
       return next;
     });
-  }
+    onSpeedUpdate?.(metrics.tokensPerSecond ?? null);
+  };
 
-  /** Processa cada chunk do stream de resposta, atualizando o conteúdo e as métricas em tempo real. */
-  for await (const chunk of completion) {
-    const delta = chunk.choices[0]?.delta?.content;
-    if (delta) {
-      pendingText += delta;
-      updateOutput();
-      tokenCount++;
-      firstTokenTime ??= performance.now();
+  try {
+    for await (const chunk of completion) {
+      const delta = chunk.choices[0]?.delta?.content;
+      if (delta) {
+        const now = performance.now();
+        firstTokenTime ??= now;
+        tokenCount++;
 
-      const elapsed = (performance.now() - firstTokenTime) / 1000;
-      const liveSpeed = elapsed > 0.05 ? (tokenCount - 1) / elapsed : undefined;
+        buffer += delta;
+        consume();
 
-      metrics = {
-        ...metrics,
-        tokensPerSecond: round(liveSpeed),
-        completionTokens: tokenCount,
-        timeToFirstToken: round((firstTokenTime - startTime) / 1000, 2),
-      };
-      onSpeedUpdate?.(metrics.tokensPerSecond ?? null);
-      commit();
+        if (now - lastRender >= INTERVAL_MS) {
+          lastRender = now;
+          render();
+        }
+      }
+
+      if (chunk.usage) {
+        const extra = chunk.usage.extra ?? {};
+        hasUsage = true;
+        metrics = {
+          ...metrics,
+          tokensPerSecond: round(extra.decode_tokens_per_s) ?? metrics.tokensPerSecond,
+          prefillTokensPerSecond: round(extra.prefill_tokens_per_s),
+          completionTokens: chunk.usage.completion_tokens ?? tokenCount,
+          promptTokens: chunk.usage.prompt_tokens,
+          totalTokens: chunk.usage.total_tokens,
+        };
+      }
     }
+  } finally {
+    consume(true);
+    updateMetrics();
+    metrics = {
+      ...metrics,
+      elapsedTime: round((performance.now() - startTime) / 1000, 2),
+    };
+    render();
 
-    if (chunk.usage) {
-      const extra = chunk.usage.extra ?? {};
-      metrics = {
-        ...metrics,
-        tokensPerSecond: round(extra.decode_tokens_per_s) ?? metrics.tokensPerSecond,
-        prefillTokensPerSecond: round(extra.prefill_tokens_per_s),
-        completionTokens: chunk.usage.completion_tokens ?? tokenCount,
-        promptTokens: chunk.usage.prompt_tokens,
-        totalTokens: chunk.usage.total_tokens,
-      };
-      onSpeedUpdate?.(metrics.tokensPerSecond ?? null);
-    }
+    updateChatMessages(chatId, [
+      ...chatHistory,
+      { role: "assistant", content: resp, think, metrics },
+    ]);
   }
-
-  metrics.elapsedTime ??= round((performance.now() - startTime) / 1000, 2);
-  commit(true);
 }

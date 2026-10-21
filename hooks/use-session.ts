@@ -47,9 +47,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
           .orderBy("updatedAt")
           .reverse()
           .toArray();
-        const savedChatSetting = await db.settings.get(
-          CHAT_SETTING_KEY,
-        );
+        const savedChatSetting = await db.settings.get(CHAT_SETTING_KEY);
 
         if (!isMounted) return;
 
@@ -57,9 +55,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
         const savedChatId = savedChatSetting?.value ?? null;
         if (savedChatId) {
-          const activeChat = savedChats.find(
-            (c: ChatSession) => c.id === savedChatId,
-          );
+          const activeChat = savedChats.find((c: ChatSession) => c.id === savedChatId);
           if (activeChat) {
             setCurrentChatId(savedChatId);
             setMessages(activeChat.messages);
