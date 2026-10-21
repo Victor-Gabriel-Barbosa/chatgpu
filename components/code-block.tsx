@@ -47,7 +47,7 @@ export function CodeBlock({
     <div className={cn("my-4 bg-background border border-border rounded-xl overflow-hidden shadow-sm w-full", className)}>
       <div className="bg-card px-4 py-2 text-xs flex justify-between items-center border-b border-border min-w-0 overflow-auto">
         <div className="flex items-center gap-4">
-          <span className="font-sans lowercase">{lang || 'code'}</span>
+          <span className="font-sans lowercase text-foreground">{lang || 'code'}</span>
 
           {isHtml && (
             <Tabs
