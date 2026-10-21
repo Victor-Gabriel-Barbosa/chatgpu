@@ -43,7 +43,7 @@ export default function ChatInterface() {
     messages,
     isGenerating,
     chats,
-    chatId,
+    currentChatId,
     handleNewChat,
     handleRenameChat,
     loadChat,
@@ -65,9 +65,9 @@ export default function ChatInterface() {
       {/* Barra lateral */}
       <AppSidebar
         chats={chats}
-        chatId={chatId}
+        currentChatId={currentChatId}
         isGenerating={isGenerating}
-        setChatId={loadChat}
+        setCurrentChatId={loadChat}
         createNewChat={handleNewChat}
         deleteChat={deleteChat}
         exportChat={exportChat}
@@ -84,7 +84,7 @@ export default function ChatInterface() {
           <SidebarTrigger />
 
           <span className="font-medium truncate max-w-50">
-            {chats.find((chat) => chat.id === chatId)?.title || "Novo Chat"}
+            {chats.find((chat) => chat.id === currentChatId)?.title || "Novo Chat"}
           </span>
 
           <Button
@@ -116,7 +116,7 @@ export default function ChatInterface() {
                           scrollAnchor={message.role === "user"}
                         >
                           <ChatMessage
-                            key={JSON.stringify([chatId, index])}
+                            key={JSON.stringify([currentChatId, index])}
                             message={message}
                             index={index}
                             handleEdit={handleEdit}

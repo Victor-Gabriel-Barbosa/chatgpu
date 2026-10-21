@@ -34,7 +34,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [speed, setSpeed] = useState<number | null>(null);
   const [chats, setChats] = useState<ChatSession[]>([]);
-  const [chatId, setChatId] = useState<string | null>(null);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
   /** Carrega as sessões de chat salvas do banco de dados quando o hook é montado. */
@@ -61,7 +61,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
             (c: ChatSession) => c.id === savedChatId,
           );
           if (activeChat) {
-            setChatId(savedChatId);
+            setCurrentChatId(savedChatId);
             setMessages(activeChat.messages);
           }
         }
@@ -73,7 +73,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       }
     };
 
-    loadSession();
+    void loadSession();
 
     return () => {
       isMounted = false;
@@ -86,10 +86,10 @@ export function useSession({ engine, isReady }: UseSessionProps) {
 
     const persistCurrentChatId = async () => {
       try {
-        if (chatId) {
+        if (currentChatId) {
           await db.settings.put({
             key: CHAT_SETTING_KEY,
-            value: chatId,
+            value: currentChatId,
           });
         } else await db.settings.delete(CHAT_SETTING_KEY);
       } catch (error) {
@@ -97,14 +97,14 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       }
     };
 
-    persistCurrentChatId();
-  }, [chatId, isSessionLoaded]);
+    void persistCurrentChatId();
+  }, [currentChatId, isSessionLoaded]);
 
   /** Inicia uma nova conversa, limpando as mensagens exibidas e desmarcando o chat ativo. */
   const handleNewChat = () => {
     if (isGenerating) return;
     setMessages([]);
-    setChatId(null);
+    setCurrentChatId(null);
   };
 
   /**
@@ -132,7 +132,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     const chat = chats.find((c) => c.id === chatId);
     if (chat) {
       setMessages(chat.messages);
-      setChatId(chatId);
+      setCurrentChatId(chatId);
     }
   };
 
@@ -233,11 +233,11 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     setMessages(newMessages);
     setIsGenerating(true);
 
-    let activeChatId = chatId;
+    let activeChatId = currentChatId;
     if (activeChatId) updateChatMessages(activeChatId, newMessages);
     else {
       activeChatId = Date.now().toString();
-      setChatId(activeChatId);
+      setCurrentChatId(activeChatId);
 
       const title = newMessage.content?.trim() || newMessage.files?.[0]?.name || "Novo Chat";
       const newChat: ChatSession = {
@@ -291,7 +291,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     setMessages(updatedMessages);
     setIsGenerating(true);
 
-    if (chatId) updateChatMessages(chatId, updatedMessages);
+    if (currentChatId) updateChatMessages(currentChatId, updatedMessages);
 
     const chatHistory = [...updatedMessages];
 
@@ -300,7 +300,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
       await streamReply(
         engine,
         chatHistory,
-        chatId!,
+        currentChatId!,
         setMessages,
         updateChatMessages,
         setSpeed,
@@ -319,7 +319,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     if (engine && isGenerating) {
       engine.interruptGenerate();
       setSpeed(null);
-      if (chatId) updateChatMessages(chatId, messages);
+      if (currentChatId) updateChatMessages(currentChatId, messages);
     }
   };
 
@@ -328,7 +328,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
     isGenerating,
     speed,
     chats,
-    chatId,
+    currentChatId,
     handleNewChat,
     handleRenameChat,
     loadChat,

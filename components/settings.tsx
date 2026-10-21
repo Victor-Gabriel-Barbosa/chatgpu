@@ -74,18 +74,18 @@ export function Settings({
   const [confirmText, setConfirmText] = useState("");
 
   return (
-    <Dialog
-      open
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent aria-describedby="Configurações" className={cn("max-w-md max-h-[85vh] overflow-y-auto", className)}>
+        {/* Cabeçalho */}
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <SettingsIcon />
             Configurações
           </DialogTitle>
+
+          <DialogDescription className="sr-only">
+            Configure o tema da aplicação, gerencie os modelos locais e acesse outras opções.
+          </DialogDescription>
         </DialogHeader>
 
         <DropdownMenu>

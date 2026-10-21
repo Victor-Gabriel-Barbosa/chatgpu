@@ -145,11 +145,11 @@ export function ModelManager({
               </Button>
             </DialogClose>
           </div>
-        </DialogHeader>
 
-        <DialogDescription className="sr-only">
-          Visualize os modelos já baixados, baixe novos modelos ou remova modelos que não são mais necessários.
-        </DialogDescription>
+          <DialogDescription className="sr-only">
+            Visualize os modelos já baixados, baixe novos modelos ou remova modelos que não são mais necessários.
+          </DialogDescription>
+        </DialogHeader>
 
         {/* Barra de pesquisa */}
         <div className="px-4">

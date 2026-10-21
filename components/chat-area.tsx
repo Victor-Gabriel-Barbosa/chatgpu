@@ -162,7 +162,7 @@ export function ChatArea({
             : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
         )}
       >
-        <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} />
+        <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} loading="eager" />
         <span className="font-bold text-primary text-center shimmer">
           Como posso ajudar hoje?
         </span>

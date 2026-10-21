@@ -60,7 +60,7 @@ export interface AppSidebarProps {
   chats: Chat[];
 
   /** Identificador da conversa atualmente selecionada, ou nulo se nenhuma estiver. */
-  chatId: string | null;
+  currentChatId: string | null;
 
   /** Indica se uma resposta está sendo gerada atualmente. */
   isGenerating: boolean;
@@ -69,7 +69,7 @@ export interface AppSidebarProps {
    * Seleciona uma conversa pelo seu identificador.
    * @param id - Identificador da conversa a ser selecionada.
    */
-  setChatId: (id: string) => void;
+  setCurrentChatId: (id: string) => void;
 
   /** Função para iniciar uma nova conversa. */
   createNewChat: () => void;
@@ -117,9 +117,9 @@ export interface AppSidebarProps {
 */
 export function AppSidebar({
   chats,
-  chatId,
+  currentChatId,
   isGenerating,
-  setChatId,
+  setCurrentChatId,
   createNewChat,
   deleteChat,
   exportChat,
@@ -152,10 +152,10 @@ export function AppSidebar({
 
   /**
    * Salva o novo nome do chat.
-   * @param chatId - Identificador da conversa a ser renomeada.
+   * @param currentChatId - Identificador da conversa a ser renomeada.
    */
-  const handleSaveRename = (chatId: string) => {
-    if (editingName.trim()) renameChat(chatId, editingName.trim());
+  const handleSaveRename = (currentChatId: string) => {
+    if (editingName.trim()) renameChat(currentChatId, editingName.trim());
     setEditingChatId(null);
     setEditingName("");
   };
@@ -169,10 +169,10 @@ export function AppSidebar({
   /**
    * Lida com eventos de teclado no input de renomear.
    * @param e - Evento de teclado.
-   * @param chatId - Identificador da conversa a ser renomeada.
+   * @param currentChatId - Identificador da conversa a ser renomeada.
    */
-  const handleKeyDown = (e: React.KeyboardEvent, chatId: string) => {
-    if (e.key === "Enter") handleSaveRename(chatId);
+  const handleKeyDown = (e: React.KeyboardEvent, currentChatId: string) => {
+    if (e.key === "Enter") handleSaveRename(currentChatId);
     else if (e.key === "Escape") handleCancelRename();
   };
 
@@ -182,7 +182,7 @@ export function AppSidebar({
    */
   const handleSelectChat = (id: string) => {
     if (editingChatId !== null) return;
-    setChatId(id);
+    setCurrentChatId(id);
     if (isMobile) setOpenMobile(false);
   };
 
@@ -216,7 +216,7 @@ export function AppSidebar({
             className="flex items-center gap-0.5 overflow-hidden group-data-[collapsible=icon]:hidden pr-1.5"
           >
             <span className="flex size-8 shrink-0 items-center justify-center">
-              <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} />
+              <Image src="/icon0.svg" alt="ChatGPU" width={20} height={20} loading="eager" />
             </span>
             <span className="font-semibold text-primary truncate whitespace-nowrap">
               ChatGPU
@@ -242,6 +242,7 @@ export function AppSidebar({
                       alt="ChatGPU"
                       width={20}
                       height={20}
+                      loading="eager"
                     />
                     <PanelLeftOpen className="absolute transition-opacity duration-400 opacity-0 group-hover/toggle:opacity-100" />
                   </>
@@ -344,7 +345,7 @@ export function AppSidebar({
                       <TooltipTrigger asChild>
                         <SidebarMenuButton
                           id={`sidebar-chat-${chat.id}`}
-                          isActive={chatId === chat.id}
+                          isActive={currentChatId === chat.id}
                           onClick={() => handleSelectChat(chat.id)}
                           disabled={isGenerating}
                         >
