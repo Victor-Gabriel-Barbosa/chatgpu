@@ -181,13 +181,15 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    * @param newMessages - Nova lista de mensagens a ser associada ao chat.
    */
   const updateChatMessages = (chatId: string, newMessages: Message[]) => {
+    const updatedAt = Date.now();
+
     setChats((prev) =>
       prev
-        .map((chat) => chat.id === chatId ? { ...chat, messages: newMessages } : chat)
+        .map((chat) => chat.id === chatId ? { ...chat, messages: newMessages, updatedAt } : chat)
         .sort((a, b) => b.updatedAt - a.updatedAt),
     );
 
-    db.chats.update(chatId, { messages: newMessages }).catch((error: unknown) => {
+    db.chats.update(chatId, { messages: newMessages, updatedAt }).catch((error: unknown) => {
       console.error("Erro ao salvar mensagens do chat:", error);
       toast.error("Erro ao salvar mensagens do chat");
     });
