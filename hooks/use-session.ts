@@ -142,7 +142,7 @@ export function useSession({ engine, isReady }: UseSessionProps) {
    */
   const deleteChat = (chatId: string) => {
     setChats((prev) => prev.filter((c) => c.id !== chatId));
-    if (chatId === chatId) handleNewChat();
+    if (chatId === currentChatId) handleNewChat();
 
     db.chats.delete(chatId).catch((error) => {
       console.error("Erro ao excluir chat:", error);
