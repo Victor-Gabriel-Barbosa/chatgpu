@@ -6,7 +6,7 @@ import { Tooltip as TooltipPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 
 function TooltipProvider({
-  delayDuration = 0,
+  delayDuration = 300,
   ...props
 }: Readonly<React.ComponentProps<typeof TooltipPrimitive.Provider>>) {
   return (
@@ -32,7 +32,7 @@ function TooltipTrigger({
 
 function TooltipContent({
   className,
-  sideOffset = 0,
+  sideOffset = 11,
   children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
@@ -56,7 +56,6 @@ function TooltipContent({
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-xs bg-slate-900 fill-slate-900 dark:bg-slate-100 dark:fill-slate-100" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )
