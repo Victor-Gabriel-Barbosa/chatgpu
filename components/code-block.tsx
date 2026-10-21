@@ -139,7 +139,7 @@ export function CodeBlock({
 
       {/* Preview em tela cheia */}
       {isFullscreen && typeof document !== 'undefined' ? createPortal(
-        <div className="absolute inset-0 z-10 flex flex-col animate-in fade-in duration-800">
+        <div className="absolute inset-0 z-10 flex flex-col animate-in fade-in duration-800 bg-background">
           <Button
             variant="secondary"
             onClick={() => setIsFullscreen(false)}
