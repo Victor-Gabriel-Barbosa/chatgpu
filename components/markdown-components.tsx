@@ -1,5 +1,40 @@
-import { Components } from 'react-markdown';
+import { memo, useMemo } from 'react';
 import { CodeBlock } from '@/components/code-block';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import remarkBreaks from 'remark-breaks';
+import rehypeKatex from 'rehype-katex';
+
+import { normalizeMarkdown } from "@/lib/utils";
+
+const remarkPlugins = [remarkGfm, remarkMath, remarkBreaks];
+const rehypePlugins = [rehypeKatex];
+
+/**
+ * Componente para renderização de Markdown.
+ *
+ * @param children - Conteúdo em Markdown para renderização.
+ * @param components - Componentes customizados para substituição dos padrões do Markdown.
+ */
+export const Markdown = memo(function Markdown({
+  children,
+  components,
+}: {
+  children: string;
+  components?: Components;
+}) {
+  const content = useMemo(() => normalizeMarkdown(children), [children]);
+  return (
+    <ReactMarkdown
+      remarkPlugins={remarkPlugins}
+      rehypePlugins={rehypePlugins}
+      components={components}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+});
 
 /** Mapeamento de componentes customizados para renderização de Markdown no bloco de raciocínio. */
 export const reasoningComponents: Components = {
