@@ -13,7 +13,7 @@
     "postinstall": "npm run generate:models"
   },
   "dependencies": {
-    "@mlc-ai/web-llm": "^0.2.82",
+    "@mlc-ai/web-llm": "^0.2.79",
     "@shadcn/react": "^0.3.0",
     "@truto/turndown-plugin-gfm": "^1.0.5",
     "@vercel/analytics": "^2.0.1",

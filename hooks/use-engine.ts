@@ -120,11 +120,12 @@ export function useEngine() {
    * @param percent - Percentual de progresso (0–100).
    */
   const showLoadingToast = useCallback(
-    (percent: number) => {
+    (percent: number, isDownloading: boolean) => {
       const clamped = Math.min(100, Math.max(0, Math.round(percent)));
-      toast.loading(`Carregando modelo (${clamped}%)`, {
+      toast.loading(`${isDownloading ? "Baixando" : "Carregando"} modelo (${clamped}%)`, {
         id: LOADING_TOAST_ID,
         duration: Infinity,
+        description: isDownloading ? "O download inicial do modelo pode demorar para preencher o cache. As atualizações posteriores serão mais rápidas." : "Carregando modelo do cache...",
         action: {
           label: "Cancelar",
           onClick: cancelLoading,
@@ -156,11 +157,10 @@ export function useEngine() {
       setIsReady(false);
       setIsLoading(true);
     });
-    showLoadingToast(0);
 
     sharedEngine.setInitProgressCallback((report: InitProgressReport) => {
       if (currentLoadId !== loadIdRef.current) return;
-      showLoadingToast((report.progress ?? 0) * 100);
+      showLoadingToast((report.progress ?? 0) * 100, report.text.includes("fetch"));
     });
 
     exclusiveRunner.run(() => {
@@ -175,6 +175,7 @@ export function useEngine() {
         window.dispatchEvent(new CustomEvent("model-cache-updated"));
         toast.success("Modelo carregado e pronto para uso!", {
           id: LOADING_TOAST_ID,
+          description: "",
           duration: 1000,
         });
       })

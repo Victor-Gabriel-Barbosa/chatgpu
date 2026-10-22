@@ -1,6 +1,5 @@
-import { prebuiltAppConfig } from "@mlc-ai/web-llm";
+import { prebuiltAppConfig, ModelType } from "@mlc-ai/web-llm";
 import { writeFile } from "node:fs/promises";
-import { ModelType } from "@mlc-ai/web-llm";
 
 /**
  * Formata bytes para GB.
