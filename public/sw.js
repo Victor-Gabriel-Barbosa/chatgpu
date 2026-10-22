@@ -6,7 +6,6 @@ const ASSETS_TO_CACHE = [
   '/manifest.json',
   '/icon0.svg',
   '/icon1.png',
-  '/chatgpu-video.mp4'
 ];
 
 self.addEventListener('install', (event) => {

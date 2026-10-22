@@ -7,7 +7,6 @@ import { Plus } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Settings } from "@/components/settings";
 import { ModelManager } from "@/components/model-manager";
-import { Video } from "@/components/video";
 import { models } from "@/config/models.json";
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner";
@@ -55,7 +54,6 @@ export default function ChatInterface() {
   } = useSession({ engine, isReady });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isModelManagerOpen, setIsModelManagerOpen] = useState(false);
-  const [isVideoOpen, setIsVideoOpen] = useState(true);
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
   const isEmpty = messages.length === 0;
   const modelName = models.flatMap(group => group.options).find(model => model.id === selectedModel)?.name;
@@ -153,7 +151,6 @@ export default function ChatInterface() {
         <Settings
           modelName={modelName}
           onClose={() => setIsSettingsOpen(false)}
-          onWatch={() => setIsVideoOpen(true)}
           setIsModelManagerOpen={setIsModelManagerOpen}
         />
       )}
@@ -167,12 +164,6 @@ export default function ChatInterface() {
           onClose={() => setIsModelManagerOpen(false)}
         />
       )}
-
-      {/* Vídeo de introdução na inicialização */}
-      <Video
-        isOpen={isVideoOpen}
-        onClose={() => setIsVideoOpen(false)}
-      />
 
       {/* Toaster para notificações */}
       <Toaster

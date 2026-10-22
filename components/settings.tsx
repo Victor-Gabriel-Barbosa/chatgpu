@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTheme } from "next-themes";
-import { Settings as SettingsIcon, Cpu, Film, HardDrive, Sun, Moon, Monitor, Trash2, TriangleAlert } from 'lucide-react';
+import { Settings as SettingsIcon, Cpu, HardDrive, Sun, Moon, Monitor, Trash2, TriangleAlert } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -39,9 +39,6 @@ export interface SettingsProps {
   /** Função de callback acionada para fechar o modal. */
   onClose: () => void;
 
-  /** Função de callback opcional para exibir o vídeo de introdução. */
-  onWatch?: () => void;
-
   /**
    * Função acionada para controlar a visibilidade do modal de gerenciamento de modelos.
    * @param isOpen - Valor booleano indicando se o modal de gerenciamento de modelos deve ser aberto.
@@ -66,7 +63,6 @@ export interface SettingsProps {
 export function Settings({
   modelName,
   onClose,
-  onWatch,
   setIsModelManagerOpen,
   className
 }: Readonly<SettingsProps>) {
@@ -132,20 +128,6 @@ export function Settings({
             <p>Gerenciar modelos</p>
           </TooltipContent>
         </Tooltip>
-
-        {onWatch && (
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center"
-            onClick={() => {
-              onClose();
-              onWatch();
-            }}
-          >
-            <Film />
-            Assistir introdução
-          </Button>
-        )}
 
         <Dialog onOpenChange={(open) => { if (!open) setConfirmText(""); }}>
           <DialogTrigger asChild>
