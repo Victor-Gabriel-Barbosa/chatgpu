@@ -75,7 +75,7 @@ export function CodeBlock({
               onClick={() => setIsFullscreen(true)}
               title="Maximizar preview"
               className="text-muted-foreground"
-              size="icon"
+              size="icon-sm"
             >
               <Maximize2 />
             </Button>
@@ -85,7 +85,7 @@ export function CodeBlock({
             onClick={() => downloadFile(`snippet.${ext}`, code)}
             title="Download"
             className="text-muted-foreground"
-            size="icon"
+            size="icon-sm"
           >
             <Download />
           </Button>
@@ -94,7 +94,7 @@ export function CodeBlock({
             onClick={() => copyToClipboard(code)}
             title="Copiar código"
             className="text-muted-foreground"
-            size="icon"
+            size="icon-sm"
           >
             <Copy />
           </Button>

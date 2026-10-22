@@ -222,11 +222,11 @@ export function ChatMessage({
 
         {/* Rodapé da mensagem (ações e métricas) */}
         {!isEditing && (
-          <MessageFooter className="m-1 flex items-center justify-between gap-2">
+          <MessageFooter className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-1 opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 className="text-muted-foreground"
                 onClick={() => copyToClipboard(message.content)}
                 title="Copiar mensagem"
@@ -237,7 +237,7 @@ export function ChatMessage({
               {isUser && handleEdit && (
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="icon-sm"
                   className="text-muted-foreground"
                   onClick={() => setIsEditing(true)}
                   title="Editar mensagem"
