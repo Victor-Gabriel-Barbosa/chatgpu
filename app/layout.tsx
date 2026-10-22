@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   title: "ChatGPU",
   description: "ChatGPT rodando inteiramente no seu navegador usando WebGPU e MLC",
   manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
@@ -39,7 +45,7 @@ export default function RootLayout({
           <ServiceWorkerRegister />
 
           <TooltipProvider>
-            <SidebarProvider className="h-dvh overflow-hidden">
+            <SidebarProvider className="h-dvh min-h-0 overflow-clip">
               {children}
             </SidebarProvider>
           </TooltipProvider>
