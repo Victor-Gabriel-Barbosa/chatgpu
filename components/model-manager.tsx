@@ -271,7 +271,7 @@ export function ModelManager({
                           <label
                             htmlFor={`model-${model.id}`}
                             className={cn(
-                              "flex items-center gap-2 min-w-0 flex-1",
+                              "flex items-center gap-3 min-w-0 flex-1",
                               model.isCached && !isGenerating
                                 ? "cursor-pointer"
                                 : "cursor-not-allowed opacity-70"

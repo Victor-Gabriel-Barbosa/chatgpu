@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { WebWorkerMLCEngine, InitProgressReport } from "@mlc-ai/web-llm";
+import { WebWorkerMLCEngine, InitProgressReport, deleteModelAllInfoInCache, hasModelInCache } from "@mlc-ai/web-llm";
 import { toast } from "sonner";
 
 /** Identificador fixo do toast de progresso de carregamento do modelo. */
@@ -100,7 +100,7 @@ export function useEngine() {
    * e o motor singleton (que serão recriados sob demanda), limpa a seleção
    * de modelo e exibe um toast informativo.
    */
-  const cancelLoading = useCallback(() => {
+  const cancelLoading = useCallback(async() => {
     loadIdRef.current++;
     destroyEngineSingleton();
     exclusiveRunner.reset();
@@ -109,11 +109,13 @@ export function useEngine() {
     setIsReady(false);
     setIsLoading(false);
     localStorage.removeItem(STORAGE_KEY);
+    const isCached = await hasModelInCache(selectedModel);
+    if (!isCached) await deleteModelAllInfoInCache(selectedModel);
     toast.info("Carregamento do modelo cancelado.", {
       id: LOADING_TOAST_ID,
       duration: 2000,
     });
-  }, []);
+  }, [selectedModel]);
 
   /**
    * Exibe ou atualiza o toast de progresso de carregamento do modelo.
@@ -175,8 +177,9 @@ export function useEngine() {
         window.dispatchEvent(new CustomEvent("model-cache-updated"));
         toast.success("Modelo carregado e pronto para uso!", {
           id: LOADING_TOAST_ID,
-          description: "",
+          description: null,
           duration: 1000,
+          action: null
         });
       })
       .catch((error) => {
