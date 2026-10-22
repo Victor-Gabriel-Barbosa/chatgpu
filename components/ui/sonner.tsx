@@ -37,6 +37,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
         } as React.CSSProperties
       }
       toastOptions={{
+        actionButtonStyle: {
+          backgroundColor: "var(--primary)",
+          color: "var(--primary-foreground)",
+        },
         classNames: {
           toast: "cn-toast",
         },
