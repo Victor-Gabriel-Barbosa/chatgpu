@@ -213,6 +213,7 @@ export function AppSidebar({
         <div className="flex items-center">
           <Link
             href="/"
+            data-sidebar-autofocus
             className="flex items-center gap-0.5 overflow-hidden group-data-[collapsible=icon]:hidden pr-1.5"
           >
             <span className="flex size-8 shrink-0 items-center justify-center">

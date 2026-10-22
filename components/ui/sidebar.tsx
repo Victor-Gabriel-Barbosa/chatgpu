@@ -168,6 +168,7 @@ function Sidebar({
   collapsible?: "offcanvas" | "icon" | "none"
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const sidebarRef = React.useRef<HTMLDivElement>(null)
 
   if (collapsible === "none") {
     return (
@@ -188,10 +189,19 @@ function Sidebar({
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
+          ref={sidebarRef}
           dir={dir}
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
+          onOpenAutoFocus={(event) => {
+            const autofocusTarget = sidebarRef.current?.querySelector<HTMLElement>("[data-sidebar-autofocus]")
+
+            if (autofocusTarget) {
+              event.preventDefault()
+              autofocusTarget.focus()
+            }
+          }}
           className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
           style={
             {
