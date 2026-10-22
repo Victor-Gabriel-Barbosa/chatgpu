@@ -12,7 +12,7 @@ const remarkPlugins = [remarkGfm, remarkMath, remarkBreaks];
 const rehypePlugins = [rehypeKatex];
 
 /**
- * Componente para renderização de Markdown.
+ * Componente genérico para renderização de Markdown.
  *
  * @param children - Conteúdo em Markdown para renderização.
  * @param components - Componentes customizados para substituição dos padrões do Markdown.

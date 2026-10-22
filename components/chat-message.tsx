@@ -1,5 +1,18 @@
 import { useState } from 'react';
-import { Copy, ChevronDown, Pencil, File, Zap } from 'lucide-react';
+import {
+  Copy,
+  ChevronDown,
+  Pencil,
+  File,
+  Gauge,
+  FileOutput,
+  FileInput,
+  Hash,
+  Activity,
+  Clock,
+  Timer,
+} from 'lucide-react';
+import { Metric } from "@/components/metric"
 import { Message as MessageType, TextFile } from '@/types/chat';
 import { Button } from "@/components/ui/button";
 import { reasoningComponents, messageComponents, Markdown } from '@/components/markdown-components';
@@ -26,11 +39,6 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 import { cn, copyToClipboard } from "@/lib/utils";
 
@@ -219,97 +227,80 @@ export function ChatMessage({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground"
+                className="text-muted-foreground"
                 onClick={() => copyToClipboard(message.content)}
                 title="Copiar mensagem"
               >
-                <Copy className="w-4 h-4" />
+                <Copy />
               </Button>
 
               {isUser && handleEdit && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-muted-foreground"
+                  className="text-muted-foreground"
                   onClick={() => setIsEditing(true)}
                   title="Editar mensagem"
                   aria-label="Editar mensagem"
                   disabled={!isReady || isGenerating}
                 >
-                  <Pencil className="w-4 h-4" />
+                  <Pencil />
                 </Button>
               )}
             </div>
 
-            {!isUser && (message.metrics?.tokensPerSecond !== undefined || (isGenerating && isLast)) && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1 font-mono text-muted-foreground py-0.5 px-2 rounded-md hover:bg-muted transition-colors cursor-default select-none">
-                    <Zap
-                      className={cn(
-                        "w-3 h-3 shrink-0",
-                        isGenerating && isLast
-                          ? "text-primary fill-primary animate-pulse"
-                          : "text-muted-foreground"
-                      )}
-                    />
-                    <span>
-                      {message.metrics?.tokensPerSecond !== undefined
-                        ? `${message.metrics.tokensPerSecond} tokens/s`
-                        : isGenerating && isLast
-                          ? "Calculando..."
-                          : ""}
-                    </span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="text-xs">
-                  <div className="flex flex-col gap-1 font-mono text-xs">
-                    <p className="font-semibold text-center pb-1 border-b border-secondary text-secondary">Desempenho da geração</p>
-                    {message.metrics?.tokensPerSecond !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">Velocidade:</span>
-                        <span className="font-medium">{message.metrics.tokensPerSecond} tokens/s</span>
-                      </div>
-                    )}
-                    {message.metrics?.completionTokens !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">Tokens gerados:</span>
-                        <span className="font-medium">{message.metrics.completionTokens}</span>
-                      </div>
-                    )}
-                    {message.metrics?.promptTokens !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">Tokens do prompt:</span>
-                        <span className="font-medium">{message.metrics.promptTokens}</span>
-                      </div>
-                    )}
-                    {message.metrics?.totalTokens !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">Total de tokens:</span>
-                        <span className="font-medium">{message.metrics.totalTokens}</span>
-                      </div>
-                    )}
-                    {message.metrics?.prefillTokensPerSecond !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">Velocidade prefill:</span>
-                        <span className="font-medium">{message.metrics.prefillTokensPerSecond} tokens/s</span>
-                      </div>
-                    )}
-                    {message.metrics?.timeToFirstToken !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">TTFT:</span>
-                        <span className="font-medium">{message.metrics.timeToFirstToken}s</span>
-                      </div>
-                    )}
-                    {message.metrics?.elapsedTime !== undefined && (
-                      <div className="flex justify-between gap-4">
-                        <span className="text-secondary">Tempo total:</span>
-                        <span className="font-medium">{message.metrics.elapsedTime}s</span>
-                      </div>
-                    )}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
+            {!isUser && (
+              <div className="flex flex-row flex-wrap gap-2 text-xs text-foreground">
+                {message.metrics?.tokensPerSecond !== undefined && (
+                  <Metric
+                    icon={Gauge}
+                    value={`${message.metrics.tokensPerSecond} tokens/s`}
+                    label="Velocidade de geração"
+                  />
+                )}
+                {message.metrics?.completionTokens !== undefined && (
+                  <Metric
+                    icon={FileOutput}
+                    value={`${message.metrics.completionTokens} tokens`}
+                    label="Tokens da resposta"
+                  />
+                )}
+                {message.metrics?.promptTokens !== undefined && (
+                  <Metric
+                    icon={FileInput}
+                    value={`${message.metrics.promptTokens} tokens`}
+                    label="Tokens do prompt"
+                  />
+                )}
+                {message.metrics?.totalTokens !== undefined && (
+                  <Metric
+                    icon={Hash}
+                    value={`${message.metrics.totalTokens} tokens`}
+                    label="Total de tokens"
+                  />
+                )}
+                {message.metrics?.prefillTokensPerSecond !== undefined && (
+                  <Metric
+                    icon={Activity}
+                    value={`${message.metrics.prefillTokensPerSecond} tokens/s`}
+                    label="Velocidade de prefill"
+                  />
+                )}
+                {message.metrics?.timeToFirstToken !== undefined && (
+                  <Metric
+                    icon={Timer}
+                    value={`${message.metrics.timeToFirstToken}s`}
+                    label="Tempo até o primeiro token"
+                  />
+                )}
+                {message.metrics?.elapsedTime !== undefined && (
+                  <Metric
+                    icon={Clock}
+                    value={`${message.metrics.elapsedTime}s`}
+                    label="Tempo total"
+                  />
+                )}
+              </div>
             )}
           </MessageFooter>
         )}

@@ -87,6 +87,7 @@ export default function ChatInterface() {
 
           <Button
             onClick={handleNewChat}
+            disabled={isGenerating}
             aria-label="Novo Chat"
             size="icon"
           >

@@ -309,8 +309,8 @@ export function ChatArea({
           )}
         </InputGroupAddon>
       </InputGroup>
-      <p className="mt-2 text-center text-xs text-muted-foreground">
-        O ChatGPU é uma IA e pode cometer erros. Processamento 100% local via WebGPU
+      <p className="mt-2 text-center text-xs text-muted-foreground max-sm:hidden">
+        O ChatGPU é uma IA e pode cometer erros. Processamento 100% local
       </p>
     </div>
   )
