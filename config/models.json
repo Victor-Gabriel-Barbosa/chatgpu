@@ -165,12 +165,6 @@
           "vramGB": 5
         },
         {
-          "id": "Llama-3.2-1B-Instruct-q0f32-MLC",
-          "name": "Llama 3.2 1B Instruct Q0f32",
-          "sizeGB": 2.31,
-          "vramGB": 5.11
-        },
-        {
           "id": "Llama-2-7b-chat-hf-q4f32_1-MLC-1k",
           "name": "Llama 2 7b Chat Hf Q4f32.1 1k",
           "sizeGB": 3.93,
@@ -233,101 +227,6 @@
       ]
     },
     {
-      "label": "Gemma",
-      "options": [
-        {
-          "id": "gemma3-1b-it-q4f16_1-MLC",
-          "name": "Gemma3 1b It Q4f16.1",
-          "sizeGB": 0.56,
-          "vramGB": 0.71
-        },
-        {
-          "id": "gemma-2b-it-q4f16_1-MLC",
-          "name": "Gemma 2b It Q4f16.1",
-          "sizeGB": 1.33,
-          "vramGB": 1.48
-        },
-        {
-          "id": "gemma-2b-it-q4f16_1-MLC-1k",
-          "name": "Gemma 2b It Q4f16.1 1k",
-          "sizeGB": 1.33,
-          "vramGB": 1.48
-        },
-        {
-          "id": "gemma-2-2b-it-q4f16_1-MLC-1k",
-          "name": "Gemma 2 2b It Q4f16.1 1k",
-          "sizeGB": 1.39,
-          "vramGB": 1.58
-        },
-        {
-          "id": "gemma-2b-it-q4f32_1-MLC",
-          "name": "Gemma 2b It Q4f32.1",
-          "sizeGB": 1.33,
-          "vramGB": 1.75
-        },
-        {
-          "id": "gemma-2b-it-q4f32_1-MLC-1k",
-          "name": "Gemma 2b It Q4f32.1 1k",
-          "sizeGB": 1.33,
-          "vramGB": 1.75
-        },
-        {
-          "id": "gemma-2-2b-it-q4f32_1-MLC-1k",
-          "name": "Gemma 2 2b It Q4f32.1 1k",
-          "sizeGB": 1.39,
-          "vramGB": 1.88
-        },
-        {
-          "id": "gemma-2-2b-it-q4f16_1-MLC",
-          "name": "Gemma 2 2b It Q4f16.1",
-          "sizeGB": 1.39,
-          "vramGB": 1.9
-        },
-        {
-          "id": "gemma-2-2b-jpn-it-q4f16_1-MLC",
-          "name": "Gemma 2 2b Jpn It Q4f16.1",
-          "sizeGB": 1.39,
-          "vramGB": 1.9
-        },
-        {
-          "id": "gemma-2-2b-it-q4f32_1-MLC",
-          "name": "Gemma 2 2b It Q4f32.1",
-          "sizeGB": 1.39,
-          "vramGB": 2.51
-        },
-        {
-          "id": "gemma-2-2b-jpn-it-q4f32_1-MLC",
-          "name": "Gemma 2 2b Jpn It Q4f32.1",
-          "sizeGB": 1.39,
-          "vramGB": 2.51
-        },
-        {
-          "id": "gemma-4-E2B-it-q4f16_1-MLC",
-          "name": "Gemma 4 E2B It Q4f16.1",
-          "sizeGB": 2.64,
-          "vramGB": 3.39
-        },
-        {
-          "id": "gemma-4-E2B-it-q4f32_1-MLC",
-          "name": "Gemma 4 E2B It Q4f32.1",
-          "sizeGB": 2.64,
-          "vramGB": 3.86
-        },
-        {
-          "id": "gemma-2-9b-it-q4f16_1-MLC",
-          "name": "Gemma 2 9b It Q4f16.1",
-          "sizeGB": 4.86,
-          "vramGB": 6.42
-        },
-        {
-          "id": "gemma-2-9b-it-q4f32_1-MLC",
-          "name": "Gemma 2 9b It Q4f32.1",
-          "sizeGB": 4.86,
-          "vramGB": 8.38
-        }
-      ]
-    },
-    {
       "label": "Qwen",
       "options": [
         {
@@ -385,12 +284,6 @@
           "vramGB": 1.62
         },
         {
-          "id": "Qwen3.5-0.8B-q4f16_1-MLC",
-          "name": "Qwen3.5 0.8B Q4f16.1",
-          "sizeGB": 0.42,
-          "vramGB": 1.63
-        },
-        {
           "id": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
           "name": "Qwen2.5 1.5B Instruct Q4f16.1",
           "sizeGB": 0.82,
@@ -419,12 +312,6 @@
           "name": "Qwen2 Math 1.5B Instruct Q4f16.1",
           "sizeGB": 0.82,
           "vramGB": 1.63
-        },
-        {
-          "id": "Qwen3.5-0.8B-q4f32_1-MLC",
-          "name": "Qwen3.5 0.8B Q4f32.1",
-          "sizeGB": 0.42,
-          "vramGB": 1.89
         },
         {
           "id": "Qwen2.5-1.5B-Instruct-q4f32_1-MLC",
@@ -475,12 +362,6 @@
           "vramGB": 2.22
         },
         {
-          "id": "Qwen3.5-2B-q4f16_1-MLC",
-          "name": "Qwen3.5 2B Q4f16.1",
-          "sizeGB": 1.01,
-          "vramGB": 2.25
-        },
-        {
           "id": "Qwen2.5-3B-Instruct-q4f16_1-MLC",
           "name": "Qwen2.5 3B Instruct Q4f16.1",
           "sizeGB": 1.63,
@@ -493,40 +374,10 @@
           "vramGB": 2.5
         },
         {
-          "id": "Qwen3.5-2B-q4f32_1-MLC",
-          "name": "Qwen3.5 2B Q4f32.1",
-          "sizeGB": 1.01,
-          "vramGB": 2.59
-        },
-        {
           "id": "Qwen3-1.7B-q4f32_1-MLC",
           "name": "Qwen3 1.7B Q4f32.1",
           "sizeGB": 0.92,
           "vramGB": 2.64
-        },
-        {
-          "id": "Qwen2.5-0.5B-Instruct-q0f32-MLC",
-          "name": "Qwen2.5 0.5B Instruct Q0f32",
-          "sizeGB": 0.93,
-          "vramGB": 2.65
-        },
-        {
-          "id": "Qwen2.5-Coder-0.5B-Instruct-q0f32-MLC",
-          "name": "Qwen2.5 Coder 0.5B Instruct Q0f32",
-          "sizeGB": 0.93,
-          "vramGB": 2.65
-        },
-        {
-          "id": "Qwen2-0.5B-Instruct-q0f32-MLC",
-          "name": "Qwen2 0.5B Instruct Q0f32",
-          "sizeGB": 0.93,
-          "vramGB": 2.65
-        },
-        {
-          "id": "Qwen3.5-0.8B-q0f16-MLC",
-          "name": "Qwen3.5 0.8B Q0f16",
-          "sizeGB": 1.42,
-          "vramGB": 2.66
         },
         {
           "id": "Qwen2.5-3B-Instruct-q4f32_1-MLC",
@@ -547,28 +398,10 @@
           "vramGB": 3.43
         },
         {
-          "id": "Qwen3-0.6B-q0f32-MLC",
-          "name": "Qwen3 0.6B Q0f32",
-          "sizeGB": 1.13,
-          "vramGB": 3.84
-        },
-        {
-          "id": "Qwen3.5-4B-q4f16_1-MLC",
-          "name": "Qwen3.5 4B Q4f16.1",
-          "sizeGB": 2.23,
-          "vramGB": 3.87
-        },
-        {
           "id": "Qwen3-4B-q4f32_1-MLC",
           "name": "Qwen3 4B Q4f32.1",
           "sizeGB": 2.12,
           "vramGB": 4.33
-        },
-        {
-          "id": "Qwen3.5-4B-q4f32_1-MLC",
-          "name": "Qwen3.5 4B Q4f32.1",
-          "sizeGB": 2.23,
-          "vramGB": 4.68
         },
         {
           "id": "Qwen2.5-7B-Instruct-q4f16_1-MLC",
@@ -625,22 +458,10 @@
           "vramGB": 5.9
         },
         {
-          "id": "Qwen3.5-9B-q4f16_1-MLC",
-          "name": "Qwen3.5 9B Q4f16.1",
-          "sizeGB": 4.71,
-          "vramGB": 6.43
-        },
-        {
           "id": "Qwen3-8B-q4f32_1-MLC",
           "name": "Qwen3 8B Q4f32.1",
           "sizeGB": 4.31,
           "vramGB": 6.85
-        },
-        {
-          "id": "Qwen3.5-9B-q4f32_1-MLC",
-          "name": "Qwen3.5 9B Q4f32.1",
-          "sizeGB": 4.71,
-          "vramGB": 7.54
         }
       ]
     },
@@ -714,12 +535,6 @@
           "vramGB": 3.18
         },
         {
-          "id": "Phi-4-mini-instruct-q4f16_1-MLC",
-          "name": "Phi 4 Mini Instruct Q4f16.1",
-          "sizeGB": 2.03,
-          "vramGB": 3.44
-        },
-        {
           "id": "Phi-3.5-mini-instruct-q4f16_1-MLC",
           "name": "Phi 3.5 Mini Instruct Q4f16.1",
           "sizeGB": 2,
@@ -732,22 +547,16 @@
           "vramGB": 3.67
         },
         {
+          "id": "Phi-3.5-vision-instruct-q4f16_1-MLC",
+          "name": "Phi 3.5 Vision Instruct Q4f16.1",
+          "sizeGB": 2.58,
+          "vramGB": 3.95
+        },
+        {
           "id": "phi-2-q4f32_1-MLC",
           "name": "Phi 2 Q4f32.1",
           "sizeGB": 1.46,
           "vramGB": 4.03
-        },
-        {
-          "id": "Phi-4-mini-instruct-q4f32_1-MLC",
-          "name": "Phi 4 Mini Instruct Q4f32.1",
-          "sizeGB": 2.03,
-          "vramGB": 4.22
-        },
-        {
-          "id": "Phi-3.5-vision-instruct-q4f16_1-MLC",
-          "name": "Phi 3.5 Vision Instruct Q4f16.1",
-          "sizeGB": 2.58,
-          "vramGB": 4.52
         },
         {
           "id": "Phi-3.5-mini-instruct-q4f32_1-MLC",
@@ -765,7 +574,84 @@
           "id": "Phi-3.5-vision-instruct-q4f32_1-MLC",
           "name": "Phi 3.5 Vision Instruct Q4f32.1",
           "sizeGB": 2.58,
-          "vramGB": 7.05
+          "vramGB": 5.88
+        }
+      ]
+    },
+    {
+      "label": "Gemma",
+      "options": [
+        {
+          "id": "gemma-2b-it-q4f16_1-MLC",
+          "name": "Gemma 2b It Q4f16.1",
+          "sizeGB": 1.33,
+          "vramGB": 1.48
+        },
+        {
+          "id": "gemma-2b-it-q4f16_1-MLC-1k",
+          "name": "Gemma 2b It Q4f16.1 1k",
+          "sizeGB": 1.33,
+          "vramGB": 1.48
+        },
+        {
+          "id": "gemma-2-2b-it-q4f16_1-MLC-1k",
+          "name": "Gemma 2 2b It Q4f16.1 1k",
+          "sizeGB": 1.39,
+          "vramGB": 1.58
+        },
+        {
+          "id": "gemma-2b-it-q4f32_1-MLC",
+          "name": "Gemma 2b It Q4f32.1",
+          "sizeGB": 1.33,
+          "vramGB": 1.75
+        },
+        {
+          "id": "gemma-2b-it-q4f32_1-MLC-1k",
+          "name": "Gemma 2b It Q4f32.1 1k",
+          "sizeGB": 1.33,
+          "vramGB": 1.75
+        },
+        {
+          "id": "gemma-2-2b-it-q4f32_1-MLC-1k",
+          "name": "Gemma 2 2b It Q4f32.1 1k",
+          "sizeGB": 1.39,
+          "vramGB": 1.88
+        },
+        {
+          "id": "gemma-2-2b-it-q4f16_1-MLC",
+          "name": "Gemma 2 2b It Q4f16.1",
+          "sizeGB": 1.39,
+          "vramGB": 1.9
+        },
+        {
+          "id": "gemma-2-2b-jpn-it-q4f16_1-MLC",
+          "name": "Gemma 2 2b Jpn It Q4f16.1",
+          "sizeGB": 1.39,
+          "vramGB": 1.9
+        },
+        {
+          "id": "gemma-2-2b-it-q4f32_1-MLC",
+          "name": "Gemma 2 2b It Q4f32.1",
+          "sizeGB": 1.39,
+          "vramGB": 2.51
+        },
+        {
+          "id": "gemma-2-2b-jpn-it-q4f32_1-MLC",
+          "name": "Gemma 2 2b Jpn It Q4f32.1",
+          "sizeGB": 1.39,
+          "vramGB": 2.51
+        },
+        {
+          "id": "gemma-2-9b-it-q4f16_1-MLC",
+          "name": "Gemma 2 9b It Q4f16.1",
+          "sizeGB": 4.86,
+          "vramGB": 6.42
+        },
+        {
+          "id": "gemma-2-9b-it-q4f32_1-MLC",
+          "name": "Gemma 2 9b It Q4f32.1",
+          "sizeGB": 4.86,
+          "vramGB": 8.38
         }
       ]
     },
@@ -795,35 +681,6 @@
           "name": "Stablelm 2 Zephyr 1.6b Q4f32.1",
           "sizeGB": 0.87,
           "vramGB": 3
-        }
-      ]
-    },
-    {
-      "label": "Outros",
-      "options": [
-        {
-          "id": "OLMo-2-0425-1B-Instruct-q4f16_1-MLC",
-          "name": "OLMo 2 0425 1B Instruct Q4f16.1",
-          "sizeGB": 0.79,
-          "vramGB": 1.78
-        },
-        {
-          "id": "OLMo-2-0425-1B-Instruct-q4f32_1-MLC",
-          "name": "OLMo 2 0425 1B Instruct Q4f32.1",
-          "sizeGB": 0.79,
-          "vramGB": 2.45
-        },
-        {
-          "id": "OLMo-2-1124-7B-Instruct-q4f16_1-MLC",
-          "name": "OLMo 2 1124 7B Instruct Q4f16.1",
-          "sizeGB": 3.83,
-          "vramGB": 6.48
-        },
-        {
-          "id": "OLMo-2-1124-7B-Instruct-q4f32_1-MLC",
-          "name": "OLMo 2 1124 7B Instruct Q4f32.1",
-          "sizeGB": 3.83,
-          "vramGB": 9.09
         }
       ]
     },
@@ -931,42 +788,6 @@
       "label": "Mistral",
       "options": [
         {
-          "id": "Ministral-3-3B-Base-2512-q4f16_1-MLC",
-          "name": "Ministral 3 3B Base 2512 Q4f16.1",
-          "sizeGB": 1.81,
-          "vramGB": 2.86
-        },
-        {
-          "id": "Ministral-3-3B-Reasoning-2512-q4f16_1-MLC",
-          "name": "Ministral 3 3B Reasoning 2512 Q4f16.1",
-          "sizeGB": 1.81,
-          "vramGB": 2.86
-        },
-        {
-          "id": "Ministral-3-3B-Instruct-2512-BF16-q4f16_1-MLC",
-          "name": "Ministral 3 3B Instruct 2512 BF16 Q4f16.1",
-          "sizeGB": 1.81,
-          "vramGB": 2.86
-        },
-        {
-          "id": "Ministral-3-3B-Base-2512-q4f32_1-MLC",
-          "name": "Ministral 3 3B Base 2512 Q4f32.1",
-          "sizeGB": 1.81,
-          "vramGB": 3.53
-        },
-        {
-          "id": "Ministral-3-3B-Reasoning-2512-q4f32_1-MLC",
-          "name": "Ministral 3 3B Reasoning 2512 Q4f32.1",
-          "sizeGB": 1.81,
-          "vramGB": 3.53
-        },
-        {
-          "id": "Ministral-3-3B-Instruct-2512-BF16-q4f32_1-MLC",
-          "name": "Ministral 3 3B Instruct 2512 BF16 Q4f32.1",
-          "sizeGB": 1.81,
-          "vramGB": 3.53
-        },
-        {
           "id": "Mistral-7B-Instruct-v0.3-q4f16_1-MLC",
           "name": "Mistral 7B Instruct V0.3 Q4f16.1",
           "sizeGB": 3.8,
@@ -983,6 +804,24 @@
           "name": "Mistral 7B Instruct V0.3 Q4f32.1",
           "sizeGB": 3.8,
           "vramGB": 5.62
+        },
+        {
+          "id": "Ministral-3-3B-Base-2512-q4f16_1-MLC",
+          "name": "Ministral 3 3B Base 2512 Q4f16.1",
+          "sizeGB": 1.81,
+          "vramGB": null
+        },
+        {
+          "id": "Ministral-3-3B-Reasoning-2512-q4f16_1-MLC",
+          "name": "Ministral 3 3B Reasoning 2512 Q4f16.1",
+          "sizeGB": 1.81,
+          "vramGB": null
+        },
+        {
+          "id": "Ministral-3-3B-Instruct-2512-BF16-q4f16_1-MLC",
+          "name": "Ministral 3 3B Instruct 2512 BF16 Q4f16.1",
+          "sizeGB": 1.81,
+          "vramGB": null
         }
       ]
     },
