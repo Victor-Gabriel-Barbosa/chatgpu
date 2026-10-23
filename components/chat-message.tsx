@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Copy, ChevronDown, Pencil, File, Gauge, ArrowUpFromLine, ArrowDownToLine, WholeWord, Activity, Clock, Timer, Check} from 'lucide-react';
+import { Copy, ChevronDown, Pencil, File, Gauge, WholeWord, Timer, Check} from 'lucide-react';
 import { Metric } from "@/components/metric"
 import { Message as MessageType, TextFile } from '@/types/chat';
 import { Button } from "@/components/ui/button";
@@ -252,30 +252,9 @@ export function ChatMessage({
                 )}
                 {message.metrics?.completionTokens !== undefined && (
                   <Metric
-                    icon={ArrowUpFromLine}
+                    icon={WholeWord}
                     value={`${message.metrics.completionTokens} tokens`}
                     label="Tokens da resposta"
-                  />
-                )}
-                {message.metrics?.promptTokens !== undefined && (
-                  <Metric
-                    icon={ArrowDownToLine}
-                    value={`${message.metrics.promptTokens} tokens`}
-                    label="Tokens do prompt"
-                  />
-                )}
-                {message.metrics?.totalTokens !== undefined && (
-                  <Metric
-                    icon={WholeWord}
-                    value={`${message.metrics.totalTokens} tokens`}
-                    label="Total de tokens"
-                  />
-                )}
-                {message.metrics?.prefillTokensPerSecond !== undefined && (
-                  <Metric
-                    icon={Activity}
-                    value={`${message.metrics.prefillTokensPerSecond} tokens/s`}
-                    label="Velocidade de prefill"
                   />
                 )}
                 {message.metrics?.timeToFirstToken !== undefined && (
@@ -283,13 +262,6 @@ export function ChatMessage({
                     icon={Timer}
                     value={`${message.metrics.timeToFirstToken}s`}
                     label="Tempo até o primeiro token (TTFT)"
-                  />
-                )}
-                {message.metrics?.elapsedTime !== undefined && (
-                  <Metric
-                    icon={Clock}
-                    value={`${message.metrics.elapsedTime}s`}
-                    label="Tempo total"
                   />
                 )}
               </div>
