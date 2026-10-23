@@ -97,9 +97,9 @@ export function ModelManager({
     let visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
     if (filter === "downloaded") visible = visible.filter((m) => m.isCached);
     if (filter === "not-downloaded") visible = visible.filter((m) => !m.isCached);
-    if (sortOrder === "alphabetical") visible = visible.sort((a, b) => a.name.localeCompare(b.name));
-    if (sortOrder === "size") visible = visible.sort((a, b) => a.sizeGB - b.sizeGB);
-    if (sortOrder === "vram") visible = visible.sort((a, b) => (a.vramGB ?? Infinity) - (b.vramGB ?? Infinity));
+    if (sortOrder === "alphabetical") visible = [...visible].sort((a, b) => a.name.localeCompare(b.name));
+    if (sortOrder === "size") visible = [...visible].sort((a, b) => a.sizeGB - b.sizeGB);
+    if (sortOrder === "vram") visible = [...visible].sort((a, b) => (a.vramGB ?? Infinity) - (b.vramGB ?? Infinity));
 
     return Map.groupBy(visible, (m) => m.groupLabel);
   }, [models, deferredQuery, filter, sortOrder]);
@@ -263,7 +263,7 @@ export function ModelManager({
                         <div
                           key={model.id}
                           className={cn(
-                            "flex items-center justify-between gap-1 rounded-xl border bg-card p-3 transition-colors",
+                            "flex items-center justify-between gap-1 rounded-xl border bg-card p-3 transition-colors [content-visibility:auto] [contain-intrinsic-size:auto_88px]",
                             isActive && "border-primary bg-accent/40"
                           )}
                         >
