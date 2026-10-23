@@ -264,6 +264,13 @@ export function ChatMessage({
                     label="Tokens do prompt"
                   />
                 )}
+                {message.metrics?.totalTokens !== undefined && (
+                  <Metric
+                    icon={WholeWord}
+                    value={`${message.metrics.totalTokens} tokens`}
+                    label="Total de tokens"
+                  />
+                )}
                 {message.metrics?.prefillTokensPerSecond !== undefined && (
                   <Metric
                     icon={Activity}
