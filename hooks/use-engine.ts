@@ -9,24 +9,24 @@ const LOADING_TOAST_ID = "loading-model";
 const STORAGE_KEY = "chatgpu-model";
 
 /** Instância singleton do motor WebLLM compartilhada entre invocações do hook. */
-let engineSingleton: WebWorkerMLCEngine | null = null;
+let engine: WebWorkerMLCEngine | null = null;
 
 /** Instância singleton do Web Worker que executa o motor de IA em segundo plano. */
-let workerSingleton: Worker | null = null;
+let worker: Worker | null = null;
 
 /**
  * Retorna a instância singleton do motor WebLLM, criando o Web Worker e o motor na primeira chamada.
  *
  * @returns Instância compartilhada do {@link WebWorkerMLCEngine}.
  */
-function getEngineSingleton(): WebWorkerMLCEngine {
-  if (!engineSingleton) {
-    workerSingleton = new Worker(new URL("@/lib/worker.ts", import.meta.url), {
+function getEngine(): WebWorkerMLCEngine {
+  if (!engine) {
+    worker = new Worker(new URL("@/lib/worker.ts", import.meta.url), {
       type: "module",
     });
-    engineSingleton = new WebWorkerMLCEngine(workerSingleton);
+    engine = new WebWorkerMLCEngine(worker);
   }
-  return engineSingleton;
+  return engine;
 }
 
 /**
@@ -34,14 +34,14 @@ function getEngineSingleton(): WebWorkerMLCEngine {
  *
  * @remarks
  * Termina o Web Worker e anula as referências do singleton para que sejam
- * recriados na próxima chamada a {@link getEngineSingleton}.
+ * recriados na próxima chamada a {@link getEngine}.
  */
 function destroyEngineSingleton() {
-  if (workerSingleton) {
-    workerSingleton.terminate();
-    workerSingleton = null;
+  if (worker) {
+    worker.terminate();
+    worker = null;
   }
-  engineSingleton = null;
+  engine = null;
 }
 
 /**
@@ -56,7 +56,7 @@ function destroyEngineSingleton() {
  *
  * @returns Objeto com `run` (submete uma tarefa) e `reset` (destrava a cadeia).
  */
-function createExclusiveRunner() {
+function createTaskQueue() {
   let chain = Promise.resolve();
   return {
     run<T>(task: () => Promise<T> | T): Promise<T> {
@@ -70,7 +70,7 @@ function createExclusiveRunner() {
   };
 }
 
-const exclusiveRunner = createExclusiveRunner();
+const taskQueue = createTaskQueue();
 
 /**
  * Gerencia a inicialização, seleção e carregamento do motor de IA WebLLM via Web Worker.
@@ -100,21 +100,21 @@ export function useEngine() {
    * e o motor singleton (que serão recriados sob demanda), limpa a seleção
    * de modelo e exibe um toast informativo.
    */
-  const cancelLoading = useCallback(async() => {
+  const cancelLoading = useCallback(async () => {
     loadIdRef.current++;
     destroyEngineSingleton();
-    exclusiveRunner.reset();
+    taskQueue.reset();
     setEngine(null);
     setSelectedModel("");
     setIsReady(false);
     setIsLoading(false);
-    localStorage.removeItem(STORAGE_KEY);
-    const isCached = await hasModelInCache(selectedModel);
-    if (!isCached) await deleteModelAllInfoInCache(selectedModel);
-    toast.info("Carregamento do modelo cancelado.", {
-      id: LOADING_TOAST_ID,
-      duration: 2000,
-    });
+
+    try {
+      const isCached = await hasModelInCache(selectedModel);
+      if (!isCached) await deleteModelAllInfoInCache(selectedModel);
+    } catch(e) {
+      console.warn("Erro ao limpar cache do modelo:", e);
+    }
   }, [selectedModel]);
 
   /**
@@ -124,10 +124,10 @@ export function useEngine() {
   const showLoadingToast = useCallback(
     (percent: number, isDownloading: boolean) => {
       const clamped = Math.min(100, Math.max(0, Math.round(percent)));
-      toast.loading(`${isDownloading ? "Baixando" : "Carregando"} modelo (${clamped}%)`, {
+      toast.loading(`${isDownloading ? "Baixando" : "Carregando"} modelo (${clamped % 100}%)`, {
         id: LOADING_TOAST_ID,
         duration: Infinity,
-        description: isDownloading ? "O download inicial do modelo pode demorar para preencher o cache. As atualizações posteriores serão mais rápidas." : "Carregando modelo do cache...",
+        description: isDownloading ? "O download inicial pode demorar um pouco. Depois disso, as próximas aberturas serão muito mais rápidas" : "Carregando do cache do navegador...",
         action: {
           label: "Cancelar",
           onClick: cancelLoading,
@@ -153,7 +153,7 @@ export function useEngine() {
   useEffect(() => {
     if (!selectedModel) return;
     const currentLoadId = ++loadIdRef.current;
-    const sharedEngine = getEngineSingleton();
+    const sharedEngine = getEngine();
 
     queueMicrotask(() => {
       setIsReady(false);
@@ -165,7 +165,7 @@ export function useEngine() {
       showLoadingToast((report.progress ?? 0) * 100, report.text.includes("fetch"));
     });
 
-    exclusiveRunner.run(() => {
+    taskQueue.run(() => {
       if (currentLoadId !== loadIdRef.current) return;
       return sharedEngine.reload(selectedModel);
     })
@@ -182,11 +182,12 @@ export function useEngine() {
           action: null
         });
       })
-      .catch((error) => {
+      .catch((e) => {
         if (currentLoadId !== loadIdRef.current) return;
         setIsLoading(false);
-        console.error("Erro ao carregar o modelo:", error);
-        toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${error}`, {
+        setSelectedModel("");
+        console.error("Erro ao carregar o modelo:", e);
+        toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${e}`, {
           id: LOADING_TOAST_ID,
           duration: 5000,
         });
