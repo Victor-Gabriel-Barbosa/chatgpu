@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { toast } from "sonner";
 
 /**
  * Combina classes CSS de forma condicional e resolve conflitos de estilo do Tailwind CSS.
@@ -28,20 +27,6 @@ export function round(value?: number, digits = 1) {
  * @returns Promessa que será resolvida após o tempo determinado.
  */
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * Copia um texto para a área de transferência.
- * @param content - Conteúdo que será copiado.
- */
-export async function copyToClipboard(content: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(content);
-    toast.success("Copiado para a área de transferência");
-  } catch (error) {
-    console.error("Erro ao copiar mensagem:", error);
-    toast.error("Falha ao copiar a mensagem. Tente novamente");
-  }
-}
 
 /**
  * Faz o download de um arquivo.

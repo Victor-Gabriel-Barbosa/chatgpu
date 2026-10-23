@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Copy, Download, Code2, Maximize2, X, LayoutTemplate } from 'lucide-react';
+import { Copy, Download, Code2, Maximize2, X, LayoutTemplate, Check } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { copyToClipboard, downloadFile , cn } from '@/lib/utils';
+import { downloadFile , cn } from '@/lib/utils';
 
 /** Propriedades do componente {@link CodeBlock}. */
 export interface CodeBlockProps {
@@ -39,6 +39,7 @@ export function CodeBlock({
 }: Readonly<CodeBlockProps>) {
   const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [isCopied, setIsCopied] = useState(false);
   const ext = lang ? lang.toLowerCase() : 'md';
   const isHtml = ext === 'html';
 
@@ -91,12 +92,17 @@ export function CodeBlock({
           </Button>
           <Button
             variant="ghost"
-            onClick={() => copyToClipboard(code)}
-            title="Copiar código"
+            onClick={async () => {
+              await navigator.clipboard.writeText(code);
+              setIsCopied(true);
+              setTimeout(() => setIsCopied(false), 2000);
+            }}
+            title={isCopied ? "Copiado!" : "Copiar código"}
+            aria-label={isCopied ? "Mensagem copiada" : "Copiar mensagem"}
             className="text-muted-foreground"
             size="icon-sm"
           >
-            <Copy />
+            {isCopied ? <Check /> : <Copy />}
           </Button>
         </div>
       </div>

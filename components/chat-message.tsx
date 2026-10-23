@@ -1,17 +1,5 @@
 import { useState } from 'react';
-import {
-  Copy,
-  ChevronDown,
-  Pencil,
-  File,
-  Gauge,
-  FileOutput,
-  FileInput,
-  Hash,
-  Activity,
-  Clock,
-  Timer,
-} from 'lucide-react';
+import { Copy, ChevronDown, Pencil, File, Gauge, ArrowUpFromLine, ArrowDownToLine, WholeWord, Activity, Clock, Timer, Check} from 'lucide-react';
 import { Metric } from "@/components/metric"
 import { Message as MessageType, TextFile } from '@/types/chat';
 import { Button } from "@/components/ui/button";
@@ -40,7 +28,7 @@ import {
   InputGroupTextarea,
 } from "@/components/ui/input-group"
 
-import { cn, copyToClipboard } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 /** Propriedades do componente {@link ChatMessage}. */
 export interface ChatMessageProps {
@@ -94,6 +82,7 @@ export function ChatMessage({
   const [expandedFiles, setExpandedFiles] = useState<Record<number, boolean>>({});
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(message.content);
+  const [isCopied, setIsCopied] = useState(false);
   const isUser = message.role === 'user';
 
   /** Alterna o estado de expansão de um arquivo específico. */
@@ -227,18 +216,21 @@ export function ChatMessage({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="text-muted-foreground"
-                onClick={() => copyToClipboard(message.content)}
-                title="Copiar mensagem"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(message.content);
+                  setIsCopied(true);
+                  setTimeout(() => setIsCopied(false), 2000);
+                }}
+                title={isCopied ? "Copiado!" : "Copiar mensagem"}
+                aria-label={isCopied ? "Mensagem copiada" : "Copiar mensagem"}
               >
-                <Copy />
+                {isCopied ? <Check /> : <Copy />}
               </Button>
 
               {isUser && handleEdit && (
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="text-muted-foreground"
                   onClick={() => setIsEditing(true)}
                   title="Editar mensagem"
                   aria-label="Editar mensagem"
@@ -250,7 +242,7 @@ export function ChatMessage({
             </div>
 
             {!isUser && (
-              <div className="flex flex-row flex-wrap gap-2 text-xs text-foreground">
+              <div className="flex flex-row flex-wrap gap-2 text-xs">
                 {message.metrics?.tokensPerSecond !== undefined && (
                   <Metric
                     icon={Gauge}
@@ -260,21 +252,21 @@ export function ChatMessage({
                 )}
                 {message.metrics?.completionTokens !== undefined && (
                   <Metric
-                    icon={FileOutput}
+                    icon={ArrowUpFromLine}
                     value={`${message.metrics.completionTokens} tokens`}
                     label="Tokens da resposta"
                   />
                 )}
                 {message.metrics?.promptTokens !== undefined && (
                   <Metric
-                    icon={FileInput}
+                    icon={ArrowDownToLine}
                     value={`${message.metrics.promptTokens} tokens`}
                     label="Tokens do prompt"
                   />
                 )}
                 {message.metrics?.totalTokens !== undefined && (
                   <Metric
-                    icon={Hash}
+                    icon={WholeWord}
                     value={`${message.metrics.totalTokens} tokens`}
                     label="Total de tokens"
                   />
