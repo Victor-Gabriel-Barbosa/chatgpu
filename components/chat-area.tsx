@@ -214,7 +214,7 @@ export function ChatArea({
           <Tooltip>
             <TooltipTrigger asChild>
               <InputGroupButton
-                variant="default"
+                variant="outline"
                 size="icon-sm"
                 aria-label="Anexar arquivos"
                 onClick={() => fileInputRef.current?.click()}

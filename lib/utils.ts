@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 /**
  * Combina classes CSS de forma condicional e resolve conflitos de estilo do Tailwind CSS.
@@ -20,13 +20,6 @@ export function cn(...inputs: ClassValue[]) {
 export function round(value?: number, digits = 1) {
   return value !== undefined ? Number(value.toFixed(digits)) : undefined;
 }
-
-/**
- * Aguarda um tempo determinado.
- * @param ms - Tempo em milissegundos a ser aguardado.
- * @returns Promessa que será resolvida após o tempo determinado.
- */
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Faz o download de um arquivo.

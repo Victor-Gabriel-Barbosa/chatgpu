@@ -43,7 +43,7 @@ export const reasoningComponents: Components = {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
-      <CodeBlock lang={match[1]} code={(children as string ?? '').replace(/\n$/, '')} />
+      <CodeBlock lang={match[1]} code={(children as string ?? '')} />
     ) : (
       <code className="px-1.5 py-0.5 rounded text-xs font-mono wrap-break-word" {...rest}>
         {children}
@@ -62,7 +62,7 @@ export const messageComponents: Components = {
     const { children, className, ...rest } = props;
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
-      <CodeBlock lang={match[1]} code={(children as string ?? '').replace(/\n$/, '')} />
+      <CodeBlock lang={match[1]} code={(children as string ?? '')} />
     ) : (
       <code className="px-1.5 py-0.5 rounded text-sm font-mono wrap-break-word" {...rest}>
         {children}

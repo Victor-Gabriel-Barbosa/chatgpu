@@ -1,4 +1,4 @@
-import { WebWorkerMLCEngineHandler } from "@mlc-ai/web-llm"
+import { WebWorkerMLCEngineHandler } from "@mlc-ai/web-llm";
 
 /** Manipulador de mensagens do motor WebLLM executado no contexto do Web Worker. */
 const handler = new WebWorkerMLCEngineHandler();
