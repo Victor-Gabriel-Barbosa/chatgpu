@@ -156,3 +156,8 @@ body {
 img {
   user-select: none; 
 }
+
+[data-sonner-toaster] {
+  pointer-events: auto !important;
+  z-index: 9999 !important;
+}
