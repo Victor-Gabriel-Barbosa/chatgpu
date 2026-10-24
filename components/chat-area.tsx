@@ -156,15 +156,14 @@ export function ChatArea({
     <div className={cn("mx-auto w-full max-w-190 px-5", className)}>
       <div
         className={cn(
-          "max-md:hidden flex flex-row items-center justify-center gap-2 text-2xl overflow-hidden transition-all duration-500 ease-in-out",
-          isEmpty && isReady
+          "flex flex-row items-center justify-center gap-2 text-2xl transition-all duration-400 ease-in-out",
+          isEmpty
             ? "opacity-100 translate-y-0 mb-8 max-h-20"
             : "opacity-0 -translate-y-2 mb-0 max-h-0 pointer-events-none"
         )}
       >
-        <Image src="/icon0.svg" alt="ChatGPU" width={34} height={34} loading="eager" />
         <span className="font-bold text-primary text-center shimmer">
-          Como posso ajudar hoje?
+          {(isEmpty && isReady) ? "Como posso ajudar hoje?" : "Selecione um modelo..."}
         </span>
       </div>
 
