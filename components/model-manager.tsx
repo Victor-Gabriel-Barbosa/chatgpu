@@ -21,7 +21,7 @@ import {
 import { useCache } from "@/hooks/use-cache";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field } from "@/components/ui/field"
 import { Progress } from "@/components/ui/progress"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -210,6 +210,10 @@ export function ModelManager({
                       <TextAlignStart />
                       Padrão
                     </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="alphabetical">
+                      <ArrowDownAZ />
+                      Nome (A-Z)
+                    </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="size">
                       <HardDriveDownload />
                       Tamanho
@@ -218,10 +222,6 @@ export function ModelManager({
                     <DropdownMenuRadioItem value="vram">
                       <Cpu />
                       VRAM
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="alphabetical">
-                      <ArrowDownAZ />
-                      Nome (A–Z)
                     </DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
@@ -356,12 +356,12 @@ export function ModelManager({
         </div>
 
         {/* Rodapé (uso de armazenamento) */}
-        <DialogFooter className="m-2 text-xs text-muted-foreground sm:justify-start block">
+        <DialogFooter className="m-2 text-sm text-muted-foreground sm:justify-start block">
           <Field className="w-full max-w-sm">
-            <FieldLabel>
+            <div className="flex w-full items-center">
               <span>Armazenamento usado no navegador</span>
               <span className="ml-auto">{storageInfo?.usedGB ?? "N/A"} GB / {storageInfo?.quotaGB ?? "N/A"} GB</span>
-            </FieldLabel>
+            </div>
             <Progress value={storageInfo?.percent ?? 0} />
           </Field>
         </DialogFooter>

@@ -1,3 +1,5 @@
+"use client";
+
 import { memo, useMemo } from 'react';
 import { CodeBlock } from '@/components/code-block';
 import ReactMarkdown, { type Components } from 'react-markdown';

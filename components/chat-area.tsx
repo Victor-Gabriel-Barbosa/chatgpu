@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useState, type ChangeEvent, type ClipboardEvent } from "react";

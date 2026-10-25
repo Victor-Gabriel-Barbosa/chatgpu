@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { Copy, ChevronDown, Pencil, File, Gauge, WholeWord, Timer, Check} from 'lucide-react';
 import { Metric } from "@/components/metric"

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Copy, Download, Code2, Maximize2, X, LayoutTemplate, Check } from 'lucide-react';
