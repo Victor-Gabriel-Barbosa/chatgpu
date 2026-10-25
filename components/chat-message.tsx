@@ -213,8 +213,8 @@ export function ChatMessage({
 
         {/* Rodapé da mensagem (ações e métricas) */}
         {!isEditing && (
-          <MessageFooter className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-1 opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+          <MessageFooter className="flex items-center justify-between gap-2">
+            <div className="flex items-center opacity-0 max-md:opacity-100 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
               <Button
                 variant="ghost"
                 size="icon-sm"
