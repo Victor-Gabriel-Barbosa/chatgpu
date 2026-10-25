@@ -146,13 +146,13 @@ export function CodeBlock({
 
       {/* Preview em tela cheia */}
       {isFullscreen && typeof document !== 'undefined' ? createPortal(
-        <div className="absolute inset-0 z-10 flex flex-col animate-in fade-in duration-800 bg-background">
+        <div className="absolute inset-0 z-50 flex flex-col animate-in fade-in duration-800 bg-background">
           <Button
             variant="secondary"
             onClick={() => setIsFullscreen(false)}
             title="Fechar preview"
             size="icon"
-            className="absolute top-4 right-4"
+            className="absolute top-4 right-4 z-[60]"
           >
             <X />
           </Button>
