@@ -121,13 +121,12 @@ export function useEngine() {
    * Exibe ou atualiza o toast de progresso de carregamento do modelo.
    * @param percent - Percentual de progresso (0–100).
    */
-  const showLoadingToast = useCallback(
-    (percent: number, isDownloading: boolean) => {
+  const showLoadingToast = useCallback((percent: number) => {
       const clamped = Math.min(100, Math.max(0, Math.round(percent)));
-      toast.loading(`${isDownloading ? "Baixando" : "Carregando"} modelo (${clamped % 100}%)`, {
+      toast.loading(`Carregando modelo (${clamped}%)`, {
         id: LOADING_TOAST_ID,
         duration: Infinity,
-        description: isDownloading ? "O download inicial pode demorar um pouco. Depois disso, as próximas aberturas serão muito mais rápidas" : "Carregando do cache do navegador...",
+        description: "O download inicial pode demorar um pouco. Depois disso, as próximas aberturas serão muito mais rápidas",
         action: {
           label: "Cancelar",
           onClick: cancelLoading,
@@ -155,6 +154,8 @@ export function useEngine() {
     const currentLoadId = ++loadIdRef.current;
     const sharedEngine = getEngine();
 
+    showLoadingToast(0);
+
     queueMicrotask(() => {
       setIsReady(false);
       setIsLoading(true);
@@ -162,7 +163,7 @@ export function useEngine() {
 
     sharedEngine.setInitProgressCallback((report: InitProgressReport) => {
       if (currentLoadId !== loadIdRef.current) return;
-      showLoadingToast((report.progress ?? 0) * 100, report.text.includes("fetch"));
+      showLoadingToast((report.progress ?? 0) * 100);
     });
 
     taskQueue.run(() => {
