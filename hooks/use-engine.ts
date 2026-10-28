@@ -191,11 +191,15 @@ export function useEngine() {
         setIsLoading(false);
         setSelectedModel("");
         console.error("Erro ao carregar o modelo:", e);
-        toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador", {
+        toast.error("Erro ao carregar o WebGPU", {
           id: ERROR_TOAST_ID,
-          description: e,
+          description: "Utilize uma versão atualizada do Chrome ou Edge, verifique se o WebGPU é compatível com seu dispositivo e atualize os drivers de vídeo. Depois, recarregue a página e tente novamente",
           duration: Infinity,
           closeButton: true,
+          action: {
+            label: "Ver suporte",
+            onClick: () => window.open("https://webgpureport.org/", "_blank"),
+          },
         });
       });
 
