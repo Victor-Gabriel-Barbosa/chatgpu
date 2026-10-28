@@ -5,6 +5,9 @@ import { toast } from "sonner";
 /** Identificador fixo do toast de progresso de carregamento do modelo. */
 const LOADING_TOAST_ID = "loading-model";
 
+/** Identificador fixo do toast da mensagem de erro. */
+const ERROR_TOAST_ID = "loading-model-error";
+
 /** Chave do `localStorage` usada para persistir o modelo selecionado entre sessões. */
 const STORAGE_KEY = "chatgpu-model";
 
@@ -112,7 +115,7 @@ export function useEngine() {
     try {
       const isCached = await hasModelInCache(selectedModel);
       if (!isCached) await deleteModelAllInfoInCache(selectedModel);
-    } catch(e) {
+    } catch (e) {
       console.warn("Erro ao limpar cache do modelo:", e);
     }
   }, [selectedModel]);
@@ -122,17 +125,17 @@ export function useEngine() {
    * @param percent - Percentual de progresso (0–100).
    */
   const showLoadingToast = useCallback((percent: number) => {
-      const clamped = Math.min(100, Math.max(0, Math.round(percent)));
-      toast.loading(`Carregando modelo (${clamped}%)`, {
-        id: LOADING_TOAST_ID,
-        duration: Infinity,
-        description: "O download inicial pode demorar um pouco. Depois disso, as próximas aberturas serão muito mais rápidas",
-        action: {
-          label: "Cancelar",
-          onClick: cancelLoading,
-        },
-      });
-    },
+    const clamped = Math.min(100, Math.max(0, Math.round(percent)));
+    toast.loading(`Carregando modelo (${clamped}%)`, {
+      id: LOADING_TOAST_ID,
+      duration: Infinity,
+      description: "O download inicial pode demorar um pouco. Depois disso, as próximas aberturas serão muito mais rápidas",
+      action: {
+        label: "Cancelar",
+        onClick: cancelLoading,
+      },
+    });
+  },
     [cancelLoading]
   );
 
@@ -189,8 +192,9 @@ export function useEngine() {
         setSelectedModel("");
         console.error("Erro ao carregar o modelo:", e);
         toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${e}`, {
-          id: LOADING_TOAST_ID,
-          duration: 5000,
+          id: ERROR_TOAST_ID,
+          duration: Infinity,
+          closeButton: true
         });
       });
 
