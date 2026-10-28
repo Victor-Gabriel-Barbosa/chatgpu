@@ -115,7 +115,7 @@ export function useEngine() {
     try {
       const isCached = await hasModelInCache(selectedModel);
       if (!isCached) await deleteModelAllInfoInCache(selectedModel);
-    } catch (e) {
+    } catch(e) {
       console.warn("Erro ao limpar cache do modelo:", e);
     }
   }, [selectedModel]);
@@ -194,7 +194,7 @@ export function useEngine() {
         toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${e}`, {
           id: ERROR_TOAST_ID,
           duration: Infinity,
-          closeButton: true
+          closeButton: true,
         });
       });
 
