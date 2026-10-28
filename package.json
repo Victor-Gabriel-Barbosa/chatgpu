@@ -8,9 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "docs": "typedoc",
-    "generate:models": "tsx scripts/generate-models.ts",
-    "prebuild": "npm run generate:models",
-    "postinstall": "npm run generate:models"
+    "generate:models": "tsx scripts/generate-models.ts"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.79",
