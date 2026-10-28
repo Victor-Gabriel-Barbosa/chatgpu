@@ -191,8 +191,9 @@ export function useEngine() {
         setIsLoading(false);
         setSelectedModel("");
         console.error("Erro ao carregar o modelo:", e);
-        toast.error(`Erro ao carregar o WebGPU. Verifique suporte no navegador: ${e}`, {
+        toast.error("Erro ao carregar o WebGPU. Verifique suporte no navegador", {
           id: ERROR_TOAST_ID,
+          description: e,
           duration: Infinity,
           closeButton: true,
         });
