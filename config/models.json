@@ -13,8 +13,7 @@
           "id": "SmolLM2-360M-Instruct-q4f16_1-MLC",
           "name": "SmolLM2 360M Instruct Q4f16.1",
           "sizeGB": 0.19,
-          "vramGB": 0.38,
-          "recommended": true
+          "vramGB": 0.38
         },
         {
           "id": "SmolLM2-360M-Instruct-q4f32_1-MLC",
@@ -39,7 +38,8 @@
           "id": "Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC",
           "name": "Qwen2.5 Coder 0.5B Instruct Q4f16.1",
           "sizeGB": 0.27,
-          "vramGB": 0.94
+          "vramGB": 0.94,
+          "recommended": true
         },
         {
           "id": "Qwen2-0.5B-Instruct-q4f16_1-MLC",
