@@ -17,6 +17,9 @@ export interface ManagedModel {
 
   /** Quantidade de memória VRAM necessária para rodar o modelo, em gigabytes, ou null se não informada. */
   vramGB: number | null;
+
+  /** Indica se um modelo é recomendado. */
+  recommended: boolean | undefined;
 }
 
 /** Representa informações sobre o espaço de armazenamento utilizado pela aplicação. */

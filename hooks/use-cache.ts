@@ -17,7 +17,8 @@ export function useCache() {
           name: option.name,
           groupLabel: group.label,
           sizeGB: option.sizeGB,
-          vramGB: option.vramGB
+          vramGB: option.vramGB,
+          recommended: option.recommended,
         }))
       ),
     []

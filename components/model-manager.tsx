@@ -16,7 +16,8 @@ import {
   Save,
   SaveOff,
   TextAlignJustify,
-  TextAlignStart
+  TextAlignStart,
+  Sparkles
 } from "lucide-react";
 import { useCache } from "@/hooks/use-cache";
 import { Button } from "@/components/ui/button";
@@ -86,7 +87,7 @@ export function ModelManager({
   const { models, isChecking, deletingModelId, storageInfo, deleteModel, refreshCacheStatus } = useCache();
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState("none");
+  const [filter, setFilter] = useState("recommended");
   const [sortOrder, setSortOrder] = useState("none");
   const deferredQuery = useDeferredValue(searchQuery);
 
@@ -97,6 +98,7 @@ export function ModelManager({
     let visible = query ? models.filter((m) => m.name.toLowerCase().includes(query)) : models;
     if (filter === "downloaded") visible = visible.filter((m) => m.isCached);
     if (filter === "not-downloaded") visible = visible.filter((m) => !m.isCached);
+    if (filter === "recommended") visible = visible.filter((m) => m.recommended);
     if (sortOrder === "alphabetical") visible = [...visible].sort((a, b) => a.name.localeCompare(b.name));
     if (sortOrder === "size") visible = [...visible].sort((a, b) => a.sizeGB - b.sizeGB);
     if (sortOrder === "vram") visible = [...visible].sort((a, b) => (a.vramGB ?? Infinity) - (b.vramGB ?? Infinity));
@@ -195,6 +197,10 @@ export function ModelManager({
                       <TextAlignJustify />
                       Todos
                     </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="recommended">
+                      <Sparkles />
+                      Recomendados
+                    </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="downloaded">
                       <Save />
                       Baixados
@@ -287,10 +293,10 @@ export function ModelManager({
                                 {model.name}
                               </p>
                               <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                                <HardDriveDownload size={20} /> Disco: {model.sizeGB} GB
+                                <HardDriveDownload size={16} /> Tamanho: {model.sizeGB} GB
                               </p>
                               <p className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                                <Cpu size={20} /> VRAM: {model.vramGB} GB
+                                <Cpu size={16} /> VRAM: {model.vramGB} GB
                               </p>
                             </div>
                           </label>

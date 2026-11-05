@@ -13,7 +13,8 @@
           "id": "SmolLM2-360M-Instruct-q4f16_1-MLC",
           "name": "SmolLM2 360M Instruct Q4f16.1",
           "sizeGB": 0.19,
-          "vramGB": 0.38
+          "vramGB": 0.38,
+          "recommended": true
         },
         {
           "id": "SmolLM2-360M-Instruct-q4f32_1-MLC",
@@ -31,7 +32,8 @@
           "id": "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
           "name": "Qwen2.5 0.5B Instruct Q4f16.1",
           "sizeGB": 0.27,
-          "vramGB": 0.94
+          "vramGB": 0.94,
+          "recommended": true
         },
         {
           "id": "Qwen2.5-Coder-0.5B-Instruct-q4f16_1-MLC",
@@ -108,7 +110,8 @@
           "id": "Llama-3.2-1B-Instruct-q4f16_1-MLC",
           "name": "Llama 3.2 1B Instruct Q4f16.1",
           "sizeGB": 0.66,
-          "vramGB": 0.88
+          "vramGB": 0.88,
+          "recommended": true
         },
         {
           "id": "Qwen2.5-0.5B-Instruct-q4f32_1-MLC",
@@ -192,7 +195,8 @@
           "id": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
           "name": "Qwen2.5 1.5B Instruct Q4f16.1",
           "sizeGB": 0.82,
-          "vramGB": 1.63
+          "vramGB": 1.63,
+          "recommended": true
         },
         {
           "id": "Qwen2.5-Coder-1.5B-Instruct-q4f16_1-MLC",
@@ -300,7 +304,8 @@
           "id": "gemma-2-2b-it-q4f16_1-MLC",
           "name": "Gemma 2 2b It Q4f16.1",
           "sizeGB": 1.39,
-          "vramGB": 1.9
+          "vramGB": 1.9,
+          "recommended": true
         },
         {
           "id": "gemma-2-2b-jpn-it-q4f16_1-MLC",
@@ -318,7 +323,8 @@
           "id": "Qwen3-1.7B-q4f16_1-MLC",
           "name": "Qwen3 1.7B Q4f16.1",
           "sizeGB": 0.92,
-          "vramGB": 2.04
+          "vramGB": 2.04,
+          "recommended": true
         },
         {
           "id": "RedPajama-INCITE-Chat-3B-v1-q4f16_1-MLC-1k",
@@ -413,7 +419,8 @@
           "id": "Llama-3.2-3B-Instruct-q4f16_1-MLC",
           "name": "Llama 3.2 3B Instruct Q4f16.1",
           "sizeGB": 1.69,
-          "vramGB": 2.26
+          "vramGB": 2.26,
+          "recommended": true
         },
         {
           "id": "Hermes-3-Llama-3.2-3B-q4f16_1-MLC",
@@ -503,13 +510,15 @@
           "id": "Qwen3-4B-q4f16_1-MLC",
           "name": "Qwen3 4B Q4f16.1",
           "sizeGB": 2.12,
-          "vramGB": 3.43
+          "vramGB": 3.43,
+          "recommended": true
         },
         {
           "id": "Phi-3.5-mini-instruct-q4f16_1-MLC",
           "name": "Phi 3.5 Mini Instruct Q4f16.1",
           "sizeGB": 2,
-          "vramGB": 3.67
+          "vramGB": 3.67,
+          "recommended": true
         },
         {
           "id": "Phi-3-mini-4k-instruct-q4f16_1-MLC",
@@ -605,7 +614,8 @@
           "id": "Qwen2.5-7B-Instruct-q4f16_1-MLC",
           "name": "Qwen2.5 7B Instruct Q4f16.1",
           "sizeGB": 4,
-          "vramGB": 5.11
+          "vramGB": 5.11,
+          "recommended": true
         },
         {
           "id": "Qwen2.5-Coder-7B-Instruct-q4f16_1-MLC",
@@ -724,13 +734,15 @@
           "id": "Llama-3.1-8B-Instruct-q4f16_1-MLC",
           "name": "Llama 3.1 8B Instruct Q4f16.1",
           "sizeGB": 4.22,
-          "vramGB": 5
+          "vramGB": 5,
+          "recommended": true
         },
         {
           "id": "DeepSeek-R1-Distill-Llama-8B-q4f16_1-MLC",
           "name": "DeepSeek R1 Distill Llama 8B Q4f16.1",
           "sizeGB": 4.22,
-          "vramGB": 5
+          "vramGB": 5,
+          "recommended": true
         },
         {
           "id": "Llama-3-8B-Instruct-q4f16_1-MLC",
@@ -754,7 +766,8 @@
           "id": "Qwen3-8B-q4f16_1-MLC",
           "name": "Qwen3 8B Q4f16.1",
           "sizeGB": 4.31,
-          "vramGB": 5.7
+          "vramGB": 5.7,
+          "recommended": true
         },
         {
           "id": "Hermes-3-Llama-3.1-8B-q4f32_1-MLC",
@@ -796,7 +809,8 @@
           "id": "gemma-2-9b-it-q4f16_1-MLC",
           "name": "Gemma 2 9b It Q4f16.1",
           "sizeGB": 4.86,
-          "vramGB": 6.42
+          "vramGB": 6.42,
+          "recommended": true
         },
         {
           "id": "Llama-2-7b-chat-hf-q4f16_1-MLC",
@@ -837,7 +851,8 @@
           "id": "Llama-3.1-70B-Instruct-q3f16_1-MLC",
           "name": "Llama 3.1 70B Instruct Q3f16.1",
           "sizeGB": 29.6,
-          "vramGB": 31.15
+          "vramGB": 31.15,
+          "recommended": true
         },
         {
           "id": "Llama-3-70B-Instruct-q3f16_1-MLC",
